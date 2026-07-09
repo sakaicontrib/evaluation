@@ -23,11 +23,10 @@ import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.tool.reporting.ReportMessageSource;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
-
-import org.sakaiproject.evaluation.tool.reporting.EvalMessageLocator;
 
 /**
  * This utility class is responsible for creating convenient arrays and other 
@@ -54,9 +53,9 @@ public class EvalResponseAggregatorUtil {
         this.deliveryService = deliveryService;
     }
 
-    private EvalMessageLocator messageLocator;
-    public void setMessageLocator(EvalMessageLocator locator) {
-        this.messageLocator = locator;
+    private ReportMessageSource messages;
+    public void setMessageSource(ReportMessageSource messageSource) {
+        this.messages = messageSource;
     }
 
     private EvalCommonLogic commonLogic;
@@ -70,7 +69,7 @@ public class EvalResponseAggregatorUtil {
         String itemType = TemplateItemUtils.getTemplateItemType(templateItem);
         EvalUtils.decodeAnswerNA(answer);
         if (answer.NA) {
-            togo = messageLocator.getMessage("reporting.notapplicable.shortlabel");
+            togo = messages.getMessage("reporting.notapplicable.shortlabel");
         }
         else if (EvalConstants.ITEM_TYPE_TEXT.equals(itemType)) {
             togo = commonLogic.makePlainTextFromHTML( answer.getText() );
@@ -229,22 +228,22 @@ public class EvalResponseAggregatorUtil {
         String togo;
         if (EvalConstants.ITEM_TYPE_SCALED.equals(templateItemType)
                 || EvalConstants.ITEM_TYPE_BLOCK_CHILD.equals(templateItemType)) {
-            togo = messageLocator.getMessage("item.classification.scaled");
+            togo = messages.getMessage("item.classification.scaled");
         }
         else if (EvalConstants.ITEM_TYPE_TEXT.equals(templateItemType)) {
-            togo = messageLocator.getMessage("item.classification.text");
+            togo = messages.getMessage("item.classification.text");
         }
         else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(templateItemType)) {
-            togo = messageLocator.getMessage("item.classification.multianswer");
+            togo = messages.getMessage("item.classification.multianswer");
         }
         else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(templateItemType)) {
-            togo = messageLocator.getMessage("item.classification.multichoice");
+            togo = messages.getMessage("item.classification.multichoice");
         }
         else if (EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(templateItemType)) {
-            togo = messageLocator.getMessage("item.classification.block");
+            togo = messages.getMessage("item.classification.block");
         }
         else if (EvalConstants.ITEM_TYPE_HEADER.equals(templateItemType)) {
-            togo = messageLocator.getMessage("item.classification.header");
+            togo = messages.getMessage("item.classification.header");
         }
         else {
             togo = "";

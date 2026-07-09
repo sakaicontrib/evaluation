@@ -14,9 +14,6 @@
  */
 package org.sakaiproject.evaluation.tool.controllers;
 
-import javax.annotation.Resource;
-
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,11 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/preview_email")
-public class PreviewEmailController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationService")
-    private EvalEvaluationService evaluationService;
-
+public class PreviewEmailController extends EvalControllerSupport {
     @GetMapping
     public String show(@RequestParam(required = false) Long templateId,
                        @RequestParam(required = false) String emailType,

@@ -16,9 +16,6 @@ package org.sakaiproject.evaluation.tool.controllers;
 
 import java.util.Map;
 
-import javax.annotation.Resource;
-
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,24 +29,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/administrate_reporting")
-public class AdministrateReportingController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalSettings")
-    private EvalSettings evalSettings;
+public class AdministrateReportingController extends EvalControllerSupport {
 
     @GetMapping
     public String show(Model model) {
         checkAdmin();
 
-        model.addAttribute("enableCsvExport",       Boolean.TRUE.equals(evalSettings.get(EvalSettings.ENABLE_CSV_REPORT_EXPORT)));
-        model.addAttribute("enableXlsExport",       Boolean.TRUE.equals(evalSettings.get(EvalSettings.ENABLE_XLS_REPORT_EXPORT)));
-        model.addAttribute("enablePdfExport",       Boolean.TRUE.equals(evalSettings.get(EvalSettings.ENABLE_PDF_REPORT_EXPORT)));
-        model.addAttribute("enableListOfTakers",    Boolean.TRUE.equals(evalSettings.get(EvalSettings.ENABLE_LIST_OF_TAKERS_EXPORT)));
-        model.addAttribute("enablePdfBanner",       Boolean.TRUE.equals(evalSettings.get(EvalSettings.ENABLE_PDF_REPORT_BANNER)));
-        Object bannerLoc = evalSettings.get(EvalSettings.PDF_BANNER_IMAGE_LOCATION);
+        model.addAttribute("enableCsvExport",       Boolean.TRUE.equals(settings.get(EvalSettings.ENABLE_CSV_REPORT_EXPORT)));
+        model.addAttribute("enableXlsExport",       Boolean.TRUE.equals(settings.get(EvalSettings.ENABLE_XLS_REPORT_EXPORT)));
+        model.addAttribute("enablePdfExport",       Boolean.TRUE.equals(settings.get(EvalSettings.ENABLE_PDF_REPORT_EXPORT)));
+        model.addAttribute("enableListOfTakers",    Boolean.TRUE.equals(settings.get(EvalSettings.ENABLE_LIST_OF_TAKERS_EXPORT)));
+        model.addAttribute("enablePdfBanner",       Boolean.TRUE.equals(settings.get(EvalSettings.ENABLE_PDF_REPORT_BANNER)));
+        Object bannerLoc = settings.get(EvalSettings.PDF_BANNER_IMAGE_LOCATION);
         model.addAttribute("pdfBannerLocation",     bannerLoc != null ? bannerLoc.toString() : "");
 
         return "administrate_reporting";
@@ -59,21 +50,21 @@ public class AdministrateReportingController {
     public String save(@RequestParam Map<String, String> params) {
         checkAdmin();
 
-        evalSettings.set(EvalSettings.ENABLE_CSV_REPORT_EXPORT,       params.containsKey("enableCsvExport"));
-        evalSettings.set(EvalSettings.ENABLE_XLS_REPORT_EXPORT,       params.containsKey("enableXlsExport"));
-        evalSettings.set(EvalSettings.ENABLE_PDF_REPORT_EXPORT,       params.containsKey("enablePdfExport"));
-        evalSettings.set(EvalSettings.ENABLE_LIST_OF_TAKERS_EXPORT,   params.containsKey("enableListOfTakers"));
-        evalSettings.set(EvalSettings.ENABLE_PDF_REPORT_BANNER,       params.containsKey("enablePdfBanner"));
+        settings.set(EvalSettings.ENABLE_CSV_REPORT_EXPORT,       params.containsKey("enableCsvExport"));
+        settings.set(EvalSettings.ENABLE_XLS_REPORT_EXPORT,       params.containsKey("enableXlsExport"));
+        settings.set(EvalSettings.ENABLE_PDF_REPORT_EXPORT,       params.containsKey("enablePdfExport"));
+        settings.set(EvalSettings.ENABLE_LIST_OF_TAKERS_EXPORT,   params.containsKey("enableListOfTakers"));
+        settings.set(EvalSettings.ENABLE_PDF_REPORT_BANNER,       params.containsKey("enablePdfBanner"));
 
         String loc = params.getOrDefault("pdfBannerLocation", "").trim();
-        evalSettings.set(EvalSettings.PDF_BANNER_IMAGE_LOCATION, loc.isEmpty() ? null : loc);
+        settings.set(EvalSettings.PDF_BANNER_IMAGE_LOCATION, loc.isEmpty() ? null : loc);
 
-        log.info("Admin ({}) saved reporting settings", commonLogic.getCurrentUserId());
+        log.info("Admin ({}) saved reporting settings", currentUserId());
         return "redirect:/administrate_reporting";
     }
 
     private void checkAdmin() {
-        if (!commonLogic.isUserAdmin(commonLogic.getCurrentUserId()))
+        if (!isCurrentUserAdmin())
             throw new SecurityException("Non-admin users may not access this page");
     }
 }

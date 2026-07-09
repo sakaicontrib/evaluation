@@ -57,7 +57,6 @@
         <property name="evaluationAccessAPI" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService"/>
         <property name="messageSource" ref="messageSource"/>
         <property name="commonLogic" ref="org.sakaiproject.evaluation.logic.EvalCommonLogic"/>
-        <property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService"/>
         <property name="reportingPermissions" ref="org.sakaiproject.evaluation.logic.ReportingPermissions"/>
         <property name="exportersMap">
             <map>

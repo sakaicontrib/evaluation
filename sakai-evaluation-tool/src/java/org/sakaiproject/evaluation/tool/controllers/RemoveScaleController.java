@@ -14,10 +14,6 @@
  */
 package org.sakaiproject.evaluation.tool.controllers;
 
-import javax.annotation.Resource;
-
-import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,17 +27,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/remove_scale")
-public class RemoveScaleController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalAuthoringService")
-    private EvalAuthoringService authoringService;
+public class RemoveScaleController extends EvalControllerSupport {
 
     @GetMapping
     public String show(@RequestParam Long scaleId, Model model) {
-        String userId = commonLogic.getCurrentUserId();
+        String userId = currentUserId();
         EvalScale scale = authoringService.getScaleById(scaleId);
         boolean canRemove = authoringService.canRemoveScale(userId, scaleId);
 
@@ -53,7 +43,7 @@ public class RemoveScaleController {
 
     @PostMapping
     public String remove(@RequestParam Long scaleId) {
-        String userId = commonLogic.getCurrentUserId();
+        String userId = currentUserId();
         authoringService.deleteScale(scaleId, userId);
         return "redirect:/control_scales";
     }

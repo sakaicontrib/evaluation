@@ -23,11 +23,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
@@ -52,8 +50,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/evaluation_responders")
 public class EvaluationRespondersController extends EvalControllerSupport {
 
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalDeliveryService")
-    private EvalDeliveryService deliveryService;
 
     @Data
     public static class UserRow {
@@ -77,7 +73,7 @@ public class EvaluationRespondersController extends EvalControllerSupport {
                        Model model,
                        HttpServletRequest request) {
 
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
 
         if (evalGroupId != null && evalGroupId.isEmpty()) evalGroupId = null;

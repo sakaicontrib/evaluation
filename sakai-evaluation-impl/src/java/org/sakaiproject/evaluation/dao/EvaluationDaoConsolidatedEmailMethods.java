@@ -63,7 +63,7 @@ abstract class EvaluationDaoConsolidatedEmailMethods extends EvaluationDaoLockMe
     	
     	Session session = currentSession();
     	
-        Query query = session.createQuery(query1);
+        Query<Object[]> query = session.createQuery(query1, Object[].class);
         query.setFirstResult(pageSize * page);
         query.setMaxResults(pageSize);
         
@@ -71,13 +71,13 @@ abstract class EvaluationDaoConsolidatedEmailMethods extends EvaluationDaoLockMe
     	Long previousTemplateId = null;
     	Long templateId = null;
     	
-        List results = query.list();
+        List<Object[]> results = query.list();
 
         if(results != null) {
         	log.info("found items from email-processing-queue: " + results.size());
 
             for(int i = 0; i < results.size(); i++) {
-                Object[] row = (Object[]) results.get(i);
+                Object[] row = results.get(i);
                 String userId = (String) row[0];
                 templateId = (Long) row[1];
                 Date earliestDueDate = (Date)row[2];
@@ -139,7 +139,7 @@ abstract class EvaluationDaoConsolidatedEmailMethods extends EvaluationDaoLockMe
 		}
 		hqlBuffer.append("where id in (select eauId from EvalEmailProcessingData where emailTemplateId = :emailTemplateId and userId = :userId)");
 		
-		Query updateQuery = session.createQuery(hqlBuffer.toString());
+		Query<?> updateQuery = session.createQuery(hqlBuffer.toString());
 		
 		updateQuery.setParameter("dateSent", new Date());
 		updateQuery.setParameter("emailTemplateId", templateId);
@@ -167,7 +167,7 @@ abstract class EvaluationDaoConsolidatedEmailMethods extends EvaluationDaoLockMe
      */
 	public int resetConsolidatedEmailRecipients() {
 		String deleteHql = "delete from EvalEmailProcessingData";
-		Query query = currentSession().createQuery(deleteHql);
+		Query<?> query = currentSession().createQuery(deleteHql);
 		return query.executeUpdate();
 	}
 	
@@ -222,7 +222,7 @@ abstract class EvaluationDaoConsolidatedEmailMethods extends EvaluationDaoLockMe
     		}
     	}
 		
-    	Query query = currentSession().createQuery(queryBuf.toString());
+        Query<?> query = currentSession().createQuery(queryBuf.toString());
     	
     	for(Map.Entry<String,Object> entry : params.entrySet()) {
     		if(entry.getValue() instanceof Date) {
@@ -247,12 +247,11 @@ abstract class EvaluationDaoConsolidatedEmailMethods extends EvaluationDaoLockMe
      */
     public Set<String> getAllSiteIDsMatchingSectionTitle( String sectionTitleWithWildcards )
     {
-        Session session = getSessionFactory().openSession();
-        NativeQuery query = session.createSQLQuery( SQL_SELECT_SITE_IDS_MATCHING_SECTION_TITLE );
-        query.setParameter( "title", sectionTitleWithWildcards );
-        Set<String> results = new HashSet<>( query.list() );
-        session.close();
-        return results;
+        try (Session session = getSessionFactory().openSession()) {
+            NativeQuery<String> query = session.createNativeQuery(SQL_SELECT_SITE_IDS_MATCHING_SECTION_TITLE, String.class);
+            query.setParameter("title", sectionTitleWithWildcards);
+            return new HashSet<>(query.list());
+        }
     }
 
     /*
@@ -261,11 +260,10 @@ abstract class EvaluationDaoConsolidatedEmailMethods extends EvaluationDaoLockMe
      */
     public Set<String> getAllSiteIDsMatchingSiteTitle( String siteTitleWithWildcards )
     {
-        Session session = getSessionFactory().openSession();
-        NativeQuery query = session.createSQLQuery( SQL_SELECT_SITE_IDS_MATCHING_SITE_TITLE );
-        query.setParameter( "title", siteTitleWithWildcards );
-        Set<String> results = new HashSet<>( query.list() );
-        session.close();
-        return results;
+        try (Session session = getSessionFactory().openSession()) {
+            NativeQuery<String> query = session.createNativeQuery(SQL_SELECT_SITE_IDS_MATCHING_SITE_TITLE, String.class);
+            query.setParameter("title", siteTitleWithWildcards);
+            return new HashSet<>(query.list());
+        }
     }
 }

@@ -319,4 +319,32 @@ abstract class EvaluationDaoHibernateSupport extends HibernateDaoSupport {
         hql.append(") ");
     }
 
+    protected void appendEvaluationStateFilter(StringBuilder hql, String alias,
+            String[] includedStates, String[] excludedStates, Map<String, Object> params) {
+        String paramPrefix = alias.replace('.', '_');
+        if (includedStates != null && includedStates.length > 0) {
+            String includedParam = paramPrefix + "IncludedStates";
+            hql.append(" and ").append(alias).append(".state in (:").append(includedParam).append(")");
+            params.put(includedParam, includedStates);
+        }
+        if (excludedStates != null && excludedStates.length > 0) {
+            String excludedParam = paramPrefix + "ExcludedStates";
+            hql.append(" and ").append(alias).append(".state not in (:").append(excludedParam).append(")");
+            params.put(excludedParam, excludedStates);
+        }
+    }
+
+    protected void bindQueryParameters(Query<?> query, Map<String, Object> params) {
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            Object value = entry.getValue();
+            if (value instanceof Collection<?>) {
+                query.setParameterList(entry.getKey(), (Collection<?>) value);
+            } else if (value instanceof Object[]) {
+                query.setParameterList(entry.getKey(), (Object[]) value);
+            } else {
+                query.setParameter(entry.getKey(), value);
+            }
+        }
+    }
+
 }

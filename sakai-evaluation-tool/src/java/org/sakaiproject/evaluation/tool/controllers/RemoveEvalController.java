@@ -19,11 +19,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
-import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.springframework.stereotype.Controller;
@@ -38,16 +33,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/remove_eval")
-public class RemoveEvalController {
+public class RemoveEvalController extends EvalControllerSupport {
 
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationService")
-    private EvalEvaluationService evaluationService;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationSetupService")
-    private EvalEvaluationSetupService evaluationSetupService;
 
     @GetMapping
     public String show(@RequestParam Long evaluationId, Model model) {
@@ -76,7 +63,7 @@ public class RemoveEvalController {
 
     @PostMapping
     public String remove(@RequestParam Long evaluationId) {
-        String userId = commonLogic.getCurrentUserId();
+        String userId = currentUserId();
         evaluationSetupService.deleteEvaluation(evaluationId, userId);
         return "redirect:/control_evaluations";
     }

@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.query.Query;
@@ -27,8 +27,6 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.model.EvalGroupNodes;
-import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.utils.ComparatorsUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +36,31 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 abstract class EvaluationDaoQueryMethods extends EvaluationDaoAssignmentMethods {
+
+    private static final String[] INCLUDED_ACTIVE_STATES = {
+            EvalConstants.EVALUATION_STATE_ACTIVE
+    };
+    private static final String[] INCLUDED_ACTIVE_AND_GRACE_PERIOD_STATES = {
+            EvalConstants.EVALUATION_STATE_ACTIVE,
+            EvalConstants.EVALUATION_STATE_GRACEPERIOD
+    };
+    private static final String[] INCLUDED_INQUEUE_GRACE_CLOSED_AND_VIEWABLE_STATES = {
+            EvalConstants.EVALUATION_STATE_INQUEUE,
+            EvalConstants.EVALUATION_STATE_GRACEPERIOD,
+            EvalConstants.EVALUATION_STATE_CLOSED,
+            EvalConstants.EVALUATION_STATE_VIEWABLE
+    };
+    private static final String[] EXCLUDED_DELETED_STATES = {
+            EvalConstants.EVALUATION_STATE_DELETED
+    };
+    private static final String[] EXCLUDED_PARTIAL_AND_DELETED_STATES = {
+            EvalConstants.EVALUATION_STATE_PARTIAL,
+            EvalConstants.EVALUATION_STATE_DELETED
+    };
+    private static final String[] EXCLUDED_VIEWABLE_AND_DELETED_STATES = {
+            EvalConstants.EVALUATION_STATE_VIEWABLE,
+            EvalConstants.EVALUATION_STATE_DELETED
+    };
 
     public int countEvaluationsByIds(Long[] evaluationIds) {
         if (evaluationIds == null) {
@@ -86,16 +109,17 @@ abstract class EvaluationDaoQueryMethods extends EvaluationDaoAssignmentMethods 
         if (templateId == null) {
             throw new IllegalArgumentException("templateId cannot be null");
         }
-        Long count = currentSession().createQuery(
+        StringBuilder hql = new StringBuilder(
                 "select count(evaluation.id) from EvalEvaluation evaluation "
-                + "where evaluation.template.id = :templateId "
-                + "and evaluation.state != :partialState "
-                + "and evaluation.state != :deletedState",
-                Long.class)
-                .setParameter("templateId", templateId)
-                .setParameter("partialState", EvalConstants.EVALUATION_STATE_PARTIAL)
-                .setParameter("deletedState", EvalConstants.EVALUATION_STATE_DELETED)
-                .uniqueResult();
+                + "where evaluation.template.id = :templateId");
+        Map<String, Object> params = new HashMap<>();
+        params.put("templateId", templateId);
+        appendEvaluationStateFilter(hql, "evaluation", null,
+                EXCLUDED_PARTIAL_AND_DELETED_STATES, params);
+
+        Query<Long> query = currentSession().createQuery(hql.toString(), Long.class);
+        bindQueryParameters(query, params);
+        Long count = query.uniqueResult();
         return count == null ? 0 : count.intValue();
     }
 
@@ -103,32 +127,34 @@ abstract class EvaluationDaoQueryMethods extends EvaluationDaoAssignmentMethods 
         if (templateId == null) {
             throw new IllegalArgumentException("templateId cannot be null");
         }
-        return currentSession().createQuery(
+        StringBuilder hql = new StringBuilder(
                 "select evaluation from EvalEvaluation evaluation "
-                + "where evaluation.template.id = :templateId "
-                + "and evaluation.state != :partialState "
-                + "and evaluation.state != :deletedState",
-                EvalEvaluation.class)
-                .setParameter("templateId", templateId)
-                .setParameter("partialState", EvalConstants.EVALUATION_STATE_PARTIAL)
-                .setParameter("deletedState", EvalConstants.EVALUATION_STATE_DELETED)
-                .list();
+                + "where evaluation.template.id = :templateId");
+        Map<String, Object> params = new HashMap<>();
+        params.put("templateId", templateId);
+        appendEvaluationStateFilter(hql, "evaluation", null,
+                EXCLUDED_PARTIAL_AND_DELETED_STATES, params);
+
+        Query<EvalEvaluation> query = currentSession().createQuery(hql.toString(), EvalEvaluation.class);
+        bindQueryParameters(query, params);
+        return query.list();
     }
 
     public List<EvalEvaluation> getEvaluationsByTermId(String termId) {
         if (termId == null) {
             throw new IllegalArgumentException("termId cannot be null");
         }
-        return currentSession().createQuery(
+        StringBuilder hql = new StringBuilder(
                 "select evaluation from EvalEvaluation evaluation "
-                + "where evaluation.termId = :termId "
-                + "and evaluation.state != :partialState "
-                + "and evaluation.state != :deletedState",
-                EvalEvaluation.class)
-                .setParameter("termId", termId)
-                .setParameter("partialState", EvalConstants.EVALUATION_STATE_PARTIAL)
-                .setParameter("deletedState", EvalConstants.EVALUATION_STATE_DELETED)
-                .list();
+                + "where evaluation.termId = :termId");
+        Map<String, Object> params = new HashMap<>();
+        params.put("termId", termId);
+        appendEvaluationStateFilter(hql, "evaluation", null,
+                EXCLUDED_PARTIAL_AND_DELETED_STATES, params);
+
+        Query<EvalEvaluation> query = currentSession().createQuery(hql.toString(), EvalEvaluation.class);
+        bindQueryParameters(query, params);
+        return query.list();
     }
 
     public List<EvalEvaluation> getEvaluationsByState(String state) {
@@ -143,14 +169,14 @@ abstract class EvaluationDaoQueryMethods extends EvaluationDaoAssignmentMethods 
     }
 
     public List<EvalEvaluation> getEvaluationsNotViewableOrDeleted() {
-        return currentSession().createQuery(
-                "select evaluation from EvalEvaluation evaluation "
-                + "where evaluation.state != :viewableState "
-                + "and evaluation.state != :deletedState",
-                EvalEvaluation.class)
-                .setParameter("viewableState", EvalConstants.EVALUATION_STATE_VIEWABLE)
-                .setParameter("deletedState", EvalConstants.EVALUATION_STATE_DELETED)
-                .list();
+        StringBuilder hql = new StringBuilder("select evaluation from EvalEvaluation evaluation where 1=1");
+        Map<String, Object> params = new HashMap<>();
+        appendEvaluationStateFilter(hql, "evaluation", null,
+                EXCLUDED_VIEWABLE_AND_DELETED_STATES, params);
+
+        Query<EvalEvaluation> query = currentSession().createQuery(hql.toString(), EvalEvaluation.class);
+        bindQueryParameters(query, params);
+        return query.list();
     }
 
     public List<EvalEvaluation> getEvaluationsByCategory(String evalCategory) {
@@ -210,7 +236,6 @@ abstract class EvaluationDaoQueryMethods extends EvaluationDaoAssignmentMethods 
                 }
     
                 groupsHQL = " and (eval.id in (:evalIds)" + anonymousHQL + ")";
-                Set<Long> s = evalToAGList.keySet();
             }
         } else {
             // no groups but we want to get anonymous evals
@@ -227,42 +252,33 @@ abstract class EvaluationDaoQueryMethods extends EvaluationDaoAssignmentMethods 
         if (emptyReturn) {
             evals = new ArrayList<>();
         } else {
-            String activeHQL;
+            StringBuilder stateHQL = new StringBuilder();
+            Map<String, Object> params = new HashMap<>();
             if (activeOnly != null) {
                 if (activeOnly) {
-                	activeHQL = " and ( eval.state = :activeState or eval.state = :graceState) ";
+                    appendEvaluationStateFilter(stateHQL, "eval",
+                            INCLUDED_ACTIVE_AND_GRACE_PERIOD_STATES, null, params);
                 } else {
-                    activeHQL = " and (eval.state = :queueState or eval.state = :graceState or eval.state = :closedState or eval.state = :viewState) ";
+                    appendEvaluationStateFilter(stateHQL, "eval",
+                            INCLUDED_INQUEUE_GRACE_CLOSED_AND_VIEWABLE_STATES, null, params);
                 }
             } else {
                 // need to filter out the partial and deleted state evals
-                activeHQL = " and eval.state <> :partialState and eval.state <> :deletedState ";
+                appendEvaluationStateFilter(stateHQL, "eval", null,
+                        EXCLUDED_PARTIAL_AND_DELETED_STATES, params);
             }
 
             String hql = "select eval from EvalEvaluation as eval "
-                + " where 1=1 " + activeHQL + groupsHQL
+                + " where 1=1 " + stateHQL + groupsHQL
                 + " order by eval.dueDate, eval.title, eval.id";
             Query<EvalEvaluation> query = currentSession().createQuery(hql, EvalEvaluation.class);
             if (evalGroupIds != null && evalGroupIds.length > 0 && !evalToAGList.isEmpty()) {
-                query.setParameterList("evalIds", evalToAGList.keySet());
+                params.put("evalIds", evalToAGList.keySet());
             }
             if (includeAnonymous != null) {
-                query.setParameter("authControl", EvalConstants.EVALUATION_AUTHCONTROL_NONE);
+                params.put("authControl", EvalConstants.EVALUATION_AUTHCONTROL_NONE);
             }
-            if (activeOnly != null) {
-                if (activeOnly) {
-                    query.setParameter("activeState", EvalConstants.EVALUATION_STATE_ACTIVE);
-                    query.setParameter("graceState", EvalConstants.EVALUATION_STATE_GRACEPERIOD);
-                } else {
-                    query.setParameter("queueState", EvalConstants.EVALUATION_STATE_INQUEUE);
-                    query.setParameter("graceState", EvalConstants.EVALUATION_STATE_GRACEPERIOD);
-                    query.setParameter("closedState", EvalConstants.EVALUATION_STATE_CLOSED);
-                    query.setParameter("viewState", EvalConstants.EVALUATION_STATE_VIEWABLE);
-                }
-            } else {
-                query.setParameter("partialState", EvalConstants.EVALUATION_STATE_PARTIAL);
-                query.setParameter("deletedState", EvalConstants.EVALUATION_STATE_DELETED);
-            }
+            bindQueryParameters(query, params);
             query.setFirstResult(startResult);
             if (maxResults > 0) {
                 query.setMaxResults(maxResults);
@@ -301,24 +317,26 @@ abstract class EvaluationDaoQueryMethods extends EvaluationDaoAssignmentMethods 
      * if null, include all evaluations regardless of authcontrol
      * @return a List of EvalEvaluation objects sorted by due date, title, and id
      */
-    @SuppressWarnings("unchecked")
     public List<EvalEvaluation> getEvalsUserCanTake(String userId, Boolean activeOnly,
             Boolean approvedOnly, Boolean includeAnonymous, int startResult, int maxResults) {
         if (userId == null || "".equals(userId)) {
             throw new IllegalArgumentException("userId cannot be null or blank");
         }
 
-
-        String activeHQL;
+        StringBuilder stateHQL = new StringBuilder();
+        Map<String, Object> params = new HashMap<>();
         if (activeOnly != null) {
             if (activeOnly) {
-                activeHQL = " and eval.state = :activeState";
+                appendEvaluationStateFilter(stateHQL, "eval",
+                        INCLUDED_ACTIVE_STATES, null, params);
             } else {
-                activeHQL = " and (eval.state = :queueState or eval.state = :graceState or eval.state = :closedState or eval.state = :viewState)";
+                appendEvaluationStateFilter(stateHQL, "eval",
+                        INCLUDED_INQUEUE_GRACE_CLOSED_AND_VIEWABLE_STATES, null, params);
             }
         } else {
             // need to filter out the partial and deleted state evals
-            activeHQL = " and eval.state <> :partialState and eval.state <> :deletedState";
+            appendEvaluationStateFilter(stateHQL, "eval", null,
+                    EXCLUDED_PARTIAL_AND_DELETED_STATES, params);
         }
 
         String userAssignHQL = " eau.type = :assignUserType and eau.userId = :userId";
@@ -339,36 +357,21 @@ abstract class EvaluationDaoQueryMethods extends EvaluationDaoAssignmentMethods 
 
         String hql = "select distinct eval from EvalAssignUser eau "
             + "right join eau.evaluation eval "
-            + "where 1=1 "+activeHQL+userAssignAuthHQL
+            + "where 1=1 "+stateHQL+userAssignAuthHQL
             + " order by eval.dueDate, eval.title, eval.id";
 
         Query<EvalEvaluation> query = currentSession().createQuery(hql, EvalEvaluation.class);
-        if (activeOnly != null) {
-            if (activeOnly) {
-                query.setParameter("activeState", EvalConstants.EVALUATION_STATE_ACTIVE);
-            } else {
-                query.setParameter("queueState", EvalConstants.EVALUATION_STATE_INQUEUE);
-                query.setParameter("graceState", EvalConstants.EVALUATION_STATE_GRACEPERIOD);
-                query.setParameter("closedState", EvalConstants.EVALUATION_STATE_CLOSED);
-                query.setParameter("viewState", EvalConstants.EVALUATION_STATE_VIEWABLE);
-            }
-        } else {
-            query.setParameter("partialState", EvalConstants.EVALUATION_STATE_PARTIAL);
-            query.setParameter("deletedState", EvalConstants.EVALUATION_STATE_DELETED);
-        }
-        query.setParameter("authControl", EvalConstants.EVALUATION_AUTHCONTROL_NONE);
+        params.put("authControl", EvalConstants.EVALUATION_AUTHCONTROL_NONE);
         if (includeAnonymous == null || !includeAnonymous) {
-            query.setParameter("userId", userId);
-            query.setParameter("assignUserType", EvalAssignUser.TYPE_EVALUATOR);
+            params.put("userId", userId);
+            params.put("assignUserType", EvalAssignUser.TYPE_EVALUATOR);
         }
+        bindQueryParameters(query, params);
         query.setFirstResult(startResult);
         if (maxResults > 0) {
             query.setMaxResults(maxResults);
         }
         List<EvalEvaluation> evals = query.list();
-
-        // TODO populate the assign groups
-
 
         // sort the evals remaining
         Collections.sort(evals, new ComparatorsUtils.EvaluationDateTitleIdComparator());
@@ -389,20 +392,22 @@ abstract class EvaluationDaoQueryMethods extends EvaluationDaoAssignmentMethods 
      * @param maxResults 0 to return all results, otherwise limit the number of evals returned to this
      * @return a List of EvalEvaluation objects sorted by stop date, title, and id
      */
-    @SuppressWarnings("unchecked")
     public List<EvalEvaluation> getEvaluationsForOwnerAndGroups(String userId,
             String[] evalGroupIds, Date recentClosedDate, int startResult, int maxResults, boolean includePartial) {
+        Map<String, Object> params = new HashMap<>();
 
         String recentHQL = "";
         if (recentClosedDate != null) {
             recentHQL = " and ( (eval.viewDate is not null and eval.viewDate >= :recentClosedDate) "
                 + "or (eval.stopDate is not null and eval.stopDate >= :recentClosedDate) "
                 + "or (eval.dueDate is not null and eval.dueDate >= :recentClosedDate) ) ";
+            params.put("recentClosedDate", recentClosedDate);
         }
 
         String ownerHQL = "";
         if (userId != null && userId.length() > 0) {
             ownerHQL = " eval.owner = :ownerId ";
+            params.put("ownerId", userId);
         }
 
         String groupsHQL = "";
@@ -410,6 +415,7 @@ abstract class EvaluationDaoQueryMethods extends EvaluationDaoAssignmentMethods 
             groupsHQL = " eval.id in (select distinct assign.evaluation.id "
                 + "from EvalAssignGroup as assign where assign.nodeId is null "
                 + "and assign.evalGroupId in (:evalGroupIds) ) ";
+            params.put("evalGroupIds", evalGroupIds);
         }
 
         // merge the owner and groups HQL if needed
@@ -422,30 +428,18 @@ abstract class EvaluationDaoQueryMethods extends EvaluationDaoAssignmentMethods 
             ownerGroupHQL = " and " + groupsHQL;
         }
 
-        // need to filter out the partial and deleted state evals
-        String stateHQL = " and eval.state <> :deletedState ";
-        if (! includePartial) {
-            stateHQL = stateHQL + " and eval.state <> :partialState ";
-        }
+        String[] excludedStates = includePartial
+                ? EXCLUDED_DELETED_STATES
+                : EXCLUDED_PARTIAL_AND_DELETED_STATES;
+        StringBuilder stateHQL = new StringBuilder();
+        appendEvaluationStateFilter(stateHQL, "eval", null, excludedStates, params);
 
         List<EvalEvaluation> evals;
         String hql = "select eval from EvalEvaluation as eval " 
             + " where 1=1 " + stateHQL + recentHQL + ownerGroupHQL 
             + " order by eval.dueDate, eval.title, eval.id";
         Query<EvalEvaluation> query = currentSession().createQuery(hql, EvalEvaluation.class);
-        query.setParameter("deletedState", EvalConstants.EVALUATION_STATE_DELETED);
-        if (!includePartial) {
-            query.setParameter("partialState", EvalConstants.EVALUATION_STATE_PARTIAL);
-        }
-        if (recentClosedDate != null) {
-            query.setParameter("recentClosedDate", recentClosedDate);
-        }
-        if (userId != null && userId.length() > 0) {
-            query.setParameter("ownerId", userId);
-        }
-        if (evalGroupIds != null && evalGroupIds.length > 0) {
-            query.setParameterList("evalGroupIds", evalGroupIds);
-        }
+        bindQueryParameters(query, params);
         query.setFirstResult(startResult);
         if (maxResults > 0) {
             query.setMaxResults(maxResults);
@@ -456,33 +450,17 @@ abstract class EvaluationDaoQueryMethods extends EvaluationDaoAssignmentMethods 
     }
 
 
-    /**
-     * Returns all answers to the given item associated with 
-     * responses which are associated with the given evaluation,
-     * only returns the answers for completed responses
-     * 
-     * @param evalId the id of the evaluation you want answers from
-     * @param evalGroupIds an array of eval group IDs to return answers for,
-     * if null then just return answers for all groups
-     * @param templateItemIds the ids of the template items you want answers for,
-     * if null then return answers for all template items
-     * @return a list of EvalAnswer objects or empty list if none found
-     */
-    @SuppressWarnings("unchecked")
-
     public List<String> getEvalCategories(String userId) {
         StringBuilder hql = new StringBuilder("select distinct eval.evalCategory from EvalEvaluation eval where eval.evalCategory is not null");
         if (StringUtils.isNotBlank(userId)) {
             hql.append(" and eval.owner = :userid");
         }
         hql.append(" order by eval.evalCategory");
-        return getHibernateTemplate().execute(session -> {
-                Query query = session.createQuery(hql.toString());
-                if (StringUtils.contains(hql.toString(), ":userid")) {
-                    query.setParameter("userid", userId);
-                }
-                return query.list();
-        });
+        Query<String> query = currentSession().createQuery(hql.toString(), String.class);
+        if (StringUtils.isNotBlank(userId)) {
+            query.setParameter("userid", userId);
+        }
+        return query.list();
     }
 
     /**
@@ -492,12 +470,12 @@ abstract class EvaluationDaoQueryMethods extends EvaluationDaoAssignmentMethods 
      * @param evalGroupId a unique id for an eval group
      * @return a unique id for the containing node or null if none found
      */
-    @SuppressWarnings("unchecked")
     public String getNodeIdForEvalGroup(String evalGroupId) {
-        List<String> nodeIds = (List<String>) getHibernateTemplate().execute(session -> session
-                .createQuery("select egn.nodeId from EvalGroupNodes egn join egn.evalGroups egrps where egrps.id = :groupid order by egn.nodeId")
+        List<String> nodeIds = currentSession().createQuery(
+                "select egn.nodeId from EvalGroupNodes egn join egn.evalGroups egrps where egrps.id = :groupid order by egn.nodeId",
+                String.class)
                 .setParameter("groupid", evalGroupId)
-                .list());
+                .list();
 
         if (!nodeIds.isEmpty()) {
             return nodeIds.get(0);

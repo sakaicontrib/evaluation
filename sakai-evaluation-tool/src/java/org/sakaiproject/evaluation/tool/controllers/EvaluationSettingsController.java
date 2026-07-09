@@ -20,11 +20,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import javax.annotation.Resource;
-
-import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
@@ -49,107 +45,88 @@ public class EvaluationSettingsController extends EvalControllerSupport {
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
 
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationSetupService")
-    private EvalEvaluationSetupService evaluationSetupService;
+    private static class EvaluationSettingsDisplayState {
+        String currentEvalState;
+        boolean reOpening;
+        Date reOpenDueDate;
+    }
 
-    @Resource(name = "org.sakaiproject.evaluation.beans.EvalBeanUtils")
-    private EvalBeanUtils evalBeanUtils;
+    private static class EvaluationSettingsForm {
+        String title;
+        String instructions;
+        Date startDate;
+        Date dueDate;
+        Date stopDate;
+        Date viewDate;
+        String resultsSharing;
+        Boolean studentViewResults;
+        Date studentsDate;
+        Boolean instructorViewResults;
+        Boolean instructorViewAllResults;
+        Date instructorsDate;
+        Boolean blankResponsesAllowed;
+        Boolean modifyResponsesAllowed;
+        Boolean allRolesParticipate;
+        Boolean compulsoryTextItemsAllowed;
+        Boolean sectionAwareness;
+        String authControl;
+        String instructorOpt;
+        Boolean sendAvailableNotifications;
+        Integer reminderDays;
+        String reminderFromEmail;
+        String evalCategory;
+        String termId;
+        boolean reOpening;
+
+        EvaluationSettingsForm(String title, String instructions, Date startDate, Date dueDate, Date stopDate,
+                Date viewDate, String resultsSharing, Boolean studentViewResults, Date studentsDate,
+                Boolean instructorViewResults, Boolean instructorViewAllResults, Date instructorsDate,
+                Boolean blankResponsesAllowed, Boolean modifyResponsesAllowed, Boolean allRolesParticipate,
+                Boolean compulsoryTextItemsAllowed, Boolean sectionAwareness, String authControl, String instructorOpt,
+                Boolean sendAvailableNotifications, Integer reminderDays, String reminderFromEmail, String evalCategory,
+                String termId, boolean reOpening) {
+            this.title = title;
+            this.instructions = instructions;
+            this.startDate = startDate;
+            this.dueDate = dueDate;
+            this.stopDate = stopDate;
+            this.viewDate = viewDate;
+            this.resultsSharing = resultsSharing;
+            this.studentViewResults = studentViewResults;
+            this.studentsDate = studentsDate;
+            this.instructorViewResults = instructorViewResults;
+            this.instructorViewAllResults = instructorViewAllResults;
+            this.instructorsDate = instructorsDate;
+            this.blankResponsesAllowed = blankResponsesAllowed;
+            this.modifyResponsesAllowed = modifyResponsesAllowed;
+            this.allRolesParticipate = allRolesParticipate;
+            this.compulsoryTextItemsAllowed = compulsoryTextItemsAllowed;
+            this.sectionAwareness = sectionAwareness;
+            this.authControl = authControl;
+            this.instructorOpt = instructorOpt;
+            this.sendAvailableNotifications = sendAvailableNotifications;
+            this.reminderDays = reminderDays;
+            this.reminderFromEmail = reminderFromEmail;
+            this.evalCategory = evalCategory;
+            this.termId = termId;
+            this.reOpening = reOpening;
+        }
+    }
+
 
     @GetMapping
     public String show(@RequestParam Long evaluationId,
                        @RequestParam(required = false, defaultValue = "false") boolean reopen,
                        Locale locale, Model model) {
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
 
-        EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
-        if (eval == null) {
-            throw new IllegalArgumentException("Evaluation not found: " + evaluationId);
-        }
-        if (!evaluationService.canControlEvaluation(currentUserId, evaluationId)) {
-            throw new SecurityException("User does not have permission to modify evaluation: " + evaluationId);
-        }
-
-        String currentEvalState = evaluationService.returnAndFixEvalState(eval, true);
+        EvalEvaluation eval = getControlledEvaluation(evaluationId, currentUserId, "modify");
+        EvaluationSettingsDisplayState displayState = buildDisplayState(eval, reopen);
         boolean isPartial = EvalConstants.EVALUATION_STATE_PARTIAL.equals(eval.getState());
         boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
 
-        // REOPEN: if the eval is closed/viewable and reopen=true, treat it as ACTIVE
-        boolean reOpening = false;
-        Date reOpenDueDate = null;
-        if (reopen) {
-            Boolean enableReOpen = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_REOPEN);
-            if (Boolean.TRUE.equals(enableReOpen) &&
-                    EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_CLOSED, false)) {
-                currentEvalState = EvalConstants.EVALUATION_STATE_ACTIVE;
-                reOpening = true;
-                Calendar cal = Calendar.getInstance();
-                cal.add(Calendar.DATE, 2);
-                cal.add(Calendar.MINUTE, -1);
-                reOpenDueDate = cal.getTime();
-            }
-        }
-
-        // Editability flags per state
-        boolean titleEditable        = EvalUtils.checkStateBefore(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true);
-        boolean instructionsEditable = EvalUtils.checkStateBefore(currentEvalState, EvalConstants.EVALUATION_STATE_CLOSED, true);
-        boolean startDateEditable    = !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true);
-        boolean dueDateEditable      = !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_GRACEPERIOD, true);
-        boolean stopDateEditable     = !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_CLOSED, true);
-        boolean viewDateEditable     = !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_VIEWABLE, true);
-        boolean authControlDisabled  = EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true);
-        boolean instrOptDisabled     = EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_INQUEUE, true);
-        boolean reminderDisabled     = EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_GRACEPERIOD, true);
-        boolean respondentSettingsDisabled = EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true);
-        boolean viewSettingsDisabled = EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_VIEWABLE, true);
-
-        // System settings
-        Boolean useStopDate        = (Boolean) settings.get(EvalSettings.EVAL_USE_STOP_DATE);
-        Boolean useViewDate        = (Boolean) settings.get(EvalSettings.EVAL_USE_VIEW_DATE);
-        Boolean sameViewDates      = (Boolean) settings.get(EvalSettings.EVAL_USE_SAME_VIEW_DATES);
-        Boolean categoriesEnabled  = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_CATEGORIES);
-        Boolean termIdsEnabled     = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_TERM_IDS);
-        Boolean showHierarchy      = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
-        Boolean consolidatedEmail  = (Boolean) settings.get(EvalSettings.ENABLE_SINGLE_EMAIL_PER_STUDENT);
-        Boolean allowToggleMail    = (Boolean) settings.get(EvalSettings.ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION);
-        Boolean submissionEmailEnabled = (Boolean) settings.get(EvalSettings.ENABLE_SUBMISSION_CONFIRMATION_EMAIL);
-        Boolean studentUnanswered  = (Boolean) settings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
-        Boolean studentModify      = (Boolean) settings.get(EvalSettings.STUDENT_MODIFY_RESPONSES);
-        Boolean allRolesSetting    = (Boolean) settings.get(EvalSettings.ALLOW_ALL_SITE_ROLES_TO_RESPOND);
-        Boolean studentViewSetting = (Boolean) settings.get(EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS);
-        Boolean instrViewSetting   = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
-        Boolean instrViewAllSetting= (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_ALL_RESULTS);
-        Boolean compulsoryTextSetting = (Boolean) settings.get(EvalSettings.ENABLE_TEXT_ITEM_REQUIRED);
-        String  instUseFromAbove   = (String) settings.get(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE);
-
-        if (consolidatedEmail == null) consolidatedEmail = false;
-
-        // instructorOpt: if fixed in settings, show text only
-        boolean instrOptIsSelect = userAdmin && (instUseFromAbove == null ||
-                EvalToolConstants.ADMIN_BOOLEAN_CONFIGURABLE.equals(instUseFromAbove));
-        String  instrOptFixedLabel = null;
-        if (userAdmin && !instrOptIsSelect && instUseFromAbove != null) {
-            for (int i = 0; i < EvalToolConstants.INSTRUCTOR_OPT_VALUES.length; i++) {
-                if (EvalToolConstants.INSTRUCTOR_OPT_VALUES[i].equals(instUseFromAbove)) {
-                    instrOptFixedLabel = EvalToolConstants.INSTRUCTOR_OPT_LABELS[i];
-                    break;
-                }
-            }
-        }
-
-        // Format dates as strings for the datetime-local inputs
-        DateFormat df   = DateFormat.getDateInstance(DateFormat.LONG, locale);
         DateFormat dtf  = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT, locale);
-
-        // Evaluation template
         EvalTemplate evalTemplate = eval.getTemplate();
-
-        // Button text depending on the current state
-        String saveButtonKey;
-        if (isPartial) {
-            saveButtonKey = "evalsettings.continue.assigning.link";
-        } else {
-            saveButtonKey = "evalsettings.save.settings.link";
-        }
 
         model.addAttribute("eval",              eval);
         model.addAttribute("evaluationId",      evaluationId);
@@ -158,43 +135,114 @@ public class EvaluationSettingsController extends EvalControllerSupport {
         model.addAttribute("userAdmin",         userAdmin);
         model.addAttribute("currentDate",       dtf.format(new Date()));
 
-        // Editabilidad
-        model.addAttribute("titleEditable",             titleEditable);
-        model.addAttribute("instructionsEditable",      instructionsEditable);
-        model.addAttribute("startDateEditable",         startDateEditable);
-        model.addAttribute("dueDateEditable",           dueDateEditable);
-        model.addAttribute("stopDateEditable",          stopDateEditable && useStopDate);
-        model.addAttribute("viewDateEditable",          viewDateEditable && useViewDate);
-        model.addAttribute("authControlDisabled",       authControlDisabled);
-        model.addAttribute("instrOptDisabled",          instrOptDisabled);
-        model.addAttribute("reminderDisabled",          reminderDisabled);
-        model.addAttribute("respondentSettingsDisabled",respondentSettingsDisabled);
-        model.addAttribute("viewSettingsDisabled",      viewSettingsDisabled);
+        addEditabilityModel(model, displayState.currentEvalState);
+        addSystemSettingsModel(model, userAdmin);
+        addSelectConstantsModel(model);
+        addDateModel(model, eval, displayState);
+        model.addAttribute("reOpening",         displayState.reOpening);
+        model.addAttribute("saveButtonKey",      getSaveButtonKey(isPartial, displayState.reOpening));
 
-        // System options
-        model.addAttribute("useStopDate",       useStopDate);
-        model.addAttribute("useViewDate",       useViewDate);
+        return "evaluation_settings";
+    }
+
+    private EvalEvaluation getControlledEvaluation(Long evaluationId, String currentUserId, String action) {
+        EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
+        if (eval == null) {
+            throw new IllegalArgumentException("Evaluation not found: " + evaluationId);
+        }
+        if (!evaluationService.canControlEvaluation(currentUserId, evaluationId)) {
+            throw new SecurityException("User does not have permission to " + action + " evaluation: " + evaluationId);
+        }
+        return eval;
+    }
+
+    private EvaluationSettingsDisplayState buildDisplayState(EvalEvaluation eval, boolean reopen) {
+        EvaluationSettingsDisplayState state = new EvaluationSettingsDisplayState();
+        state.currentEvalState = evaluationService.returnAndFixEvalState(eval, true);
+        if (reopen) {
+            Boolean enableReOpen = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_REOPEN);
+            if (Boolean.TRUE.equals(enableReOpen) &&
+                    EvalUtils.checkStateAfter(state.currentEvalState, EvalConstants.EVALUATION_STATE_CLOSED, false)) {
+                state.currentEvalState = EvalConstants.EVALUATION_STATE_ACTIVE;
+                state.reOpening = true;
+                Calendar cal = Calendar.getInstance();
+                cal.add(Calendar.DATE, 2);
+                cal.add(Calendar.MINUTE, -1);
+                state.reOpenDueDate = cal.getTime();
+            }
+        }
+        return state;
+    }
+
+    private void addEditabilityModel(Model model, String currentEvalState) {
+        Boolean useStopDate = (Boolean) settings.get(EvalSettings.EVAL_USE_STOP_DATE);
+        Boolean useViewDate = (Boolean) settings.get(EvalSettings.EVAL_USE_VIEW_DATE);
+
+        model.addAttribute("titleEditable",
+                EvalUtils.checkStateBefore(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true));
+        model.addAttribute("instructionsEditable",
+                EvalUtils.checkStateBefore(currentEvalState, EvalConstants.EVALUATION_STATE_CLOSED, true));
+        model.addAttribute("startDateEditable",
+                !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true));
+        model.addAttribute("dueDateEditable",
+                !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_GRACEPERIOD, true));
+        model.addAttribute("stopDateEditable",
+                !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_CLOSED, true) && Boolean.TRUE.equals(useStopDate));
+        model.addAttribute("viewDateEditable",
+                !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_VIEWABLE, true) && Boolean.TRUE.equals(useViewDate));
+        model.addAttribute("authControlDisabled",
+                EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true));
+        model.addAttribute("instrOptDisabled",
+                EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_INQUEUE, true));
+        model.addAttribute("reminderDisabled",
+                EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_GRACEPERIOD, true));
+        model.addAttribute("respondentSettingsDisabled",
+                EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true));
+        model.addAttribute("viewSettingsDisabled",
+                EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_VIEWABLE, true));
+    }
+
+    private void addSystemSettingsModel(Model model, boolean userAdmin) {
+        Boolean consolidatedEmail = (Boolean) settings.get(EvalSettings.ENABLE_SINGLE_EMAIL_PER_STUDENT);
+        Boolean submissionEmailEnabled = (Boolean) settings.get(EvalSettings.ENABLE_SUBMISSION_CONFIRMATION_EMAIL);
+        Boolean sameViewDates = (Boolean) settings.get(EvalSettings.EVAL_USE_SAME_VIEW_DATES);
+        String instUseFromAbove = (String) settings.get(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE);
+
+        boolean instrOptIsSelect = userAdmin && (instUseFromAbove == null ||
+                EvalToolConstants.ADMIN_BOOLEAN_CONFIGURABLE.equals(instUseFromAbove));
+        model.addAttribute("useStopDate",       settings.get(EvalSettings.EVAL_USE_STOP_DATE));
+        model.addAttribute("useViewDate",       settings.get(EvalSettings.EVAL_USE_VIEW_DATE));
         model.addAttribute("sameViewDates",     sameViewDates);
-        model.addAttribute("categoriesEnabled", categoriesEnabled);
-        model.addAttribute("termIdsEnabled",    termIdsEnabled);
-        model.addAttribute("showHierarchy",     showHierarchy);
-        model.addAttribute("consolidatedEmail",        consolidatedEmail);
-        model.addAttribute("allowToggleMail",          allowToggleMail);
-        model.addAttribute("submissionEmailEnabled",   Boolean.TRUE.equals(submissionEmailEnabled));
+        model.addAttribute("categoriesEnabled", settings.get(EvalSettings.ENABLE_EVAL_CATEGORIES));
+        model.addAttribute("termIdsEnabled",    settings.get(EvalSettings.ENABLE_EVAL_TERM_IDS));
+        model.addAttribute("showHierarchy",     settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS));
+        model.addAttribute("consolidatedEmail", Boolean.TRUE.equals(consolidatedEmail));
+        model.addAttribute("allowToggleMail",   settings.get(EvalSettings.ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION));
+        model.addAttribute("submissionEmailEnabled", Boolean.TRUE.equals(submissionEmailEnabled));
         model.addAttribute("instrOptIsSelect",  instrOptIsSelect);
-        model.addAttribute("instrOptFixedLabel",instrOptFixedLabel);
+        model.addAttribute("instrOptFixedLabel", getInstructorOptFixedLabel(userAdmin, instrOptIsSelect, instUseFromAbove));
+        model.addAttribute("studentUnansweredSetting", settings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED));
+        model.addAttribute("studentModifySetting",     settings.get(EvalSettings.STUDENT_MODIFY_RESPONSES));
+        model.addAttribute("allRolesSetting",          settings.get(EvalSettings.ALLOW_ALL_SITE_ROLES_TO_RESPOND));
+        model.addAttribute("studentViewSetting",       settings.get(EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS));
+        model.addAttribute("instrViewSetting",         settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS));
+        model.addAttribute("instrViewAllSetting",      settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_ALL_RESULTS));
+        model.addAttribute("compulsoryTextSetting",    settings.get(EvalSettings.ENABLE_TEXT_ITEM_REQUIRED));
+    }
 
-        // Settings controlling checkbox visibility (null = configurable)
-        model.addAttribute("studentUnansweredSetting", studentUnanswered);
-        model.addAttribute("studentModifySetting",     studentModify);
-        model.addAttribute("allRolesSetting",          allRolesSetting);
-        model.addAttribute("studentViewSetting",       studentViewSetting);
-        model.addAttribute("instrViewSetting",         instrViewSetting);
-        model.addAttribute("instrViewAllSetting",      instrViewAllSetting);
-        model.addAttribute("compulsoryTextSetting",    compulsoryTextSetting);
-        model.addAttribute("sameViewDates",            sameViewDates);
+    private String getInstructorOptFixedLabel(boolean userAdmin, boolean instrOptIsSelect, String instUseFromAbove) {
+        if (!userAdmin || instrOptIsSelect || instUseFromAbove == null) {
+            return null;
+        }
+        for (int i = 0; i < EvalToolConstants.INSTRUCTOR_OPT_VALUES.length; i++) {
+            if (EvalToolConstants.INSTRUCTOR_OPT_VALUES[i].equals(instUseFromAbove)) {
+                return EvalToolConstants.INSTRUCTOR_OPT_LABELS[i];
+            }
+        }
+        return null;
+    }
 
-        // Constants for selects
+    private void addSelectConstantsModel(Model model) {
         model.addAttribute("resultsSharingValues",  EvalToolConstants.EVAL_RESULTS_SHARING_VALUES);
         model.addAttribute("resultsSharingLabels",  EvalToolConstants.EVAL_RESULTS_SHARING_LABELS_PROPS);
         model.addAttribute("authControlValues",     EvalToolConstants.AUTHCONTROL_VALUES);
@@ -203,19 +251,22 @@ public class EvaluationSettingsController extends EvalControllerSupport {
         model.addAttribute("instrOptLabels",        EvalToolConstants.INSTRUCTOR_OPT_LABELS);
         model.addAttribute("reminderDaysValues",    EvalToolConstants.REMINDER_EMAIL_DAYS_VALUES);
         model.addAttribute("reminderDaysLabels",    EvalToolConstants.REMINDER_EMAIL_DAYS_LABELS);
+    }
 
-        // Formatted dates for the datetime-local inputs
+    private void addDateModel(Model model, EvalEvaluation eval, EvaluationSettingsDisplayState displayState) {
         model.addAttribute("startDateStr",      formatDate(eval.getStartDate()));
-        model.addAttribute("dueDateStr",        reOpening ? formatDate(reOpenDueDate) : formatDate(eval.getDueDate()));
+        model.addAttribute("dueDateStr",        displayState.reOpening ? formatDate(displayState.reOpenDueDate) : formatDate(eval.getDueDate()));
         model.addAttribute("stopDateStr",       formatDate(eval.getStopDate()));
         model.addAttribute("viewDateStr",       formatDate(eval.getViewDate()));
         model.addAttribute("studentsDateStr",   formatDate(eval.getStudentsDate()));
         model.addAttribute("instructorsDateStr",formatDate(eval.getInstructorsDate()));
+    }
 
-        model.addAttribute("reOpening",         reOpening);
-        model.addAttribute("saveButtonKey",      reOpening ? "evalsettings.reopening.eval.link" : saveButtonKey);
-
-        return "evaluation_settings";
+    private String getSaveButtonKey(boolean isPartial, boolean reOpening) {
+        if (reOpening) {
+            return "evalsettings.reopening.eval.link";
+        }
+        return isPartial ? "evalsettings.continue.assigning.link" : "evalsettings.save.settings.link";
     }
 
     @PostMapping
@@ -248,175 +299,198 @@ public class EvaluationSettingsController extends EvalControllerSupport {
             @RequestParam(required = false, defaultValue = "false") boolean reOpening,
             RedirectAttributes redirectAttrs) {
 
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
 
         if (!evaluationService.canControlEvaluation(currentUserId, evaluationId)) {
             throw new SecurityException("User does not have permission to control evaluation: " + evaluationId);
         }
 
-        String[] evalStateHolder = {null};
+        EvaluationSettingsForm form = new EvaluationSettingsForm(title, instructions, startDate, dueDate, stopDate,
+                viewDate, resultsSharing, studentViewResults, studentsDate, instructorViewResults,
+                instructorViewAllResults, instructorsDate, blankResponsesAllowed, modifyResponsesAllowed,
+                allRolesParticipate, compulsoryTextItemsAllowed, sectionAwareness, authControl, instructorOpt,
+                sendAvailableNotifications, reminderDays, reminderFromEmail, evalCategory, termId, reOpening);
+
+        String evalState;
         try {
-            daoInvoker.invokeTransactionalAccess(() -> {
-                EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
-                if (eval == null) {
-                    throw new IllegalArgumentException("Evaluation not found: " + evaluationId);
-                }
-
-                String currentEvalState = evaluationService.returnAndFixEvalState(eval, true);
-
-                // REOPEN: treat closed/viewable eval as active to allow field updates
-                if (reOpening && EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_CLOSED, false)) {
-                    currentEvalState = EvalConstants.EVALUATION_STATE_ACTIVE;
-                }
-
-                // Apply editable fields based on the current state
-                if (EvalUtils.checkStateBefore(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true)) {
-                    if (title != null) eval.setTitle(title);
-                }
-                if (EvalUtils.checkStateBefore(currentEvalState, EvalConstants.EVALUATION_STATE_CLOSED, true)) {
-                    eval.setInstructions(instructions);
-                }
-                if (!EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true)) {
-                    eval.setStartDate(startDate);
-                }
-                if (!EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_GRACEPERIOD, true)) {
-                    eval.setDueDate(dueDate);
-                }
-
-                Boolean useStopDate = (Boolean) settings.get(EvalSettings.EVAL_USE_STOP_DATE);
-                if (Boolean.TRUE.equals(useStopDate) &&
-                        !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_CLOSED, true)) {
-                    eval.setStopDate(stopDate);
-                }
-
-                Boolean useViewDate = (Boolean) settings.get(EvalSettings.EVAL_USE_VIEW_DATE);
-                if (Boolean.TRUE.equals(useViewDate) &&
-                        !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_VIEWABLE, true)) {
-                    eval.setViewDate(viewDate);
-                }
-
-                // Results sharing
-                if (resultsSharing != null) eval.setResultsSharing(resultsSharing);
-
-                // Results checkboxes (only visible/editable when the setting is null = configurable)
-                Boolean studentViewSetting = (Boolean) settings.get(EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS);
-                if (studentViewSetting == null && !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_VIEWABLE, true)) {
-                    eval.setStudentViewResults(Boolean.TRUE.equals(studentViewResults));
-                } else if (studentViewSetting != null) {
-                    eval.setStudentViewResults(studentViewSetting);
-                }
-
-                Boolean instrViewSetting = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
-                if (instrViewSetting == null && !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_VIEWABLE, true)) {
-                    eval.setInstructorViewResults(Boolean.TRUE.equals(instructorViewResults));
-                } else if (instrViewSetting != null) {
-                    eval.setInstructorViewResults(instrViewSetting);
-                }
-
-                Boolean instrViewAllSetting = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_ALL_RESULTS);
-                if (instrViewAllSetting == null && !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_VIEWABLE, true)) {
-                    eval.setInstructorViewAllResults(Boolean.TRUE.equals(instructorViewAllResults));
-                } else if (instrViewAllSetting != null) {
-                    eval.setInstructorViewAllResults(instrViewAllSetting);
-                }
-
-                // Per-role view dates (only when sameViewDates is false)
-                Boolean sameViewDates = (Boolean) settings.get(EvalSettings.EVAL_USE_SAME_VIEW_DATES);
-                if (!Boolean.TRUE.equals(sameViewDates)) {
-                    if (studentsDate != null)    eval.setStudentsDate(studentsDate);
-                    if (instructorsDate != null) eval.setInstructorsDate(instructorsDate);
-                }
-
-                // Respondents
-                Boolean studentUnansweredSetting = (Boolean) settings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
-                if (studentUnansweredSetting == null && !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true)) {
-                    eval.setBlankResponsesAllowed(Boolean.TRUE.equals(blankResponsesAllowed));
-                } else if (studentUnansweredSetting != null) {
-                    eval.setBlankResponsesAllowed(studentUnansweredSetting);
-                }
-
-                Boolean studentModifySetting = (Boolean) settings.get(EvalSettings.STUDENT_MODIFY_RESPONSES);
-                if (studentModifySetting == null && !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true)) {
-                    eval.setModifyResponsesAllowed(Boolean.TRUE.equals(modifyResponsesAllowed));
-                } else if (studentModifySetting != null) {
-                    eval.setModifyResponsesAllowed(studentModifySetting);
-                }
-
-                Boolean allRolesSetting = (Boolean) settings.get(EvalSettings.ALLOW_ALL_SITE_ROLES_TO_RESPOND);
-                if (!Boolean.FALSE.equals(allRolesSetting) && !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true)) {
-                    eval.setAllRolesParticipate(Boolean.TRUE.equals(allRolesParticipate));
-                }
-
-                Boolean compulsoryTextSetting = (Boolean) settings.get(EvalSettings.ENABLE_TEXT_ITEM_REQUIRED);
-                if (compulsoryTextSetting == null && !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true)) {
-                    eval.setCompulsoryTextItemsAllowed(Boolean.TRUE.equals(compulsoryTextItemsAllowed));
-                }
-
-                // Auth control
-                if (authControl != null && !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true)) {
-                    eval.setAuthControl(authControl);
-                }
-
-                // Instructor opt (admin only)
-                if (commonLogic.isUserAdmin(currentUserId)) {
-                    String instUseFromAbove = (String) settings.get(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE);
-                    if (instUseFromAbove == null || EvalToolConstants.ADMIN_BOOLEAN_CONFIGURABLE.equals(instUseFromAbove)) {
-                        if (instructorOpt != null && !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_INQUEUE, true)) {
-                            eval.setInstructorOpt(instructorOpt);
-                        }
-                    } else {
-                        eval.setInstructorOpt(instUseFromAbove);
-                    }
-                }
-
-                // Notifications
-                Boolean allowToggleMail = (Boolean) settings.get(EvalSettings.ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION);
-                if (Boolean.TRUE.equals(allowToggleMail) && !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true)) {
-                    eval.setSendAvailableNotifications(Boolean.TRUE.equals(sendAvailableNotifications));
-                }
-
-                Boolean consolidatedEmail = (Boolean) settings.get(EvalSettings.ENABLE_SINGLE_EMAIL_PER_STUDENT);
-                if (!Boolean.TRUE.equals(consolidatedEmail)) {
-                    if (reminderDays != null && !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_GRACEPERIOD, true)) {
-                        eval.setReminderDays(reminderDays);
-                    }
-                    if (reminderFromEmail != null) {
-                        eval.setReminderFromEmail(reminderFromEmail);
-                    }
-                }
-
-                // Extras
-                Boolean categoriesEnabled = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_CATEGORIES);
-                if (Boolean.TRUE.equals(categoriesEnabled)) {
-                    eval.setEvalCategory(evalCategory);
-                }
-
-                Boolean termIdsEnabled = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_TERM_IDS);
-                if (Boolean.TRUE.equals(termIdsEnabled)) {
-                    eval.setTermId(termId);
-                }
-
-                // Hierarchy
-                Boolean showHierarchy = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
-                if (Boolean.TRUE.equals(showHierarchy)) {
-                    eval.setSectionAwareness(sectionAwareness);
-                }
-
-                // Save (without activating, false)
-                evalBeanUtils.validateEvalCategory(eval.getEvalCategory());
-                evaluationSetupService.saveEvaluation(eval, currentUserId, false);
-                evalStateHolder[0] = eval.getState();
-            });
+            evalState = saveEvaluationSettings(evaluationId, currentUserId, form);
         } catch (Exception e) {
             redirectAttrs.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/evaluation_settings?evaluationId=" + evaluationId;
         }
 
-        // Redirect based on the current state
-        if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(evalStateHolder[0])) {
+        if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(evalState)) {
             return "redirect:/evaluation_assign?evaluationId=" + evaluationId;
         } else {
             return "redirect:/control_evaluations";
+        }
+    }
+
+    private String saveEvaluationSettings(Long evaluationId, String currentUserId, EvaluationSettingsForm form) {
+        String[] evalStateHolder = {null};
+        daoInvoker.invokeTransactionalAccess(() -> {
+            EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
+            if (eval == null) {
+                throw new IllegalArgumentException("Evaluation not found: " + evaluationId);
+            }
+
+            String currentEvalState = evaluationService.returnAndFixEvalState(eval, true);
+            if (form.reOpening && EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_CLOSED, false)) {
+                currentEvalState = EvalConstants.EVALUATION_STATE_ACTIVE;
+            }
+
+            applyEditableFields(eval, form, currentEvalState);
+            applyResultsSettings(eval, form, currentEvalState);
+            applyRespondentSettings(eval, form, currentEvalState);
+            applyAdminSettings(eval, form, currentEvalState, currentUserId);
+            applyNotificationSettings(eval, form, currentEvalState);
+            applyExtraSettings(eval, form);
+
+            evalBeanUtils.validateEvalCategory(eval.getEvalCategory());
+            evaluationSetupService.saveEvaluation(eval, currentUserId, false);
+            evalStateHolder[0] = eval.getState();
+        });
+        return evalStateHolder[0];
+    }
+
+    private void applyEditableFields(EvalEvaluation eval, EvaluationSettingsForm form, String currentEvalState) {
+        if (EvalUtils.checkStateBefore(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true) && form.title != null) {
+            eval.setTitle(form.title);
+        }
+        if (EvalUtils.checkStateBefore(currentEvalState, EvalConstants.EVALUATION_STATE_CLOSED, true)) {
+            eval.setInstructions(form.instructions);
+        }
+        if (!EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true)) {
+            eval.setStartDate(form.startDate);
+        }
+        if (!EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_GRACEPERIOD, true)) {
+            eval.setDueDate(form.dueDate);
+        }
+
+        Boolean useStopDate = (Boolean) settings.get(EvalSettings.EVAL_USE_STOP_DATE);
+        if (Boolean.TRUE.equals(useStopDate) &&
+                !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_CLOSED, true)) {
+            eval.setStopDate(form.stopDate);
+        }
+
+        Boolean useViewDate = (Boolean) settings.get(EvalSettings.EVAL_USE_VIEW_DATE);
+        if (Boolean.TRUE.equals(useViewDate) &&
+                !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_VIEWABLE, true)) {
+            eval.setViewDate(form.viewDate);
+        }
+        if (form.authControl != null && !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true)) {
+            eval.setAuthControl(form.authControl);
+        }
+    }
+
+    private void applyResultsSettings(EvalEvaluation eval, EvaluationSettingsForm form, String currentEvalState) {
+        if (form.resultsSharing != null) {
+            eval.setResultsSharing(form.resultsSharing);
+        }
+
+        Boolean studentViewSetting = (Boolean) settings.get(EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS);
+        if (studentViewSetting == null && !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_VIEWABLE, true)) {
+            eval.setStudentViewResults(Boolean.TRUE.equals(form.studentViewResults));
+        } else if (studentViewSetting != null) {
+            eval.setStudentViewResults(studentViewSetting);
+        }
+
+        Boolean instrViewSetting = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
+        if (instrViewSetting == null && !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_VIEWABLE, true)) {
+            eval.setInstructorViewResults(Boolean.TRUE.equals(form.instructorViewResults));
+        } else if (instrViewSetting != null) {
+            eval.setInstructorViewResults(instrViewSetting);
+        }
+
+        Boolean instrViewAllSetting = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_ALL_RESULTS);
+        if (instrViewAllSetting == null && !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_VIEWABLE, true)) {
+            eval.setInstructorViewAllResults(Boolean.TRUE.equals(form.instructorViewAllResults));
+        } else if (instrViewAllSetting != null) {
+            eval.setInstructorViewAllResults(instrViewAllSetting);
+        }
+
+        Boolean sameViewDates = (Boolean) settings.get(EvalSettings.EVAL_USE_SAME_VIEW_DATES);
+        if (!Boolean.TRUE.equals(sameViewDates)) {
+            if (form.studentsDate != null) {
+                eval.setStudentsDate(form.studentsDate);
+            }
+            if (form.instructorsDate != null) {
+                eval.setInstructorsDate(form.instructorsDate);
+            }
+        }
+    }
+
+    private void applyRespondentSettings(EvalEvaluation eval, EvaluationSettingsForm form, String currentEvalState) {
+        Boolean studentUnansweredSetting = (Boolean) settings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
+        if (studentUnansweredSetting == null && !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true)) {
+            eval.setBlankResponsesAllowed(Boolean.TRUE.equals(form.blankResponsesAllowed));
+        } else if (studentUnansweredSetting != null) {
+            eval.setBlankResponsesAllowed(studentUnansweredSetting);
+        }
+
+        Boolean studentModifySetting = (Boolean) settings.get(EvalSettings.STUDENT_MODIFY_RESPONSES);
+        if (studentModifySetting == null && !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true)) {
+            eval.setModifyResponsesAllowed(Boolean.TRUE.equals(form.modifyResponsesAllowed));
+        } else if (studentModifySetting != null) {
+            eval.setModifyResponsesAllowed(studentModifySetting);
+        }
+
+        Boolean allRolesSetting = (Boolean) settings.get(EvalSettings.ALLOW_ALL_SITE_ROLES_TO_RESPOND);
+        if (!Boolean.FALSE.equals(allRolesSetting) && !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true)) {
+            eval.setAllRolesParticipate(Boolean.TRUE.equals(form.allRolesParticipate));
+        }
+
+        Boolean compulsoryTextSetting = (Boolean) settings.get(EvalSettings.ENABLE_TEXT_ITEM_REQUIRED);
+        if (compulsoryTextSetting == null && !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true)) {
+            eval.setCompulsoryTextItemsAllowed(Boolean.TRUE.equals(form.compulsoryTextItemsAllowed));
+        }
+    }
+
+    private void applyAdminSettings(EvalEvaluation eval, EvaluationSettingsForm form, String currentEvalState, String currentUserId) {
+        if (!commonLogic.isUserAdmin(currentUserId)) {
+            return;
+        }
+        String instUseFromAbove = (String) settings.get(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE);
+        if (instUseFromAbove == null || EvalToolConstants.ADMIN_BOOLEAN_CONFIGURABLE.equals(instUseFromAbove)) {
+            if (form.instructorOpt != null && !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_INQUEUE, true)) {
+                eval.setInstructorOpt(form.instructorOpt);
+            }
+        } else {
+            eval.setInstructorOpt(instUseFromAbove);
+        }
+    }
+
+    private void applyNotificationSettings(EvalEvaluation eval, EvaluationSettingsForm form, String currentEvalState) {
+        Boolean allowToggleMail = (Boolean) settings.get(EvalSettings.ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION);
+        if (Boolean.TRUE.equals(allowToggleMail) && !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true)) {
+            eval.setSendAvailableNotifications(Boolean.TRUE.equals(form.sendAvailableNotifications));
+        }
+
+        Boolean consolidatedEmail = (Boolean) settings.get(EvalSettings.ENABLE_SINGLE_EMAIL_PER_STUDENT);
+        if (!Boolean.TRUE.equals(consolidatedEmail)) {
+            if (form.reminderDays != null && !EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_GRACEPERIOD, true)) {
+                eval.setReminderDays(form.reminderDays);
+            }
+            if (form.reminderFromEmail != null) {
+                eval.setReminderFromEmail(form.reminderFromEmail);
+            }
+        }
+    }
+
+    private void applyExtraSettings(EvalEvaluation eval, EvaluationSettingsForm form) {
+        Boolean categoriesEnabled = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_CATEGORIES);
+        if (Boolean.TRUE.equals(categoriesEnabled)) {
+            eval.setEvalCategory(form.evalCategory);
+        }
+
+        Boolean termIdsEnabled = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_TERM_IDS);
+        if (Boolean.TRUE.equals(termIdsEnabled)) {
+            eval.setTermId(form.termId);
+        }
+
+        Boolean showHierarchy = (Boolean) settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS);
+        if (Boolean.TRUE.equals(showHierarchy)) {
+            eval.setSectionAwareness(form.sectionAwareness);
         }
     }
 

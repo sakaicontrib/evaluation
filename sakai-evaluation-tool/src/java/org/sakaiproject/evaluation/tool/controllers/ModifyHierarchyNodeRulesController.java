@@ -17,10 +17,6 @@ package org.sakaiproject.evaluation.tool.controllers;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Resource;
-
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.logic.model.HierarchyNodeRule;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
@@ -38,13 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/modify_hierarchy_node_rules")
-public class ModifyHierarchyNodeRulesController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic")
-    private ExternalHierarchyLogic hierLogic;
+public class ModifyHierarchyNodeRulesController extends EvalControllerSupport {
 
     @Data
     public static class RuleRow {
@@ -59,9 +49,9 @@ public class ModifyHierarchyNodeRulesController {
                        @RequestParam(value = "expanded", required = false) List<String> expanded,
                        Model model) {
         checkAdmin();
-        EvalHierarchyNode node = hierLogic.getNodeById(nodeId);
+        EvalHierarchyNode node = hierarchyLogic.getNodeById(nodeId);
         List<HierarchyNodeRule> rawRules;
-        try { rawRules = hierLogic.getRulesByNodeID(Long.parseLong(nodeId)); }
+        try { rawRules = hierarchyLogic.getRulesByNodeID(Long.parseLong(nodeId)); }
         catch (Exception e) { rawRules = Collections.emptyList(); }
 
         List<RuleRow> rules = new java.util.ArrayList<>();
@@ -69,8 +59,8 @@ public class ModifyHierarchyNodeRulesController {
             rules.add(new RuleRow(
                     r.getId(),
                     r.getOption(),
-                    hierLogic.determineQualifierFromRuleText(r.getRule()),
-                    hierLogic.removeQualifierFromRuleText(r.getRule())
+                    hierarchyLogic.determineQualifierFromRuleText(r.getRule()),
+                    hierarchyLogic.removeQualifierFromRuleText(r.getRule())
             ));
         }
 
@@ -99,8 +89,8 @@ public class ModifyHierarchyNodeRulesController {
             return buildReturnUrl(nodeId, expanded);
         }
         try {
-            hierLogic.assignNodeRule(ruleText.trim(), qualifier, option, Long.parseLong(nodeId));
-            log.info("Admin ({}) added rule to node {}", commonLogic.getCurrentUserId(), nodeId);
+            hierarchyLogic.assignNodeRule(ruleText.trim(), qualifier, option, Long.parseLong(nodeId));
+            log.info("Admin ({}) added rule to node {}", currentUserId(), nodeId);
         } catch (Exception e) {
             ra.addFlashAttribute("errorMessage", "modifynoderules.error.rule.exists.text");
         }
@@ -115,8 +105,8 @@ public class ModifyHierarchyNodeRulesController {
                              @RequestParam(defaultValue = "") String option,
                              @RequestParam(value = "expanded", required = false) List<String> expanded) {
         checkAdmin();
-        hierLogic.updateNodeRule(ruleId, ruleText.trim(), qualifier, option, Long.parseLong(nodeId));
-        log.info("Admin ({}) updated rule {} on node {}", commonLogic.getCurrentUserId(), ruleId, nodeId);
+        hierarchyLogic.updateNodeRule(ruleId, ruleText.trim(), qualifier, option, Long.parseLong(nodeId));
+        log.info("Admin ({}) updated rule {} on node {}", currentUserId(), ruleId, nodeId);
         return buildReturnUrl(nodeId, expanded);
     }
 
@@ -125,8 +115,8 @@ public class ModifyHierarchyNodeRulesController {
                              @RequestParam Long ruleId,
                              @RequestParam(value = "expanded", required = false) List<String> expanded) {
         checkAdmin();
-        hierLogic.removeNodeRule(ruleId);
-        log.info("Admin ({}) removed rule {} from node {}", commonLogic.getCurrentUserId(), ruleId, nodeId);
+        hierarchyLogic.removeNodeRule(ruleId);
+        log.info("Admin ({}) removed rule {} from node {}", currentUserId(), ruleId, nodeId);
         return buildReturnUrl(nodeId, expanded);
     }
 
@@ -137,7 +127,7 @@ public class ModifyHierarchyNodeRulesController {
     }
 
     private void checkAdmin() {
-        if (!commonLogic.isUserAdmin(commonLogic.getCurrentUserId()))
+        if (!isCurrentUserAdmin())
             throw new SecurityException("Non-admin users may not access this locator");
     }
 }

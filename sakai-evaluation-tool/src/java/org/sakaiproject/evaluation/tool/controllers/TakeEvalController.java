@@ -23,17 +23,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.EvalDeliveryService;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.exceptions.ResponseSaveException;
-import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAnswer;
@@ -41,12 +35,10 @@ import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
-import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
-import org.sakaiproject.evaluation.dao.EvalDaoInvoker;
-import org.sakaiproject.evaluation.tool.EvalToolConstants;
-import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
-import org.sakaiproject.evaluation.tool.utils.ScaledUtils;
+import org.sakaiproject.evaluation.tool.utils.ScaleOptionsBuilder;
+import org.sakaiproject.evaluation.tool.utils.ScaleOptionsBuilder.OptionData;
+import org.sakaiproject.evaluation.tool.utils.ScaleOptionsBuilder.SteppedRow;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
@@ -74,30 +66,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/take_eval")
-public class TakeEvalController {
+public class TakeEvalController extends EvalControllerSupport {
 
     // ---- DTOs ----------------------------------------------------------------
 
-    @Data
-    public static class OptionData {
-        int index;
-        String value;
-        String label;
-        String matrixLegend;
-        String matrixLegendAlign;
-        boolean selected;
-    }
-
-    @Data
-    public static class SteppedRow {
-        String label;
-        int middleCount;
-        String value;
-    }
-
     /** Item data for rendering and form binding */
     @Data
-    public static class FormItemData {
+    public static class FormItemData implements ScaleOptionsBuilder.ItemScaleOptionsTarget {
         // Item metadata
         String itemType;
         String itemText;
@@ -179,28 +154,25 @@ public class TakeEvalController {
         List<NodeGroupData> nodeGroups = new ArrayList<>();
     }
 
+    private static class TakeEvalAccess {
+        boolean userCanAccess;
+        String evalGroupId;
+        List<EvalGroup> validGroups = new ArrayList<>();
+    }
+
+    private static class ResponseState {
+        Long responseId;
+        EvalResponse response;
+        Map<String, EvalAnswer> answerMap = new HashMap<>();
+    }
+
+    private static class TakeEvalFormModel {
+        List<CategorySection> sections = new ArrayList<>();
+        EvalFormWrapper formWrapper = new EvalFormWrapper();
+    }
+
     // ---- Services ------------------------------------------------------------
 
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationService")
-    private EvalEvaluationService evaluationService;
-
-    @Resource(name = "org.sakaiproject.evaluation.dao.EvalDaoInvoker")
-    private EvalDaoInvoker daoInvoker;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalAuthoringService")
-    private EvalAuthoringService authoringService;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalDeliveryService")
-    private EvalDeliveryService deliveryService;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalSettings")
-    private EvalSettings evalSettings;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic")
-    private ExternalHierarchyLogic hierarchyLogic;
 
     @Autowired
     private MessageSource messageSource;
@@ -218,120 +190,156 @@ public class TakeEvalController {
             HttpServletRequest request) {
 
         Locale locale = RequestContextUtils.getLocale(request);
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
 
         EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
         if (eval == null) {
             throw new IllegalArgumentException("Invalid evaluationId: " + evaluationId);
         }
 
+        addBaseModel(model, eval, external, evaluationId);
+        if (addEvaluationUnavailableMessage(eval, locale, model)) {
+            return "take_eval";
+        }
+
+        TakeEvalAccess access = resolveTakeEvalAccess(eval, evaluationId, evalGroupId, currentUserId);
+        if (!access.userCanAccess) {
+            addCannotTakeMessage(currentUserId, locale, model);
+            return "take_eval";
+        }
+
+        model.addAttribute("evalGroupId", access.evalGroupId);
+        addGroupSelectorModel(access.validGroups, model);
+        EvalGroup evalGroup = commonLogic.makeEvalGroupObject(access.evalGroupId);
+        model.addAttribute("groupTitle", evalGroup.title);
+
+        ResponseState responseState = loadResponseState(evaluationId, currentUserId, access.evalGroupId, responseId);
+        model.addAttribute("responseId", responseState.responseId);
+        addSavedWarning(responseState, locale, model);
+        addSubmissionError(error, locale, model);
+        addTakeSettings(eval, responseState.response, model);
+
+        Boolean useCourseOnly = Boolean.TRUE.equals(settings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY));
+        Boolean showHierHeaders = Boolean.TRUE.equals(settings.get(EvalSettings.DISPLAY_HIERARCHY_HEADERS));
+        TakeEvalFormModel formModel = buildTakeEvalFormModel(evaluationId, access.evalGroupId,
+                responseState.answerMap, useCourseOnly, showHierHeaders, locale);
+        model.addAttribute("categorySections", formModel.sections);
+        model.addAttribute("evalForm", formModel.formWrapper);
+        return "take_eval";
+    }
+
+    private void addBaseModel(Model model, EvalEvaluation eval, boolean external, Long evaluationId) {
         model.addAttribute("eval", eval);
         model.addAttribute("external", external);
         model.addAttribute("evaluationId", evaluationId);
+    }
 
-        // Check eval state
+    private boolean addEvaluationUnavailableMessage(EvalEvaluation eval, Locale locale, Model model) {
         String evalState = evaluationService.returnAndFixEvalState(eval, true);
         if (EvalUtils.checkStateBefore(evalState, EvalConstants.EVALUATION_STATE_ACTIVE, false)) {
             model.addAttribute("cannotTakeMessage",
                     messageSource.getMessage("takeeval.eval.not.open", null, locale));
-            return "take_eval";
+            return true;
         } else if (EvalUtils.checkStateAfter(evalState, EvalConstants.EVALUATION_STATE_CLOSED, true)) {
             model.addAttribute("cannotTakeMessage",
                     messageSource.getMessage("takeeval.eval.closed", null, locale));
-            return "take_eval";
+            return true;
         }
+        return false;
+    }
 
-        // Determine valid groups and access
-        boolean userCanAccess = false;
-        List<EvalGroup> validGroups = new ArrayList<>();
+    private TakeEvalAccess resolveTakeEvalAccess(EvalEvaluation eval, Long evaluationId, String evalGroupId, String currentUserId) {
+        TakeEvalAccess access = new TakeEvalAccess();
+        access.evalGroupId = evalGroupId;
 
         Map<Long, List<EvalAssignGroup>> assignGroupsMap = evaluationService
                 .getAssignGroupsForEvals(new Long[]{evaluationId}, true, null);
         List<EvalAssignGroup> allAssignGroups = assignGroupsMap.get(evaluationId);
 
         if (!commonLogic.isUserAnonymous(currentUserId) && commonLogic.isUserAdmin(currentUserId)) {
-            userCanAccess = true;
+            access.userCanAccess = true;
             for (EvalAssignGroup ag : allAssignGroups) {
-                if (evalGroupId == null) evalGroupId = ag.getEvalGroupId();
-                validGroups.add(commonLogic.makeEvalGroupObject(ag.getEvalGroupId()));
-            }
-        } else {
-            EvalGroup[] candidates;
-            if (EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(eval.getAuthControl())) {
-                candidates = new EvalGroup[allAssignGroups.size()];
-                for (int i = 0; i < allAssignGroups.size(); i++) {
-                    candidates[i] = commonLogic.makeEvalGroupObject(allAssignGroups.get(i).getEvalGroupId());
+                if (access.evalGroupId == null) {
+                    access.evalGroupId = ag.getEvalGroupId();
                 }
-            } else {
-                List<EvalAssignUser> userAssignments = evaluationService.getParticipantsForEval(
-                        evaluationId, currentUserId, null, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
-                Set<String> groupIds = EvalUtils.getGroupIdsFromUserAssignments(userAssignments);
-                List<EvalGroup> groups = EvalUtils.makeGroupsFromGroupsIds(groupIds, commonLogic);
-                candidates = EvalUtils.getGroupsInCommon(groups, allAssignGroups);
+                access.validGroups.add(commonLogic.makeEvalGroupObject(ag.getEvalGroupId()));
             }
-            for (EvalGroup g : candidates) {
-                if (evaluationService.canTakeEvaluation(currentUserId, evaluationId, g.evalGroupId)) {
-                    if (evalGroupId == null) {
-                        evalGroupId = g.evalGroupId;
-                    }
-                    userCanAccess = true;
-                    validGroups.add(commonLogic.makeEvalGroupObject(g.evalGroupId));
-                }
-            }
+            return access;
         }
 
-        if (!userCanAccess) {
-            EvalUser current = commonLogic.getEvalUserById(currentUserId);
-            model.addAttribute("cannotTakeMessage",
-                    messageSource.getMessage("takeeval.user.cannot.take",
-                            new Object[]{current.displayName, current.email, current.username}, locale));
-            return "take_eval";
-        }
-
-        model.addAttribute("evalGroupId", evalGroupId);
-
-        // Multiple groups selector
-        if (validGroups.size() > 1) {
-            List<String> groupValues = new ArrayList<>();
-            List<String> groupLabels = new ArrayList<>();
-            for (EvalGroup g : validGroups) {
-                groupValues.add(g.evalGroupId);
-                groupLabels.add(g.title);
+        EvalGroup[] candidates;
+        if (EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(eval.getAuthControl())) {
+            candidates = new EvalGroup[allAssignGroups.size()];
+            for (int i = 0; i < allAssignGroups.size(); i++) {
+                candidates[i] = commonLogic.makeEvalGroupObject(allAssignGroups.get(i).getEvalGroupId());
             }
-            model.addAttribute("groupValues", groupValues);
-            model.addAttribute("groupLabels", groupLabels);
-            model.addAttribute("showSwitchGroup", true);
         } else {
+            List<EvalAssignUser> userAssignments = evaluationService.getParticipantsForEval(
+                    evaluationId, currentUserId, null, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
+            Set<String> groupIds = EvalUtils.getGroupIdsFromUserAssignments(userAssignments);
+            List<EvalGroup> groups = EvalUtils.makeGroupsFromGroupsIds(groupIds, commonLogic);
+            candidates = EvalUtils.getGroupsInCommon(groups, allAssignGroups);
+        }
+        for (EvalGroup g : candidates) {
+            if (evaluationService.canTakeEvaluation(currentUserId, evaluationId, g.evalGroupId)) {
+                if (access.evalGroupId == null) {
+                    access.evalGroupId = g.evalGroupId;
+                }
+                access.userCanAccess = true;
+                access.validGroups.add(commonLogic.makeEvalGroupObject(g.evalGroupId));
+            }
+        }
+        return access;
+    }
+
+    private void addCannotTakeMessage(String currentUserId, Locale locale, Model model) {
+        EvalUser current = commonLogic.getEvalUserById(currentUserId);
+        model.addAttribute("cannotTakeMessage",
+                messageSource.getMessage("takeeval.user.cannot.take",
+                        new Object[]{current.displayName, current.email, current.username}, locale));
+    }
+
+    private void addGroupSelectorModel(List<EvalGroup> validGroups, Model model) {
+        if (validGroups.size() <= 1) {
             model.addAttribute("showSwitchGroup", false);
+            return;
         }
+        List<String> groupValues = new ArrayList<>();
+        List<String> groupLabels = new ArrayList<>();
+        for (EvalGroup g : validGroups) {
+            groupValues.add(g.evalGroupId);
+            groupLabels.add(g.title);
+        }
+        model.addAttribute("groupValues", groupValues);
+        model.addAttribute("groupLabels", groupLabels);
+        model.addAttribute("showSwitchGroup", true);
+    }
 
-        // Group title
-        EvalGroup evalGroup = commonLogic.makeEvalGroupObject(evalGroupId);
-        model.addAttribute("groupTitle", evalGroup.title);
-
-        // Load or create response
-        EvalResponse response = null;
+    private ResponseState loadResponseState(Long evaluationId, String currentUserId, String evalGroupId, Long responseId) {
+        ResponseState responseState = new ResponseState();
+        responseState.responseId = responseId;
         if (responseId != null) {
-            response = deliveryService.getResponseById(responseId);
+            responseState.response = deliveryService.getResponseById(responseId);
         } else {
-            response = evaluationService.getResponseForUserAndGroup(evaluationId, currentUserId, evalGroupId);
-            if (response != null) {
-                responseId = response.getId();
+            responseState.response = evaluationService.getResponseForUserAndGroup(evaluationId, currentUserId, evalGroupId);
+            if (responseState.response != null) {
+                responseState.responseId = responseState.response.getId();
             }
         }
-        model.addAttribute("responseId", responseId);
-
-        // Load existing answers
-        Map<String, EvalAnswer> answerMap = new HashMap<>();
-        if (responseId != null && response != null) {
-            answerMap = EvalUtils.getAnswersMapByTempItemAndAssociated(response);
-            if (!response.complete) {
-                model.addAttribute("savedWarning",
-                        messageSource.getMessage("takeeval.saved.warning", null, locale));
-            }
+        if (responseState.responseId != null && responseState.response != null) {
+            responseState.answerMap = EvalUtils.getAnswersMapByTempItemAndAssociated(responseState.response);
         }
+        return responseState;
+    }
 
-        // Submission error from a previous POST attempt
+    private void addSavedWarning(ResponseState responseState, Locale locale, Model model) {
+        if (responseState.responseId != null && responseState.response != null && !responseState.response.complete) {
+            model.addAttribute("savedWarning",
+                    messageSource.getMessage("takeeval.saved.warning", null, locale));
+        }
+    }
+
+    private void addSubmissionError(String error, Locale locale, Model model) {
         if ("missing_required".equals(error)) {
             model.addAttribute("validationError",
                     messageSource.getMessage("takeeval.user.must.answer.all.exception", null, locale));
@@ -342,53 +350,32 @@ public class TakeEvalController {
             model.addAttribute("validationError",
                     messageSource.getMessage("takeeval.user.cannot.save.reponse", null, locale));
         }
+    }
 
-        // Settings
-        Boolean studentAllowedLeaveUnanswered = (Boolean) evalSettings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
+    private void addTakeSettings(EvalEvaluation eval, EvalResponse response, Model model) {
+        Boolean studentAllowedLeaveUnanswered = (Boolean) settings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
         if (studentAllowedLeaveUnanswered == null) {
             studentAllowedLeaveUnanswered = EvalUtils.safeBool(eval.getBlankResponsesAllowed(), false);
         }
         model.addAttribute("mustAnswerAll", !studentAllowedLeaveUnanswered);
 
-        Boolean saveWithoutSubmit = (Boolean) evalSettings.get(EvalSettings.STUDENT_SAVE_WITHOUT_SUBMIT);
-        Boolean cancelAllowed = (Boolean) evalSettings.get(EvalSettings.STUDENT_CANCEL_ALLOWED);
-        Boolean useCourseOnly = Boolean.TRUE.equals(evalSettings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY));
-        Boolean showHierHeaders = Boolean.TRUE.equals(evalSettings.get(EvalSettings.DISPLAY_HIERARCHY_HEADERS));
+        Boolean saveWithoutSubmit = (Boolean) settings.get(EvalSettings.STUDENT_SAVE_WITHOUT_SUBMIT);
+        Boolean cancelAllowed = (Boolean) settings.get(EvalSettings.STUDENT_CANCEL_ALLOWED);
         model.addAttribute("saveWithoutSubmit", Boolean.TRUE.equals(saveWithoutSubmit) && (response == null || !response.complete));
         model.addAttribute("cancelAllowed", Boolean.TRUE.equals(cancelAllowed));
+    }
 
-        // Build TIDL and item DTO list
+    private TakeEvalFormModel buildTakeEvalFormModel(Long evaluationId, String evalGroupId,
+            Map<String, EvalAnswer> answerMap, boolean useCourseOnly, boolean showHierHeaders, Locale locale) {
+
         TemplateItemDataList tidl = new TemplateItemDataList(evaluationId, evalGroupId,
                 evaluationService, authoringService, hierarchyLogic, null);
-
-        List<CategorySection> sections = new ArrayList<>();
-        EvalFormWrapper formWrapper = new EvalFormWrapper();
+        TakeEvalFormModel formModel = new TakeEvalFormModel();
         int displayNumber = 1;
         int answerIndex = 0;
 
         for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {
-            CategorySection section = new CategorySection();
-            section.setAssociateType(tig.associateType);
-            section.setAssociateId(tig.associateId);
-
-            if (!useCourseOnly) {
-                if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType)) {
-                    section.setHeader(messageSource.getMessage("takeeval.group.questions.header", null, locale));
-                } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
-                    EvalUser user = commonLogic.getEvalUserById(tig.associateId);
-                    section.setHeader(messageSource.getMessage("takeeval.instructor.questions.header",
-                            new Object[]{user.displayName}, locale));
-                } else if (EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(tig.associateType)) {
-                    EvalUser user = commonLogic.getEvalUserById(tig.associateId);
-                    section.setHeader(messageSource.getMessage("takeeval.assistant.questions.header",
-                            new Object[]{user.displayName}, locale));
-                } else {
-                    section.setHeader("");
-                }
-            } else {
-                section.setHeader("");
-            }
-
+            CategorySection section = buildCategorySection(tig, useCourseOnly, locale);
             for (HierarchyNodeGroup hng : tig.hierarchyNodeGroups) {
                 NodeGroupData ngd = new NodeGroupData();
                 if (hng.node != null && showHierHeaders) {
@@ -402,42 +389,18 @@ public class TakeEvalController {
                     String type = TemplateItemUtils.getTemplateItemType(ti);
 
                     if (TemplateItemUtils.isAnswerable(ti)) {
-                        // Answerable item — create submission slot
-                        EvalFormWrapper.AnswerSubmission slot = new EvalFormWrapper.AnswerSubmission();
-                        slot.setTemplateItemId(ti.getId());
-                        slot.setAssociatedId(dti.associateId);
-                        slot.setAssociatedType(dti.associateId != null ? ti.getCategory() : null);
-                        slot.setItemType(type);
-
-                        // Pre-fill from existing answer
-                        String key = TemplateItemUtils.makeTemplateItemAnswerKey(
-                                ti.getId(), slot.getAssociatedType(), dti.associateId);
-                        EvalAnswer existing = answerMap.get(key);
-                        if (existing != null) {
-                            slot.setExistingAnswerId(existing.getId());
-                            slot.setNumeric(existing.getNumeric());
-                            slot.setText(existing.getText());
-                            slot.setNa(EvalUtils.decodeAnswerNA(existing));
-                            slot.setComment(existing.getComment());
-                            if (existing.multipleAnswers != null) {
-                                List<String> maList = new ArrayList<>();
-                                for (Integer v : existing.multipleAnswers) {
-                                    if (v != null) maList.add(String.valueOf(v));
-                                }
-                                slot.setMultipleAnswers(maList);
-                            }
-                        }
-                        formWrapper.getAnswers().add(slot);
+                        EvalFormWrapper.AnswerSubmission slot = buildAnswerSlot(ti, dti.associateId, type, answerMap, true);
+                        formModel.formWrapper.getAnswers().add(slot);
 
                         FormItemData fid = buildFormItemData(ti, displayNumber, dti.associateId,
-                                slot.getAssociatedType(), answerIndex, existing, locale);
+                                slot.getAssociatedType(), answerIndex, answerMap.get(TemplateItemUtils.makeTemplateItemAnswerKey(
+                                        ti.getId(), slot.getAssociatedType(), dti.associateId)), locale);
                         fid.setOdd(rowIndex % 2 != 0);
                         ngd.getItems().add(fid);
                         answerIndex++;
                         displayNumber++;
 
                     } else if (EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(type)) {
-                        // Block parent: add slots for all children
                         List<EvalTemplateItem> children = dti.blockChildItems != null
                                 ? dti.blockChildItems : new ArrayList<>();
 
@@ -448,23 +411,12 @@ public class TakeEvalController {
 
                         for (int ci = 0; ci < children.size(); ci++) {
                             EvalTemplateItem child = children.get(ci);
-                            EvalFormWrapper.AnswerSubmission slot = new EvalFormWrapper.AnswerSubmission();
-                            slot.setTemplateItemId(child.getId());
-                            slot.setAssociatedId(dti.associateId);
-                            slot.setAssociatedType(dti.associateId != null ? child.getCategory() : null);
-                            slot.setItemType(TemplateItemUtils.getTemplateItemType(child));
+                            EvalFormWrapper.AnswerSubmission slot = buildAnswerSlot(child, dti.associateId,
+                                    TemplateItemUtils.getTemplateItemType(child), answerMap, false);
+                            formModel.formWrapper.getAnswers().add(slot);
 
-                            String key = TemplateItemUtils.makeTemplateItemAnswerKey(
-                                    child.getId(), slot.getAssociatedType(), dti.associateId);
-                            EvalAnswer existing = answerMap.get(key);
-                            if (existing != null) {
-                                slot.setExistingAnswerId(existing.getId());
-                                slot.setNumeric(existing.getNumeric());
-                                slot.setNa(EvalUtils.decodeAnswerNA(existing));
-                                slot.setComment(existing.getComment());
-                            }
-                            formWrapper.getAnswers().add(slot);
-
+                            EvalAnswer existing = answerMap.get(TemplateItemUtils.makeTemplateItemAnswerKey(
+                                    child.getId(), slot.getAssociatedType(), dti.associateId));
                             FormItemData childFid = buildFormItemData(child, displayNumber + ci,
                                     dti.associateId, slot.getAssociatedType(), answerIndex, existing, locale);
                             childFids.add(childFid);
@@ -475,7 +427,6 @@ public class TakeEvalController {
                         displayNumber += children.size();
 
                     } else {
-                        // Header or non-answerable — no form slot
                         FormItemData fid = buildFormItemData(ti, displayNumber, null, null, -1, null, locale);
                         fid.setOdd(rowIndex % 2 != 0);
                         ngd.getItems().add(fid);
@@ -484,12 +435,60 @@ public class TakeEvalController {
                 }
                 section.getNodeGroups().add(ngd);
             }
-            sections.add(section);
+            formModel.sections.add(section);
         }
+        return formModel;
+    }
 
-        model.addAttribute("categorySections", sections);
-        model.addAttribute("evalForm", formWrapper);
-        return "take_eval";
+    private CategorySection buildCategorySection(TemplateItemGroup tig, boolean useCourseOnly, Locale locale) {
+        CategorySection section = new CategorySection();
+        section.setAssociateType(tig.associateType);
+        section.setAssociateId(tig.associateId);
+        if (useCourseOnly) {
+            section.setHeader("");
+        } else if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType)) {
+            section.setHeader(messageSource.getMessage("takeeval.group.questions.header", null, locale));
+        } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
+            EvalUser user = commonLogic.getEvalUserById(tig.associateId);
+            section.setHeader(messageSource.getMessage("takeeval.instructor.questions.header",
+                    new Object[]{user.displayName}, locale));
+        } else if (EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(tig.associateType)) {
+            EvalUser user = commonLogic.getEvalUserById(tig.associateId);
+            section.setHeader(messageSource.getMessage("takeeval.assistant.questions.header",
+                    new Object[]{user.displayName}, locale));
+        } else {
+            section.setHeader("");
+        }
+        return section;
+    }
+
+    private EvalFormWrapper.AnswerSubmission buildAnswerSlot(EvalTemplateItem ti, String associateId, String type,
+            Map<String, EvalAnswer> answerMap, boolean includeFullAnswerValues) {
+        EvalFormWrapper.AnswerSubmission slot = new EvalFormWrapper.AnswerSubmission();
+        slot.setTemplateItemId(ti.getId());
+        slot.setAssociatedId(associateId);
+        slot.setAssociatedType(associateId != null ? ti.getCategory() : null);
+        slot.setItemType(type);
+
+        String key = TemplateItemUtils.makeTemplateItemAnswerKey(ti.getId(), slot.getAssociatedType(), associateId);
+        EvalAnswer existing = answerMap.get(key);
+        if (existing != null) {
+            slot.setExistingAnswerId(existing.getId());
+            slot.setNumeric(existing.getNumeric());
+            slot.setNa(EvalUtils.decodeAnswerNA(existing));
+            slot.setComment(existing.getComment());
+            if (includeFullAnswerValues) {
+                slot.setText(existing.getText());
+            }
+            if (includeFullAnswerValues && existing.multipleAnswers != null) {
+                List<String> maList = new ArrayList<>();
+                for (Integer v : existing.multipleAnswers) {
+                    if (v != null) maList.add(String.valueOf(v));
+                }
+                slot.setMultipleAnswers(maList);
+            }
+        }
+        return slot;
     }
 
     // ---- POST ----------------------------------------------------------------
@@ -503,89 +502,92 @@ public class TakeEvalController {
             @RequestParam(required = false) String actionSubmit,
             @ModelAttribute("evalForm") EvalFormWrapper formWrapper) {
 
-        String currentUserId = commonLogic.getCurrentUserId();
-        // actionSubmit is non-null only when the submit button was clicked (not save)
+        String currentUserId = currentUserId();
         boolean submit = (actionSubmit != null);
 
-        // Step 1: Always save answers without endTime in its own transaction.
-        // This commits immediately so we always have a responseId we can include in
-        // any subsequent error redirect, allowing the form to reload with saved answers.
-        Long[] savedId = {responseId};
+        Long savedId;
         try {
-            daoInvoker.invokeTransactionalAccess(() -> {
-                EvalResponse response;
-                if (savedId[0] != null) {
-                    response = deliveryService.getResponseById(savedId[0]);
-                } else {
-                    // No responseId in the post (e.g. a stale/cached form re-submitted without
-                    // it) — reuse the existing response for this user/eval/group if there is one,
-                    // same lookup show() does, instead of unconditionally creating a new one.
-                    // Creating a second EvalResponse here violates the one-response-per-user/
-                    // eval/group invariant and permanently locks the user out: every later
-                    // canTakeEvaluation() call throws IllegalStateException via
-                    // getResponseForUserAndGroup().
-                    response = evaluationService.getResponseForUserAndGroup(evaluationId, currentUserId, evalGroupId);
-                    if (response == null) {
-                        EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
-                        response = new EvalResponse(currentUserId, evalGroupId, eval, new Date());
-                    }
-                }
-
-                response.setAnswers(buildAnswers(response, formWrapper));
-                // No endTime set here — partial save, responseComplete=false
-                deliveryService.saveResponse(response, currentUserId);
-                savedId[0] = response.getId();
-            });
+            savedId = savePartialResponse(evaluationId, evalGroupId, responseId, currentUserId, formWrapper);
         } catch (Exception e) {
             log.error("Error saving partial response for evaluation {}: {}", evaluationId, e.getMessage(), e);
-            return "redirect:/take_eval?evaluationId=" + evaluationId
-                    + "&evalGroupId=" + evalGroupId
-                    + (responseId != null ? "&responseId=" + responseId : "")
-                    + "&error=savefailed";
+            return redirectToTakeEval(evaluationId, evalGroupId, responseId, "savefailed");
         }
 
         if (!submit) {
-            // Save-only: return to form so user can see saved progress
-            return "redirect:/take_eval?evaluationId=" + evaluationId
-                    + "&evalGroupId=" + evalGroupId
-                    + "&responseId=" + savedId[0];
+            return redirectToTakeEval(evaluationId, evalGroupId, savedId, null);
         }
 
-        // Step 2: Mark response complete in a separate transaction from step 1.
-        // If validation fails (required answers missing), step 1 has already committed,
-        // so the redirect includes responseId and the form reloads with the saved answers.
-        Long finalId = savedId[0];
         try {
-            daoInvoker.invokeTransactionalAccess(() -> {
-                EvalResponse response = deliveryService.getResponseById(finalId);
-                // Decode multiAnswerCode into the transient multipleAnswers field so
-                // saveResponse's cleanup re-encodes them correctly rather than losing them.
-                for (EvalAnswer answer : response.getAnswers()) {
-                    String mac = answer.getMultiAnswerCode();
-                    if (mac != null && !mac.isEmpty()) {
-                        answer.multipleAnswers = EvalUtils.decodeMultipleAnswers(mac);
-                    }
-                }
-                response.setEndTime(new Date());
-                deliveryService.saveResponse(response, currentUserId);
-            });
+            completeResponse(savedId, currentUserId);
         } catch (ResponseSaveException e) {
             String errorCode = ResponseSaveException.TYPE_BLANK_RESPONSE.equals(e.type)
                     ? "blank_response" : "missing_required";
-            log.warn("Submission rejected for response {}: {}", finalId, e.getMessage());
-            return "redirect:/take_eval?evaluationId=" + evaluationId
-                    + "&evalGroupId=" + evalGroupId
-                    + "&responseId=" + finalId
-                    + "&error=" + errorCode;
+            log.warn("Submission rejected for response {}: {}", savedId, e.getMessage());
+            return redirectToTakeEval(evaluationId, evalGroupId, savedId, errorCode);
         } catch (Exception e) {
-            log.error("Error completing response {}: {}", finalId, e.getMessage(), e);
-            return "redirect:/take_eval?evaluationId=" + evaluationId
-                    + "&evalGroupId=" + evalGroupId
-                    + "&responseId=" + finalId
-                    + "&error=savefailed";
+            log.error("Error completing response {}: {}", savedId, e.getMessage(), e);
+            return redirectToTakeEval(evaluationId, evalGroupId, savedId, "savefailed");
         }
 
         return "redirect:/summary";
+    }
+
+    private Long savePartialResponse(Long evaluationId, String evalGroupId, Long responseId,
+            String currentUserId, EvalFormWrapper formWrapper) {
+        Long[] savedId = {responseId};
+        daoInvoker.invokeTransactionalAccess(() -> {
+            EvalResponse response = loadOrCreateResponseForSave(evaluationId, evalGroupId, savedId[0], currentUserId);
+            response.setAnswers(buildAnswers(response, formWrapper));
+            deliveryService.saveResponse(response, currentUserId);
+            savedId[0] = response.getId();
+        });
+        return savedId[0];
+    }
+
+    private EvalResponse loadOrCreateResponseForSave(Long evaluationId, String evalGroupId, Long responseId, String currentUserId) {
+        if (responseId != null) {
+            return deliveryService.getResponseById(responseId);
+        }
+
+        EvalResponse response = evaluationService.getResponseForUserAndGroup(evaluationId, currentUserId, evalGroupId);
+        if (response != null) {
+            return response;
+        }
+
+        EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
+        return new EvalResponse(currentUserId, evalGroupId, eval, new Date());
+    }
+
+    private void completeResponse(Long responseId, String currentUserId) {
+        daoInvoker.invokeTransactionalAccess(() -> {
+            EvalResponse response = deliveryService.getResponseById(responseId);
+            decodeMultipleAnswers(response);
+            response.setEndTime(new Date());
+            deliveryService.saveResponse(response, currentUserId);
+        });
+    }
+
+    private void decodeMultipleAnswers(EvalResponse response) {
+        for (EvalAnswer answer : response.getAnswers()) {
+            String mac = answer.getMultiAnswerCode();
+            if (mac != null && !mac.isEmpty()) {
+                answer.multipleAnswers = EvalUtils.decodeMultipleAnswers(mac);
+            }
+        }
+    }
+
+    private String redirectToTakeEval(Long evaluationId, String evalGroupId, Long responseId, String error) {
+        StringBuilder redirect = new StringBuilder("redirect:/take_eval?evaluationId=")
+                .append(evaluationId)
+                .append("&evalGroupId=")
+                .append(evalGroupId);
+        if (responseId != null) {
+            redirect.append("&responseId=").append(responseId);
+        }
+        if (error != null) {
+            redirect.append("&error=").append(error);
+        }
+        return redirect.toString();
     }
 
     /** Builds the answer set from the submitted form data. */
@@ -704,112 +706,12 @@ public class TakeEvalController {
     }
 
     private void populateScaleData(FormItemData d, EvalTemplateItem ti) {
-        EvalScale scale = ti.getItem().getScale();
-        List<String> rawOptions = scale.getOptions();
-        int n = rawOptions.size();
-
-        String ds = ti.getScaleDisplaySetting();
-        if (ds == null) ds = EvalConstants.ITEM_SCALE_DISPLAY_FULL;
-        d.setScaleDisplaySetting(ds);
-
-        boolean isColored = EvalConstants.ITEM_SCALE_DISPLAY_COMPACT_COLORED.equals(ds)
-                || EvalConstants.ITEM_SCALE_DISPLAY_FULL_COLORED.equals(ds)
-                || EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED.equals(ds)
-                || EvalConstants.ITEM_SCALE_DISPLAY_MATRIX_COLORED.equals(ds);
-        boolean isCompact = EvalConstants.ITEM_SCALE_DISPLAY_COMPACT.equals(ds)
-                || EvalConstants.ITEM_SCALE_DISPLAY_COMPACT_COLORED.equals(ds);
-        boolean isStepped = EvalConstants.ITEM_SCALE_DISPLAY_STEPPED.equals(ds)
-                || EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED.equals(ds);
-        boolean isMatrix = EvalConstants.ITEM_SCALE_DISPLAY_MATRIX.equals(ds)
-                || EvalConstants.ITEM_SCALE_DISPLAY_MATRIX_COLORED.equals(ds);
-
-        if (isColored) {
-            d.setIdealImageUrl(resolveContextUrl(EvalToolConstants.COLORED_IMAGE_URLS[ScaledUtils.idealIndex(scale)]));
-        }
-
-        if (isCompact) {
-            d.setStartLabel(rawOptions.get(0));
-            d.setEndLabel(rawOptions.get(n - 1));
-            if (isColored) {
-                d.setStartClass(ScaledUtils.getStartClass(scale));
-                d.setEndClass(ScaledUtils.getEndClass(scale));
-            }
-            List<OptionData> opts = new ArrayList<>();
-            for (int j = 0; j < n; j++) {
-                OptionData o = new OptionData();
-                o.setIndex(j); o.setValue(String.valueOf(j)); o.setLabel(" ");
-                opts.add(o);
-            }
-            d.setOptions(opts);
-
-        } else if (isStepped) {
-            List<SteppedRow> rows = new ArrayList<>();
-            for (int j = 0; j < n; j++) {
-                SteppedRow row = new SteppedRow();
-                row.setLabel(rawOptions.get(n - 1 - j));
-                row.setMiddleCount(j);
-                row.setValue(String.valueOf(n - 1 - j));
-                rows.add(row);
-            }
-            d.setSteppedRows(rows);
-            List<OptionData> opts = new ArrayList<>();
-            for (int j = 0; j < n; j++) {
-                OptionData o = new OptionData();
-                o.setIndex(j); o.setValue(String.valueOf(n - 1 - j)); o.setLabel(rawOptions.get(n - 1 - j));
-                opts.add(o);
-            }
-            d.setOptions(opts);
-
-        } else if (isMatrix) {
-            List<String> headers = RenderingUtils.getMatrixLabels(rawOptions);
-            d.setMatrixLabelStart(headers.get(0));
-            d.setMatrixLabelEnd(headers.get(1));
-            if (headers.size() >= 3) d.setMatrixLabelMiddle(headers.get(2));
-            boolean numericScale = RenderingUtils.isNumericScale(rawOptions);
-            int middleIndex = n > 4 ? (n - 1) / 2 : -1;
-            List<OptionData> opts = new ArrayList<>();
-            for (int j = 0; j < n; j++) {
-                OptionData o = new OptionData();
-                o.setIndex(j); o.setValue(String.valueOf(n - 1 - j)); o.setLabel(String.valueOf(j + 1));
-                if (!numericScale) {
-                    if (j == 0) { o.setMatrixLegend(headers.get(0)); o.setMatrixLegendAlign("left"); }
-                    else if (j == n - 1) { o.setMatrixLegend(headers.get(1)); o.setMatrixLegendAlign("right"); }
-                    else if (j == middleIndex) { o.setMatrixLegend(headers.get(2)); o.setMatrixLegendAlign("center"); }
-                }
-                opts.add(o);
-            }
-            d.setOptions(opts);
-
-        } else {
-            List<OptionData> opts = new ArrayList<>();
-            for (int j = 0; j < n; j++) {
-                OptionData o = new OptionData();
-                o.setIndex(j); o.setValue(String.valueOf(j)); o.setLabel(rawOptions.get(j));
-                opts.add(o);
-            }
-            d.setOptions(opts);
-        }
+        ScaleOptionsBuilder.applyTo(d, ScaleOptionsBuilder.forTemplateItem(ti));
     }
 
     private void populateChoiceData(FormItemData d, EvalTemplateItem ti) {
-        EvalScale scale = ti.getItem().getScale();
-        List<String> rawOptions = scale.getOptions();
-        String ds = ti.getScaleDisplaySetting();
-        if (ds == null) ds = EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL;
-        d.setScaleDisplaySetting(ds);
+        ScaleOptionsBuilder.applyTo(d, ScaleOptionsBuilder.forChoiceTemplateItem(ti, d.getCurrentMultipleAnswers()));
         d.setUsesNA(Boolean.TRUE.equals(ti.getUsesNA()));
-        List<OptionData> opts = new ArrayList<>();
-        for (int j = 0; j < rawOptions.size(); j++) {
-            OptionData o = new OptionData();
-            o.setIndex(j); o.setValue(String.valueOf(j)); o.setLabel(rawOptions.get(j));
-            o.setSelected(d.getCurrentMultipleAnswers() != null && d.getCurrentMultipleAnswers().contains(j));
-            opts.add(o);
-        }
-        d.setOptions(opts);
-    }
-
-    private String resolveContextUrl(String url) {
-        return url.replace("$context", "");
     }
 
     private EvalAnswer findAnswerInResponse(EvalResponse response, Long answerId) {

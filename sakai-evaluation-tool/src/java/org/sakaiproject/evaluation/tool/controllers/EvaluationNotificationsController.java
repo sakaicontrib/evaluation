@@ -21,9 +21,7 @@ import java.util.Locale;
 
 import javax.annotation.Resource;
 
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.model.EvalEmailMessage;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
@@ -45,13 +43,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/evaluation_notifications")
-public class EvaluationNotificationsController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationService")
-    private EvalEvaluationService evaluationService;
+public class EvaluationNotificationsController extends EvalControllerSupport {
 
     @Resource(name = "org.sakaiproject.evaluation.logic.EvalEmailsLogic")
     private EvalEmailsLogic emailsLogic;
@@ -68,7 +60,7 @@ public class EvaluationNotificationsController {
                        @RequestParam(required = false) String errorMessage,
                        Model model) {
 
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         if (evalGroupId != null && evalGroupId.isEmpty()) evalGroupId = null;
 
         if (!evaluationService.canControlEvaluation(currentUserId, evaluationId)) {

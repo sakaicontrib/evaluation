@@ -27,4 +27,9 @@ public interface ToolApi {
 	
 	public void exportReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream, String exportType);
 
+	public default void exportReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId,
+			OutputStream outputStream, String exportType, boolean newReportStyle) {
+		exportReport(evaluation, groupIds, evaluateeId, outputStream, exportType);
+	}
+
 }

@@ -20,9 +20,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.annotation.Resource;
-
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.providers.EvalGroupsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,11 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/admin_test_evalgroup_provider")
-public class AdminTestEGProviderController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
+public class AdminTestEGProviderController extends EvalControllerSupport {
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -60,7 +53,7 @@ public class AdminTestEGProviderController {
             @RequestParam(required = false, defaultValue = "") String evalGroupId,
             Model model) {
 
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         if (!commonLogic.isUserAdmin(currentUserId))
             throw new SecurityException("Non-admin users may not access this page");
 

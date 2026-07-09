@@ -21,10 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Resource;
-
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
@@ -44,14 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/modify_adhoc_group")
-public class ModifyAdhocGroupController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalSettings")
-    private EvalSettings settings;
-
+public class ModifyAdhocGroupController extends EvalControllerSupport {
     @Data
     public static class MemberRow {
         private final String userId;
@@ -64,7 +54,7 @@ public class ModifyAdhocGroupController {
     public String show(@RequestParam(required = false) Long adhocGroupId,
                        @RequestParam(required = false, defaultValue = "") String returnUrl,
                        Model model) {
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         if (commonLogic.isUserAnonymous(currentUserId))
             throw new SecurityException("Anonymous users cannot access adhoc groups");
 
@@ -102,7 +92,7 @@ public class ModifyAdhocGroupController {
                        @RequestParam(required = false, defaultValue = "") String newMembers,
                        @RequestParam(required = false, defaultValue = "") String returnUrl,
                        RedirectAttributes ra) {
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         if (commonLogic.isUserAnonymous(currentUserId))
             throw new SecurityException("Anonymous users cannot create EvalAdhocGroups");
 
@@ -111,31 +101,39 @@ public class ModifyAdhocGroupController {
             return redirectToForm(adhocGroupId, returnUrl);
         }
 
-        EvalAdhocGroup group;
-        if (adhocGroupId == null) {
-            group = new EvalAdhocGroup(currentUserId, groupTitle.trim());
-        } else {
-            group = commonLogic.getAdhocGroupById(adhocGroupId);
-            if (!currentUserId.equals(group.getOwner()))
-                throw new SecurityException("Only owners can modify adhocgroups: " + currentUserId);
-            group.setTitle(groupTitle.trim());
-        }
-
-        // Process the list of new members
         List<String> rejected = new ArrayList<>();
         List<String> alreadyIn = new ArrayList<>();
-        List<String> toAdd = addMembersFromText(newMembers, group, rejected, alreadyIn);
+        Long[] savedId = new Long[1];
+        String[] savedTitle = new String[1];
+        String trimmedTitle = groupTitle.trim();
 
-        Set<String> all = new HashSet<>();
-        if (group.getParticipantIds() != null) all.addAll(group.getParticipantIds());
-        all.addAll(toAdd);
-        group.setParticipantIds(new ArrayList<>(all));
+        daoInvoker.invokeTransactionalAccess(() -> {
+            EvalAdhocGroup group;
+            if (adhocGroupId == null) {
+                group = new EvalAdhocGroup(currentUserId, trimmedTitle);
+            } else {
+                group = commonLogic.getAdhocGroupById(adhocGroupId);
+                if (group == null) throw new IllegalArgumentException("Adhoc group not found: " + adhocGroupId);
+                if (!currentUserId.equals(group.getOwner()))
+                    throw new SecurityException("Only owners can modify adhocgroups: " + currentUserId);
+                group.setTitle(trimmedTitle);
+            }
 
-        commonLogic.saveAdhocGroup(group);
-        Long savedId = group.getId();
+            // Process the list of new members
+            List<String> toAdd = addMembersFromText(newMembers, group, rejected, alreadyIn);
+
+            Set<String> all = new HashSet<>();
+            if (group.getParticipantIds() != null) all.addAll(group.getParticipantIds());
+            all.addAll(toAdd);
+            group.setParticipantIds(new ArrayList<>(all));
+
+            commonLogic.saveAdhocGroup(group);
+            savedId[0] = group.getId();
+            savedTitle[0] = group.getTitle();
+        });
 
         ra.addFlashAttribute("successMessage", "modifyadhocgroup.message.savednewgroup");
-        ra.addFlashAttribute("successArgs", new Object[]{ group.getTitle() });
+        ra.addFlashAttribute("successArgs", new Object[]{ savedTitle[0] });
 
         boolean useAdhocUsers = Boolean.TRUE.equals(settings.get(EvalSettings.ENABLE_ADHOC_USERS));
         if (!rejected.isEmpty()) {
@@ -148,8 +146,8 @@ public class ModifyAdhocGroupController {
             ra.addFlashAttribute("infoArgs", new Object[]{ String.join(", ", alreadyIn) });
         }
 
-        log.info("User ({}) saved adhoc group ({})", currentUserId, savedId);
-        return "redirect:/modify_adhoc_group?adhocGroupId=" + savedId
+        log.info("User ({}) saved adhoc group ({})", currentUserId, savedId[0]);
+        return "redirect:/modify_adhoc_group?adhocGroupId=" + savedId[0]
                 + (returnUrl.isEmpty() ? "" : "&returnUrl=" + URLEncoder.encode(returnUrl, StandardCharsets.UTF_8));
     }
 
@@ -158,21 +156,28 @@ public class ModifyAdhocGroupController {
                                @RequestParam String adhocUserId,
                                @RequestParam(required = false, defaultValue = "") String returnUrl,
                                RedirectAttributes ra) {
-        String currentUserId = commonLogic.getCurrentUserId();
-        EvalAdhocGroup group = commonLogic.getAdhocGroupById(adhocGroupId);
-        if (!currentUserId.equals(group.getOwner()))
-            throw new SecurityException("Only owners can modify adhocgroups: " + currentUserId);
+        String currentUserId = currentUserId();
+        String[] removedDisplayName = new String[1];
 
-        List<String> participants = new ArrayList<>();
-        for (String id : group.getParticipantIds()) {
-            if (!id.equals(adhocUserId)) participants.add(id);
-        }
-        group.setParticipantIds(participants);
-        commonLogic.saveAdhocGroup(group);
+        daoInvoker.invokeTransactionalAccess(() -> {
+            EvalAdhocGroup group = commonLogic.getAdhocGroupById(adhocGroupId);
+            if (group == null) throw new IllegalArgumentException("Adhoc group not found: " + adhocGroupId);
+            if (!currentUserId.equals(group.getOwner()))
+                throw new SecurityException("Only owners can modify adhocgroups: " + currentUserId);
 
-        EvalUser removed = commonLogic.getEvalUserById(adhocUserId);
+            List<String> participants = new ArrayList<>();
+            for (String id : group.getParticipantIds()) {
+                if (!id.equals(adhocUserId)) participants.add(id);
+            }
+            group.setParticipantIds(participants);
+            commonLogic.saveAdhocGroup(group);
+
+            EvalUser removed = commonLogic.getEvalUserById(adhocUserId);
+            removedDisplayName[0] = removed.displayName;
+        });
+
         ra.addFlashAttribute("successMessage", "modifyadhocgroup.message.removeduser");
-        ra.addFlashAttribute("successArgs", new Object[]{ removed.displayName });
+        ra.addFlashAttribute("successArgs", new Object[]{ removedDisplayName[0] });
 
         return "redirect:/modify_adhoc_group?adhocGroupId=" + adhocGroupId
                 + (returnUrl.isEmpty() ? "" : "&returnUrl=" + URLEncoder.encode(returnUrl, StandardCharsets.UTF_8));
@@ -216,7 +221,7 @@ public class ModifyAdhocGroupController {
                     displayEntry = user.displayName;
                 } else if (useAdhocUsers && EvalUtils.isValidEmail(entry)) {
                     // 3. Create adhoc user from email address
-                    EvalAdhocUser adhocUser = new EvalAdhocUser(commonLogic.getCurrentUserId(), entry);
+                    EvalAdhocUser adhocUser = new EvalAdhocUser(currentUserId(), entry);
                     commonLogic.saveAdhocUser(adhocUser);
                     userId = adhocUser.getUserId();
                 }

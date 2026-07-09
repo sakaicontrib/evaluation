@@ -16,12 +16,9 @@ package org.sakaiproject.evaluation.tool.controllers;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.sakaiproject.component.cover.ComponentManager;
 import org.sakaiproject.content.api.ContentHostingService;
 import org.sakaiproject.content.api.ContentResourceEdit;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.imports.EvalImportLogic;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,11 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/control_import")
-public class ControlImportController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
+public class ControlImportController extends EvalControllerSupport {
     // Retrieved via ComponentManager because they live in the RSF context, not the MVC one
     private EvalImportLogic getImportLogic() {
         return (EvalImportLogic) ComponentManager.get(EvalImportLogic.class.getName());
@@ -81,7 +74,7 @@ public class ControlImportController {
             // Process the XML file
             List<String> messages = getImportLogic().load(resourceId);
             ra.addFlashAttribute("importMessages", messages);
-            log.info("Admin ({}) imported XML data: {} messages", commonLogic.getCurrentUserId(), messages.size());
+            log.info("Admin ({}) imported XML data: {} messages", currentUserId(), messages.size());
 
         } catch (Exception e) {
             log.error("Error during XML data import", e);
@@ -98,7 +91,7 @@ public class ControlImportController {
     }
 
     private void checkAdmin() {
-        if (!commonLogic.isUserAdmin(commonLogic.getCurrentUserId()))
+        if (!isCurrentUserAdmin())
             throw new SecurityException("Non-admin users may not access this page");
     }
 }

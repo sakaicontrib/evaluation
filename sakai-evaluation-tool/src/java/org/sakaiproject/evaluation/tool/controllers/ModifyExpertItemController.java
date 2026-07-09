@@ -40,7 +40,7 @@ public class ModifyExpertItemController extends EvalControllerSupport {
                        @RequestParam(defaultValue = "false") boolean isNew,
                        Model model) {
 
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         if (!commonLogic.isUserAdmin(currentUserId)) {
             throw new SecurityException("Non-admin users may not access this page");
         }
@@ -75,7 +75,7 @@ public class ModifyExpertItemController extends EvalControllerSupport {
                        @RequestParam String title,
                        @RequestParam(required = false) String description) {
 
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         boolean isCategory = EvalConstants.ITEM_GROUP_TYPE_CATEGORY.equals(type);
         EvalItemGroup group;
 

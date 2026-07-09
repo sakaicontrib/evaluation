@@ -18,12 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.dao.EvalDaoInvoker;
-import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
@@ -41,23 +36,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  */
 @Controller
 @RequestMapping("/modify_scale")
-public class ModifyScaleController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalAuthoringService")
-    private EvalAuthoringService authoringService;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalSettings")
-    private EvalSettings settings;
-
-    @Resource(name = "org.sakaiproject.evaluation.dao.EvalDaoInvoker")
-    private EvalDaoInvoker daoInvoker;
+public class ModifyScaleController extends EvalControllerSupport {
 
     @GetMapping
     public String show(@RequestParam(required = false) Long scaleId, Model model) {
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
 
         List<String> options;
@@ -115,7 +98,7 @@ public class ModifyScaleController {
                        @RequestParam(required = false) String sharing,
                        RedirectAttributes redirectAttrs) {
 
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
 
         // Build options list (filter empty trailing entries)

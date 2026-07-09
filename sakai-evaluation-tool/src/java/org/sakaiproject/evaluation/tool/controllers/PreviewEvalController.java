@@ -21,24 +21,17 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
-import org.sakaiproject.evaluation.tool.EvalToolConstants;
-import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
-import org.sakaiproject.evaluation.tool.utils.ScaledUtils;
+import org.sakaiproject.evaluation.tool.utils.ScaleOptionsBuilder;
+import org.sakaiproject.evaluation.tool.utils.ScaleOptionsBuilder.OptionData;
+import org.sakaiproject.evaluation.tool.utils.ScaleOptionsBuilder.SteppedRow;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.DataTemplateItem;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.HierarchyNodeGroup;
@@ -65,28 +58,12 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @Controller
 @RequestMapping("/preview_eval")
-public class PreviewEvalController {
+public class PreviewEvalController extends EvalControllerSupport {
 
     // ---- DTOs ----------------------------------------------------------------
 
     @Data
-    public static class OptionData {
-        int index;
-        String value;
-        String label;
-        String matrixLegend;
-        String matrixLegendAlign;
-    }
-
-    @Data
-    public static class SteppedRow {
-        String label;
-        int middleCount;
-        String value;
-    }
-
-    @Data
-    public static class ItemData {
+    public static class ItemData implements ScaleOptionsBuilder.ItemScaleOptionsTarget {
         String itemType;
         String itemText;
         int displayNumber;
@@ -123,20 +100,6 @@ public class PreviewEvalController {
 
     // ---- Services ------------------------------------------------------------
 
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationService")
-    private EvalEvaluationService evaluationService;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalAuthoringService")
-    private EvalAuthoringService authoringService;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalSettings")
-    private EvalSettings evalSettings;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic")
-    private ExternalHierarchyLogic hierarchyLogic;
 
     @Autowired
     private MessageSource messageSource;
@@ -157,7 +120,7 @@ public class PreviewEvalController {
         }
 
         Locale locale = RequestContextUtils.getLocale(request);
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
 
         // ---- Build eval object (real or fake) --------------------------------
         EvalEvaluation eval;
@@ -198,7 +161,7 @@ public class PreviewEvalController {
                 }
             }
         } else {
-            Boolean useGroupSpecificPreview = (Boolean) evalSettings.get(EvalSettings.ENABLE_GROUP_SPECIFIC_PREVIEW);
+            Boolean useGroupSpecificPreview = (Boolean) settings.get(EvalSettings.ENABLE_GROUP_SPECIFIC_PREVIEW);
             if (useGroupSpecificPreview != null && useGroupSpecificPreview && evaluationId != null) {
                 int groupCount = evaluationService.countEvaluationGroups(evaluationId, true);
                 if (groupCount == 1) {
@@ -239,7 +202,7 @@ public class PreviewEvalController {
                 instructors.add("fake2");
                 Map<String, List<String>> associates = new HashMap<>();
                 associates.put(EvalConstants.ITEM_CATEGORY_INSTRUCTOR, instructors);
-                Boolean taEnabled = (Boolean) evalSettings.get(EvalSettings.ENABLE_ASSISTANT_CATEGORY);
+                Boolean taEnabled = (Boolean) settings.get(EvalSettings.ENABLE_ASSISTANT_CATEGORY);
                 if (Boolean.TRUE.equals(taEnabled)) {
                     List<String> tas = new ArrayList<>();
                     tas.add("fake1");
@@ -260,8 +223,8 @@ public class PreviewEvalController {
         }
 
         // ---- Render items into DTO list --------------------------------------
-        boolean useCourseOnly = Boolean.TRUE.equals(evalSettings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY));
-        boolean showHierHeaders = Boolean.TRUE.equals(evalSettings.get(EvalSettings.DISPLAY_HIERARCHY_HEADERS));
+        boolean useCourseOnly = Boolean.TRUE.equals(settings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY));
+        boolean showHierHeaders = Boolean.TRUE.equals(settings.get(EvalSettings.DISPLAY_HIERARCHY_HEADERS));
 
         List<CategorySection> sections = new ArrayList<>();
         int countInstructors = 0;
@@ -375,111 +338,11 @@ public class PreviewEvalController {
     }
 
     private void populateScaleData(ItemData d, EvalTemplateItem ti) {
-        EvalScale scale = ti.getItem().getScale();
-        List<String> rawOptions = scale.getOptions();
-        int n = rawOptions.size();
-
-        String ds = ti.getScaleDisplaySetting();
-        if (ds == null) ds = EvalConstants.ITEM_SCALE_DISPLAY_FULL;
-        d.setScaleDisplaySetting(ds);
-
-        boolean isColored = EvalConstants.ITEM_SCALE_DISPLAY_COMPACT_COLORED.equals(ds)
-                || EvalConstants.ITEM_SCALE_DISPLAY_FULL_COLORED.equals(ds)
-                || EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED.equals(ds)
-                || EvalConstants.ITEM_SCALE_DISPLAY_MATRIX_COLORED.equals(ds);
-        boolean isCompact = EvalConstants.ITEM_SCALE_DISPLAY_COMPACT.equals(ds)
-                || EvalConstants.ITEM_SCALE_DISPLAY_COMPACT_COLORED.equals(ds);
-        boolean isStepped = EvalConstants.ITEM_SCALE_DISPLAY_STEPPED.equals(ds)
-                || EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED.equals(ds);
-        boolean isMatrix = EvalConstants.ITEM_SCALE_DISPLAY_MATRIX.equals(ds)
-                || EvalConstants.ITEM_SCALE_DISPLAY_MATRIX_COLORED.equals(ds);
-
-        if (isColored) {
-            d.setIdealImageUrl(resolveContextUrl(EvalToolConstants.COLORED_IMAGE_URLS[ScaledUtils.idealIndex(scale)]));
-        }
-
-        if (isCompact) {
-            d.setStartLabel(rawOptions.get(0));
-            d.setEndLabel(rawOptions.get(n - 1));
-            if (isColored) {
-                d.setStartClass(ScaledUtils.getStartClass(scale));
-                d.setEndClass(ScaledUtils.getEndClass(scale));
-            }
-            List<OptionData> opts = new ArrayList<>();
-            for (int j = 0; j < n; j++) {
-                OptionData o = new OptionData();
-                o.setIndex(j); o.setValue(String.valueOf(j)); o.setLabel(" ");
-                opts.add(o);
-            }
-            d.setOptions(opts);
-
-        } else if (isStepped) {
-            List<SteppedRow> rows = new ArrayList<>();
-            for (int j = 0; j < n; j++) {
-                SteppedRow row = new SteppedRow();
-                row.setLabel(rawOptions.get(n - 1 - j));
-                row.setMiddleCount(j);
-                row.setValue(String.valueOf(n - 1 - j));
-                rows.add(row);
-            }
-            d.setSteppedRows(rows);
-            List<OptionData> opts = new ArrayList<>();
-            for (int j = 0; j < n; j++) {
-                OptionData o = new OptionData();
-                o.setIndex(j); o.setValue(String.valueOf(n - 1 - j)); o.setLabel(rawOptions.get(n - 1 - j));
-                opts.add(o);
-            }
-            d.setOptions(opts);
-
-        } else if (isMatrix) {
-            List<String> headers = RenderingUtils.getMatrixLabels(rawOptions);
-            d.setMatrixLabelStart(headers.get(0));
-            d.setMatrixLabelEnd(headers.get(1));
-            if (headers.size() >= 3) d.setMatrixLabelMiddle(headers.get(2));
-            boolean numericScale = RenderingUtils.isNumericScale(rawOptions);
-            int middleIndex = n > 4 ? (n - 1) / 2 : -1;
-            List<OptionData> opts = new ArrayList<>();
-            for (int j = 0; j < n; j++) {
-                OptionData o = new OptionData();
-                o.setIndex(j); o.setValue(String.valueOf(n - 1 - j)); o.setLabel(String.valueOf(j + 1));
-                if (!numericScale) {
-                    if (j == 0) { o.setMatrixLegend(headers.get(0)); o.setMatrixLegendAlign("left"); }
-                    else if (j == n - 1) { o.setMatrixLegend(headers.get(1)); o.setMatrixLegendAlign("right"); }
-                    else if (j == middleIndex) { o.setMatrixLegend(headers.get(2)); o.setMatrixLegendAlign("center"); }
-                }
-                opts.add(o);
-            }
-            d.setOptions(opts);
-
-        } else {
-            // Full, FullColored, Vertical
-            List<OptionData> opts = new ArrayList<>();
-            for (int j = 0; j < n; j++) {
-                OptionData o = new OptionData();
-                o.setIndex(j); o.setValue(String.valueOf(j)); o.setLabel(rawOptions.get(j));
-                opts.add(o);
-            }
-            d.setOptions(opts);
-        }
+        ScaleOptionsBuilder.applyTo(d, ScaleOptionsBuilder.forTemplateItem(ti));
     }
 
     private void populateChoiceData(ItemData d, EvalTemplateItem ti) {
-        EvalScale scale = ti.getItem().getScale();
-        List<String> rawOptions = scale.getOptions();
-        String ds = ti.getScaleDisplaySetting();
-        if (ds == null) ds = EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL;
-        d.setScaleDisplaySetting(ds);
+        ScaleOptionsBuilder.applyTo(d, ScaleOptionsBuilder.forChoiceTemplateItem(ti, null));
         d.setUsesNA(Boolean.TRUE.equals(ti.getUsesNA()));
-        List<OptionData> opts = new ArrayList<>();
-        for (int j = 0; j < rawOptions.size(); j++) {
-            OptionData o = new OptionData();
-            o.setIndex(j); o.setValue(String.valueOf(j)); o.setLabel(rawOptions.get(j));
-            opts.add(o);
-        }
-        d.setOptions(opts);
-    }
-
-    private String resolveContextUrl(String url) {
-        return url.replace("$context", "");
     }
 }

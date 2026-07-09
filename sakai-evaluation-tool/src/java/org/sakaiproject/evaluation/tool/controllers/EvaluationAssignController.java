@@ -24,13 +24,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Resource;
-
 import org.sakaiproject.entitybroker.EntityReference;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
@@ -56,19 +51,7 @@ import lombok.Data;
  */
 @Controller
 @RequestMapping("/evaluation_assign")
-public class EvaluationAssignController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationService")
-    private EvalEvaluationService evaluationService;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalSettings")
-    private EvalSettings settings;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalAuthoringService")
-    private EvalAuthoringService authoringService;
+public class EvaluationAssignController extends EvalControllerSupport {
 
     @Data
     public static class GroupRow {
@@ -82,7 +65,7 @@ public class EvaluationAssignController {
 
     @GetMapping
     public String show(@RequestParam Long evaluationId, Locale locale, Model model) {
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
 
         EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
         if (eval == null) {

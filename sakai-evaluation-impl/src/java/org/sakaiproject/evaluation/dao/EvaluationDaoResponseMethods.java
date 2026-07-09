@@ -15,8 +15,10 @@
 package org.sakaiproject.evaluation.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.query.Query;
@@ -208,13 +210,6 @@ abstract class EvaluationDaoResponseMethods extends EvaluationDaoAdminSupportMet
         return query.list();
     }
 
-    /**
-     * Removes a group of templateItems and updates all related items 
-     * and templates at the same time (inside one transaction)
-     * 
-     * @param templateItems the array of {@link EvalTemplateItem} to remove 
-     */
-
     public List<Long> getResponseIds(Long evalId, String[] evalGroupIds, String[] userIds, Boolean completed) {
         String groupsHQL = "";
         if (evalGroupIds != null && evalGroupIds.length > 0) {
@@ -274,14 +269,6 @@ abstract class EvaluationDaoResponseMethods extends EvaluationDaoAdminSupportMet
     }
 
 
-    /**
-     * Get a list of evaluation categories
-     * 
-     * @param userId the internal user id (not username), if null then return all categories
-     * @return a list of {@link String}
-     */
-    @SuppressWarnings("unchecked")
-
     public Set<String> getResponseUserIds(Long evaluationId, String[] evalGroupIds, Boolean completed) {
         String groupsHQL = "";
         if (evalGroupIds != null && evalGroupIds.length > 0) {
@@ -308,21 +295,22 @@ abstract class EvaluationDaoResponseMethods extends EvaluationDaoAdminSupportMet
 
     /** getResponsesSavedInProgress returns a List of EvalResponses that have been saved
      * but not submitted, meaning that they will not be included in any statistics.
-     * @param activeEvaluationsOnly If true, only include responses associated with Evaluations
-     * that are still open.  If false, only include respones associated with Evaluations that are closed
+     * @param activeEvaluationsOnly If true, only include responses associated with evaluations
+     * that are still open. If false, only include responses associated with evaluations that are closed
      * @see org.sakaiproject.evaluation.dao.EvaluationDao#getResponsesSavedInProgress()
      */
-    @SuppressWarnings("unchecked")
     public List<EvalResponse> getResponsesSavedInProgress(boolean activeEvaluationsOnly) {
-        String evalState = EvalConstants.EVALUATION_STATE_ACTIVE;
-        String hql = "SELECT response from EvalResponse as response where response.endTime is null";         		
+        StringBuilder hql = new StringBuilder("SELECT response from EvalResponse as response where response.endTime is null");
+        Map<String, Object> params = new HashMap<>();
         if (activeEvaluationsOnly) {
-        	hql += " and response.evaluation.state = :evalState"; 
+            appendEvaluationStateFilter(hql, "response.evaluation",
+                    new String[] {EvalConstants.EVALUATION_STATE_ACTIVE}, null, params);
         } else {
-        	hql += " and response.evaluation.state != :evalState";
+            appendEvaluationStateFilter(hql, "response.evaluation", null,
+                    new String[] {EvalConstants.EVALUATION_STATE_ACTIVE}, params);
         }
-        Query<EvalResponse> query = currentSession().createQuery(hql, EvalResponse.class);
-        query.setParameter("evalState", evalState);
+        Query<EvalResponse> query = currentSession().createQuery(hql.toString(), EvalResponse.class);
+        bindQueryParameters(query, params);
         return query.list();
     }
 }

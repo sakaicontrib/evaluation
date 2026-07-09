@@ -19,10 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import javax.annotation.Resource;
-
-import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -41,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/control_templates")
-public class ControlTemplatesController {
+public class ControlTemplatesController extends EvalControllerSupport {
 
     @Data
     public static class TemplateRow {
@@ -55,16 +51,10 @@ public class ControlTemplatesController {
         boolean canChown;
     }
 
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalAuthoringService")
-    private EvalAuthoringService authoringService;
-
     @GetMapping
     public String show(Locale locale, Model model) {
 
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
 
         List<EvalTemplate> templates = authoringService.getTemplatesForUser(currentUserId, null, true);
@@ -91,7 +81,7 @@ public class ControlTemplatesController {
 
     @PostMapping("/copy")
     public String copyTemplate(@RequestParam Long templateId) {
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         authoringService.copyTemplate(templateId, null, currentUserId, false, true);
         return "redirect:/control_templates";
     }

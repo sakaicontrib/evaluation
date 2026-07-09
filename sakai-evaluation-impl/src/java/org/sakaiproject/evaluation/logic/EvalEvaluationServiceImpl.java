@@ -100,6 +100,11 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
         toolApi.exportReport(evaluation, groupIds, evaluateeId, outputStream, exportType);
     }
 
+    public void exportReport(EvalEvaluation evaluation, String[] groupIds,
+            String evaluateeId, OutputStream outputStream, String exportType, boolean newReportStyle) {
+        toolApi.exportReport(evaluation, groupIds, evaluateeId, outputStream, exportType, newReportStyle);
+    }
+
     private SiteService siteService;
     public void setSiteService(SiteService siteService) {
         this.siteService = siteService;

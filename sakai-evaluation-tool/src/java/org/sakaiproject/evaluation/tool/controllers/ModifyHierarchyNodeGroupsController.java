@@ -20,12 +20,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Resource;
-
 import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.springframework.stereotype.Controller;
@@ -41,13 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/modify_hierarchy_node_groups")
-public class ModifyHierarchyNodeGroupsController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic")
-    private ExternalHierarchyLogic hierLogic;
+public class ModifyHierarchyNodeGroupsController extends EvalControllerSupport {
 
     @Data
     public static class GroupRow {
@@ -62,8 +52,8 @@ public class ModifyHierarchyNodeGroupsController {
                        @RequestParam(value = "expanded", required = false) List<String> expanded,
                        Model model) {
         checkAdmin();
-        EvalHierarchyNode node = hierLogic.getNodeById(nodeId);
-        Set<String> assignedGroupIds = hierLogic.getEvalGroupsForNode(nodeId);
+        EvalHierarchyNode node = hierarchyLogic.getNodeById(nodeId);
+        Set<String> assignedGroupIds = hierarchyLogic.getEvalGroupsForNode(nodeId);
 
         List<EvalGroup> allGroups = commonLogic.getEvalGroupsForUser(
                 commonLogic.getAdminUserId(), EvalConstants.PERM_BE_EVALUATED);
@@ -81,7 +71,7 @@ public class ModifyHierarchyNodeGroupsController {
 
         List<GroupRow> rows = new ArrayList<>();
         for (EvalGroup g : allGroups) {
-            List<Section> sections = hierLogic.getSectionsUnderEvalGroup(g.evalGroupId);
+            List<Section> sections = hierarchyLogic.getSectionsUnderEvalGroup(g.evalGroupId);
             String sectionStr = sections.stream().map(Section::getTitle).reduce("", (a, b) -> a.isEmpty() ? b : a + ", " + b);
             rows.add(new GroupRow(g.evalGroupId, g.title, sectionStr, assignedGroupIds.contains(g.evalGroupId)));
         }
@@ -99,8 +89,8 @@ public class ModifyHierarchyNodeGroupsController {
                        @RequestParam(value = "expanded", required = false) List<String> expanded) {
         checkAdmin();
         Set<String> toAssign = selectedGroups != null ? new HashSet<>(selectedGroups) : new HashSet<>();
-        hierLogic.setEvalGroupsForNode(nodeId, toAssign);
-        log.info("Admin ({}) set {} groups for hierarchy node {}", commonLogic.getCurrentUserId(), toAssign.size(), nodeId);
+        hierarchyLogic.setEvalGroupsForNode(nodeId, toAssign);
+        log.info("Admin ({}) set {} groups for hierarchy node {}", currentUserId(), toAssign.size(), nodeId);
         return buildReturnUrl(expanded);
     }
 
@@ -110,7 +100,7 @@ public class ModifyHierarchyNodeGroupsController {
     }
 
     private void checkAdmin() {
-        if (!commonLogic.isUserAdmin(commonLogic.getCurrentUserId()))
+        if (!isCurrentUserAdmin())
             throw new SecurityException("Non-admin users may not access this locator");
     }
 }

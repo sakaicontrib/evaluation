@@ -14,8 +14,6 @@
  */
 package org.sakaiproject.evaluation.tool.reporting;
 
-import org.sakaiproject.evaluation.tool.reporting.EvalMessageLocator;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -53,7 +51,7 @@ import org.sakaiproject.user.api.UserDirectoryService;
 
 
 /**
- * 
+ *
  * @author Steven Githens
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
@@ -86,9 +84,9 @@ public class XLSReportExporter implements ReportExporter {
         this.evaluationService = evaluationService;
     }
 
-    private EvalMessageLocator messageLocator;
-    public void setEvalMessageLocator(EvalMessageLocator locator) {
-        this.messageLocator = locator;
+    private ReportMessageSource messages;
+    public void setMessageSource(ReportMessageSource messageSource) {
+        this.messages = messageSource;
     }
 
     private UserDirectoryService userDirectoryService;
@@ -102,7 +100,7 @@ public class XLSReportExporter implements ReportExporter {
 
     /**
      * Build the .xls report in the new (section based) format.
-     * 
+     *
      * @param evaluation
      * @param groupIDs
      * @param outputStream
@@ -120,8 +118,8 @@ public class XLSReportExporter implements ReportExporter {
         creationHelper = wb.getCreationHelper();
 
         // Title style
-        Sheet courseSheet = wb.createSheet( messageLocator.getMessage( "viewreport.xls.courseSheet.name" ) );
-        Sheet instructorSheet = wb.createSheet( messageLocator.getMessage( "viewreport.xls.instructorSheet.name" ) );
+        Sheet courseSheet = wb.createSheet( messages.getMessage( "viewreport.xls.courseSheet.name" ) );
+        Sheet instructorSheet = wb.createSheet( messages.getMessage( "viewreport.xls.instructorSheet.name" ) );
         Font font = wb.createFont();
         font.setFontHeightInPoints( (short) 12 );
         font.setBold(true);
@@ -152,8 +150,8 @@ public class XLSReportExporter implements ReportExporter {
         Row instructorSheetRow1 = instructorSheet.createRow( rowCounter );
         Cell courseSheetCellA1 = courseSheetRow1.createCell( (short) 0 );
         Cell instructorSheetCellA1 = instructorSheetRow1.createCell( (short) 0 );
-        setPlainStringCell( courseSheetCellA1, evaluation.getTitle() + " - " + messageLocator.getMessage( "viewreport.xls.courseSheet.name" ) );
-        setPlainStringCell( instructorSheetCellA1, evaluation.getTitle() + " - " + messageLocator.getMessage( "viewreport.xls.instructorSheet.name" ) );
+        setPlainStringCell( courseSheetCellA1, evaluation.getTitle() + " - " + messages.getMessage( "viewreport.xls.courseSheet.name" ) );
+        setPlainStringCell( instructorSheetCellA1, evaluation.getTitle() + " - " + messages.getMessage( "viewreport.xls.instructorSheet.name" ) );
         courseSheetCellA1.setCellStyle( mainTitleStyle );
         instructorSheetCellA1.setCellStyle( mainTitleStyle );
 
@@ -171,14 +169,14 @@ public class XLSReportExporter implements ReportExporter {
         setPlainStringCell( instructorSheetCellA2, EvalUtils.makeResponseRateStringFromCounts( responsesCount, enrollmentsCount ) );
 
         // Dates
-        setPlainStringCell( courseSheetRow1.createCell( (short) 2 ), messageLocator.getMessage( "evalsettings.start.date.header" ) );
-        setPlainStringCell( instructorSheetRow1.createCell( (short)  2 ), messageLocator.getMessage( "evalsettings.start.date.header" ) );
+        setPlainStringCell( courseSheetRow1.createCell( (short) 2 ), messages.getMessage( "evalsettings.start.date.header" ) );
+        setPlainStringCell( instructorSheetRow1.createCell( (short)  2 ), messages.getMessage( "evalsettings.start.date.header" ) );
         setDateCell( courseSheetRow2.createCell( (short) 2 ), evaluation.getStartDate() );
         setDateCell( instructorSheetRow2.createCell( (short)  2 ), evaluation.getStartDate() );
         if( evaluation.getDueDate() != null )
         {
-            setPlainStringCell( courseSheetRow1.createCell( (short) 3 ), messageLocator.getMessage( "evalsettings.due.date.header" ) );
-            setPlainStringCell( instructorSheetRow1.createCell( (short) 3), messageLocator.getMessage( "evalsettings.due.date.header" ) );
+            setPlainStringCell( courseSheetRow1.createCell( (short) 3 ), messages.getMessage( "evalsettings.due.date.header" ) );
+            setPlainStringCell( instructorSheetRow1.createCell( (short) 3), messages.getMessage( "evalsettings.due.date.header" ) );
             setDateCell( courseSheetRow2.createCell( (short) 3 ), evaluation.getDueDate() );
             setDateCell( instructorSheetRow2.createCell( (short) 3), evaluation.getDueDate() );
         }
@@ -193,9 +191,9 @@ public class XLSReportExporter implements ReportExporter {
             Cell instructorSheetCellA3 = instructorSheetRow3.createCell( (short) 0 );
 
             // Get the section/site titles
-            setPlainStringCell( courseSheetCellA3, messageLocator.getMessage( "reporting.xls.participants",
+            setPlainStringCell( courseSheetCellA3, messages.getMessage( "reporting.xls.participants",
                     new Object[] { responseAggregator.getCommaSeparatedGroupNames( groupIDs ) } ) );
-            setPlainStringCell( instructorSheetCellA3, messageLocator.getMessage( "reporting.xls.participants",
+            setPlainStringCell( instructorSheetCellA3, messages.getMessage( "reporting.xls.participants",
                     new Object[] { responseAggregator.getCommaSeparatedGroupNames( groupIDs ) } ) );
         }
 
@@ -209,30 +207,30 @@ public class XLSReportExporter implements ReportExporter {
         Cell instructorSheetSectionHeaderCell = instructorSheetHeaderRow.createCell( instructorSheetHeaderCount++ );
         if( evaluation.getSectionAwareness() )
         {
-            courseSheetSectionHeaderCell.setCellValue( messageLocator.getMessage( "viewreport.section.header" ) );
-            instructorSheetSectionHeaderCell.setCellValue( messageLocator.getMessage( "viewreport.section.header" ) );
+            courseSheetSectionHeaderCell.setCellValue( messages.getMessage( "viewreport.section.header" ) );
+            instructorSheetSectionHeaderCell.setCellValue( messages.getMessage( "viewreport.section.header" ) );
         }
         else
         {
-            courseSheetSectionHeaderCell.setCellValue( messageLocator.getMessage( "viewreport.site.header" ) );
-            instructorSheetSectionHeaderCell.setCellValue( messageLocator.getMessage( "viewreport.site.header" ) );
+            courseSheetSectionHeaderCell.setCellValue( messages.getMessage( "viewreport.site.header" ) );
+            instructorSheetSectionHeaderCell.setCellValue( messages.getMessage( "viewreport.site.header" ) );
         }
         courseSheetSectionHeaderCell.setCellStyle( boldHeaderStyle );
         instructorSheetSectionHeaderCell.setCellStyle( boldHeaderStyle );
         Cell courseSheetResponseIdHeaderCell = courseSheetHeaderRow.createCell( courseSheetHeaderCount++ );
         Cell instructorSheetResponseIdHeaderCell = instructorSheetHeaderRow.createCell( instructorSheetHeaderCount++ );
-        courseSheetResponseIdHeaderCell.setCellValue( messageLocator.getMessage( "viewreport.responseID.header" ) );
-        instructorSheetResponseIdHeaderCell.setCellValue( messageLocator.getMessage( "viewreport.responseID.header" ) );
+        courseSheetResponseIdHeaderCell.setCellValue( messages.getMessage( "viewreport.responseID.header" ) );
+        instructorSheetResponseIdHeaderCell.setCellValue( messages.getMessage( "viewreport.responseID.header" ) );
         courseSheetResponseIdHeaderCell.setCellStyle( boldHeaderStyle );
         instructorSheetResponseIdHeaderCell.setCellStyle( boldHeaderStyle );
         Cell instructorSheetInstructorIdHeaderCell = instructorSheetHeaderRow.createCell( instructorSheetHeaderCount++ );
-        instructorSheetInstructorIdHeaderCell.setCellValue( messageLocator.getMessage( "viewreport.instructorID.header" ) );
+        instructorSheetInstructorIdHeaderCell.setCellValue( messages.getMessage( "viewreport.instructorID.header" ) );
         instructorSheetInstructorIdHeaderCell.setCellStyle( boldHeaderStyle );
         Cell instructorSheetFirstNameHeaderCell = instructorSheetHeaderRow.createCell( instructorSheetHeaderCount++ );
-        instructorSheetFirstNameHeaderCell.setCellValue( messageLocator.getMessage( "viewreport.firstName.header" ) );
+        instructorSheetFirstNameHeaderCell.setCellValue( messages.getMessage( "viewreport.firstName.header" ) );
         instructorSheetFirstNameHeaderCell.setCellStyle( boldHeaderStyle );
         Cell instructorSheetLastNameHeaderCell = instructorSheetHeaderRow.createCell( instructorSheetHeaderCount++ );
-        instructorSheetLastNameHeaderCell.setCellValue( messageLocator.getMessage( "viewreport.lastName.header" ) );
+        instructorSheetLastNameHeaderCell.setCellValue( messages.getMessage( "viewreport.lastName.header" ) );
         instructorSheetLastNameHeaderCell.setCellStyle( boldHeaderStyle );
 
         // Generate dynamic question headers
@@ -262,7 +260,7 @@ public class XLSReportExporter implements ReportExporter {
                 if( dti.usesComments() )
                 {
                     setPlainStringCell( instructorSheetHeaderRow.createCell( instructorSheetHeaderCount++ ),
-                            messageLocator.getMessage( "viewreport.comments.header" ) ).setCellStyle( italicMiniHeaderStyle );
+                            messages.getMessage( "viewreport.comments.header" ) ).setCellStyle( italicMiniHeaderStyle );
                 }
             }
             else
@@ -272,7 +270,7 @@ public class XLSReportExporter implements ReportExporter {
                 if( dti.usesComments() )
                 {
                     setPlainStringCell( courseSheetHeaderRow.createCell( courseSheetHeaderCount++ ),
-                            messageLocator.getMessage( "viewreport.comments.header" ) ).setCellStyle( italicMiniHeaderStyle );
+                            messages.getMessage( "viewreport.comments.header" ) ).setCellStyle( italicMiniHeaderStyle );
                 }
             }
             setPlainStringCell( questionTextHeaderCell, questionText );
@@ -308,7 +306,7 @@ public class XLSReportExporter implements ReportExporter {
                     continue;
                 }
 
-                // If it's an instructor related item... 
+                // If it's an instructor related item...
                 EvalAnswer answer = dti.getAnswer( responseID );
                 if( EvalConstants.ITEM_CATEGORY_ASSISTANT.equals( dti.associateType ) || EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals( dti.associateType ) )
                 {
@@ -341,7 +339,7 @@ public class XLSReportExporter implements ReportExporter {
 
                 // If it's a course related item, just add it normally to the course worksheet
                 else
-                {    
+                {
                     row.add( QUESTION_COMMENTS_COLUMN_START_INDEX_COURSE_SHEET + questionCounter, "" );
                     if( answer != null )
                     {
@@ -491,7 +489,7 @@ public class XLSReportExporter implements ReportExporter {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.sakaiproject.evaluation.tool.reporting.ReportExporter#buildReport(org.sakaiproject.evaluation
      * .model.EvalEvaluation, java.lang.String[], java.io.OutputStream)
@@ -499,16 +497,16 @@ public class XLSReportExporter implements ReportExporter {
     public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream, boolean newReportStyle) {
         buildReport(evaluation, groupIds, null, outputStream, newReportStyle);
     }
-	
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.sakaiproject.evaluation.tool.reporting.ReportExporter#buildReport(org.sakaiproject.evaluation
      * .model.EvalEvaluation, java.lang.String[], java.lang.String, java.io.OutputStream)
      */
     public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream, boolean newReportStyle) {
-    	
+
         /*
          * Logic for creating this view 1) make tidl 2) get DTIs for this eval from tidl 3) use DTIs
          * to make the headers 4) get responseIds from tidl 5) loop over response ids 6) loop over
@@ -516,9 +514,9 @@ public class XLSReportExporter implements ReportExporter {
          * done
          */
 
-    	
-    	//Make sure responseAggregator is using this messageLocator
-        responseAggregator.setMessageLocator(messageLocator);
+
+        //Make sure responseAggregator is using this message source
+        responseAggregator.setMessageSource(messages);
 
         // Determine which report style to use; normal or section based
         if( newReportStyle )
@@ -541,7 +539,7 @@ public class XLSReportExporter implements ReportExporter {
            Workbook wb = new XSSFWorkbook();
            creationHelper = wb.getCreationHelper();
 
-           Sheet sheet = wb.createSheet(messageLocator.getMessage("reporting.xls.sheetname"));
+           Sheet sheet = wb.createSheet(messages.getMessage("reporting.xls.sheetname"));
 
            // Title Style
            Font font = wb.createFont();
@@ -590,11 +588,11 @@ public class XLSReportExporter implements ReportExporter {
                    enrollmentsCount));
 
            // dates
-           setPlainStringCell(row1.createCell((short) 2), messageLocator
+           setPlainStringCell(row1.createCell((short) 2), messages
                    .getMessage("evalsettings.start.date.header"));
            setDateCell(row2.createCell((short) 2), evaluation.getStartDate());
            if (evaluation.getDueDate() != null) {
-               setPlainStringCell(row1.createCell((short) 3), messageLocator
+               setPlainStringCell(row1.createCell((short) 3), messages
                        .getMessage("evalsettings.due.date.header"));
                setDateCell(row2.createCell((short) 3), evaluation.getDueDate());
            }
@@ -603,7 +601,7 @@ public class XLSReportExporter implements ReportExporter {
            if (groupIds.length > 0) {
                Row row3 = sheet.createRow(2);
                Cell cellA3 = row3.createCell((short) 0);
-               setPlainStringCell(cellA3, messageLocator.getMessage("reporting.xls.participants",
+               setPlainStringCell(cellA3, messages.getMessage("reporting.xls.participants",
                        new Object[] { responseAggregator.getCommaSeparatedGroupNames(groupIds) }));
            }
 
@@ -617,7 +615,7 @@ public class XLSReportExporter implements ReportExporter {
                if (!instructorViewAllResults // If the eval is so configured,
                  && !isCurrentUserAdmin // and currentUser is not an admin
                  && !currentUserId.equals(evalOwner) // and currentUser is not the eval creator
-                 && !EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType) 
+                 && !EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType)
                  && !currentUserId.equals(commonLogic.getEvalUserById(dti.associateId).userId) ) {
                    // skip items that aren't for the current user
                    continue;
@@ -636,19 +634,19 @@ public class XLSReportExporter implements ReportExporter {
                Cell questionCat = questionCatRow.createCell(headerCount);
                if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(dti.associateType)) {
                    EvalUser user = commonLogic.getEvalUserById( dti.associateId );
-                   String instructorMsg = messageLocator.getMessage("reporting.spreadsheet.instructor", 
+                   String instructorMsg = messages.getMessage("reporting.spreadsheet.instructor",
                            new Object[] {user.displayName});
                    setPlainStringCell(questionCat, instructorMsg );
                } else if (EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(dti.associateType)) {
                    EvalUser user = commonLogic.getEvalUserById( dti.associateId );
-                   String assistantMsg = messageLocator.getMessage("reporting.spreadsheet.ta", 
+                   String assistantMsg = messages.getMessage("reporting.spreadsheet.ta",
                            new Object[] {user.displayName});
                    setPlainStringCell(questionCat, assistantMsg );
                } else if (EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType)) {
-                   setPlainStringCell(questionCat, messageLocator
+                   setPlainStringCell(questionCat, messages
                            .getMessage("reporting.spreadsheet.course"));
                } else {
-                   setPlainStringCell(questionCat, messageLocator.getMessage("unknown.caps"));
+                   setPlainStringCell(questionCat, messages.getMessage("unknown.caps"));
                }
 
                headerCount++;
@@ -656,7 +654,7 @@ public class XLSReportExporter implements ReportExporter {
                if (dti.usesComments()) {
                    // add an extra column for comments
                    setPlainStringCell(questionTypeRow.createCell(headerCount),
-                           messageLocator.getMessage("viewreport.comments.header")).setCellStyle(
+                           messages.getMessage("viewreport.comments.header")).setCellStyle(
                            italicMiniHeaderStyle);
                    headerCount++;
                }
@@ -680,7 +678,7 @@ public class XLSReportExporter implements ReportExporter {
                    if (!instructorViewAllResults // If the eval is so configured,
                      && !isCurrentUserAdmin // and currentUser is not an admin
                      && !currentUserId.equals(evalOwner) // and currentUser is not the eval creator
-                     && !EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType) 
+                     && !EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType)
                      && !currentUserId.equals(commonLogic.getEvalUserById(dti.associateId).userId) ) {
                        //skip instructor items that aren't for the current user
                        continue;
@@ -696,7 +694,7 @@ public class XLSReportExporter implements ReportExporter {
                    if (dti.usesComments()) {
                        // put comment in the extra column
                        dtiCounter++;
-                       setPlainStringCell(row.createCell(dtiCounter), 
+                       setPlainStringCell(row.createCell(dtiCounter),
                                (answer == null || EvalUtils.isBlank(answer.getComment())) ? "" : answer.getComment());
                    }
                    dtiCounter++;
@@ -714,14 +712,14 @@ public class XLSReportExporter implements ReportExporter {
     }
 
     private TemplateItemDataList getEvalTIDL(EvalEvaluation evaluation,
-			String[] groupIds) {  	
+			String[] groupIds) {
         return responseAggregator.prepareTemplateItemDataStructure(evaluation.getId(), groupIds);
 	}
 
 	/**
      * The regular set string value method in POI is deprecated, and this preferred way is much more
      * bulky, so this is a convenience method.
-     * 
+     *
      * @param cell
      * @param value
      */
@@ -733,7 +731,7 @@ public class XLSReportExporter implements ReportExporter {
     /**
      * Sets the cell contents to the date (requires extra work because Excel stores dates as
      * numbers.
-     * 
+     *
      * @param cell
      * @param date
      * @return
@@ -747,5 +745,5 @@ public class XLSReportExporter implements ReportExporter {
     public String getContentType() {
         return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
     }
-    
+
 }

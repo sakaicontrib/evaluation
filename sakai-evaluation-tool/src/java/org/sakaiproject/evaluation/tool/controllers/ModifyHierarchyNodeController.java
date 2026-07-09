@@ -16,10 +16,6 @@ package org.sakaiproject.evaluation.tool.controllers;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,13 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/modify_hierarchy_node")
-public class ModifyHierarchyNodeController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic")
-    private ExternalHierarchyLogic hierLogic;
+public class ModifyHierarchyNodeController extends EvalControllerSupport {
 
     @GetMapping
     public String show(@RequestParam String nodeId,
@@ -47,7 +37,7 @@ public class ModifyHierarchyNodeController {
                        @RequestParam(value = "expanded", required = false) List<String> expanded,
                        Model model) {
         checkAdmin();
-        EvalHierarchyNode node = hierLogic.getNodeById(nodeId);
+        EvalHierarchyNode node = hierarchyLogic.getNodeById(nodeId);
         model.addAttribute("nodeId",      nodeId);
         model.addAttribute("addingChild", addingChild);
         model.addAttribute("nodeTitle",   node.title != null ? node.title : "");
@@ -69,13 +59,13 @@ public class ModifyHierarchyNodeController {
                        @RequestParam(defaultValue = "") String description,
                        @RequestParam(value = "expanded", required = false) List<String> expanded) {
         checkAdmin();
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         if (addingChild) {
-            EvalHierarchyNode newNode = hierLogic.addNode(nodeId);
-            hierLogic.updateNodeData(newNode.id, title.trim(), description.trim());
+            EvalHierarchyNode newNode = hierarchyLogic.addNode(nodeId);
+            hierarchyLogic.updateNodeData(newNode.id, title.trim(), description.trim());
             log.info("Admin ({}) added child node under {} with title '{}'", currentUserId, nodeId, title);
         } else {
-            hierLogic.updateNodeData(nodeId, title.trim(), description.trim());
+            hierarchyLogic.updateNodeData(nodeId, title.trim(), description.trim());
             log.info("Admin ({}) updated hierarchy node {} with title '{}'", currentUserId, nodeId, title);
         }
         return buildReturnUrl(expanded);
@@ -87,7 +77,7 @@ public class ModifyHierarchyNodeController {
     }
 
     private void checkAdmin() {
-        if (!commonLogic.isUserAdmin(commonLogic.getCurrentUserId()))
+        if (!isCurrentUserAdmin())
             throw new SecurityException("Non-admin users may not access this page");
     }
 }

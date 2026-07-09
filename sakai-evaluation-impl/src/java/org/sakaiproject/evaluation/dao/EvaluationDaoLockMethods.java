@@ -262,20 +262,6 @@ abstract class EvaluationDaoLockMethods extends EvaluationDaoQueryMethods {
     // IN_USE checks
 
     /**
-     * NOT USED
-     * @param scaleId
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    protected Long[] getItemIdsUsingScale(Long scaleId) {
-        List<Long> itemIds = getHibernateTemplate().execute(session -> session
-                .createQuery("select item.id from EvalItem item join item.scale itemScale where itemScale.id = :scaleid order by item.id")
-                .setParameter("scaleid", scaleId)
-                .list());
-        return itemIds.toArray(new Long[] {});
-    }
-
-    /**
      * @param scaleId
      * @return true if this scale is used in any items
      */
@@ -307,7 +293,7 @@ abstract class EvaluationDaoLockMethods extends EvaluationDaoQueryMethods {
 
     /**
      * @param templateId
-     * @return true if this template is used in any evalautions
+     * @return true if this template is used in any evaluations
      */
     public boolean isUsedTemplate(Long templateId) {
         if (templateId != null) {

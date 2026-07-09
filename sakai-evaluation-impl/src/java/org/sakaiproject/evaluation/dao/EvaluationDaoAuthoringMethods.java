@@ -503,13 +503,13 @@ abstract class EvaluationDaoAuthoringMethods extends EvaluationDaoEmailTemplateM
      * @param userId the internal user id (not username)
      * @return a List of {@link EvalItemGroup} objects, ordered by title alphabetically
      */
-    @SuppressWarnings("unchecked")
     public Long getItemGroupIdByItemId(Long itemId, String userId) {
 
-        List<Long> results = getHibernateTemplate().execute(session -> session
-                .createQuery("select eig.id from EvalItemGroup eig, EvalItem ei where eig.ig_item_id = ei.id and ei.id = :itemid")
+        List<Long> results = currentSession().createQuery(
+                "select eig.id from EvalItemGroup eig, EvalItem ei where eig.ig_item_id = ei.id and ei.id = :itemid",
+                Long.class)
                 .setParameter("itemid", itemId)
-                .list());
+                .list();
 
         if (!results.isEmpty()) {
             return results.get(0);
@@ -660,10 +660,11 @@ abstract class EvaluationDaoAuthoringMethods extends EvaluationDaoEmailTemplateM
      */
 
     protected Long getTemplateIdForEvaluation(Long evaluationId) {
-        List<Long> results = (List<Long>) getHibernateTemplate().execute(session -> session
-                .createQuery("select eval.template.id from EvalEvaluation eval where eval.id = :evalid")
+        List<Long> results = currentSession().createQuery(
+                "select eval.template.id from EvalEvaluation eval where eval.id = :evalid",
+                Long.class)
                 .setParameter("evalid", evaluationId)
-                .list());
+                .list();
 
         if (!results.isEmpty()) {
             return results.get(0);

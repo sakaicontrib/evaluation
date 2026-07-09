@@ -66,9 +66,9 @@ public class CSVTakersReportExporter implements ReportExporter {
         this.evaluationService = evaluationService;
     }
 
-    private EvalMessageLocator messageLocator;
-    public void setEvalMessageLocator(EvalMessageLocator locator) {
-        this.messageLocator = locator;
+    private ReportMessageSource messages;
+    public void setMessageSource(ReportMessageSource messageSource) {
+        this.messages = messageSource;
     }
 
     public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream, boolean newReportStyle) {
@@ -78,7 +78,7 @@ public class CSVTakersReportExporter implements ReportExporter {
     public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream, boolean newReportStyle) {
         if (EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(evaluation.getAuthControl())) {
             try (OutputStreamWriter osw = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8)) {
-                osw.write(messageLocator.getMessage("reporting.respondents.nologin"));
+                osw.write(messages.getMessage("reporting.respondents.nologin"));
             } catch (IOException e) {
                 throw new RuntimeException("IO Exception writing CSV takers", e);
             }
@@ -105,12 +105,12 @@ public class CSVTakersReportExporter implements ReportExporter {
             // Header row
             List<String> headers = new ArrayList<>();
             if (multiGroup) {
-                headers.add(messageLocator.getMessage("viewreport.takers.csv.group.header"));
+                headers.add(messages.getMessage("viewreport.takers.csv.group.header"));
             }
-            headers.add(messageLocator.getMessage("viewreport.takers.csv.username.header"));
-            headers.add(messageLocator.getMessage("viewreport.takers.csv.email.header"));
-            headers.add(messageLocator.getMessage("viewreport.takers.csv.name.header"));
-            headers.add(messageLocator.getMessage("viewreport.takers.csv.status.header"));
+            headers.add(messages.getMessage("viewreport.takers.csv.username.header"));
+            headers.add(messages.getMessage("viewreport.takers.csv.email.header"));
+            headers.add(messages.getMessage("viewreport.takers.csv.name.header"));
+            headers.add(messages.getMessage("viewreport.takers.csv.status.header"));
             writer.writeNext(headers.toArray(new String[0]));
 
             // Resolve participant list using EvalAssignUser rows when available (same as
@@ -143,11 +143,11 @@ public class CSVTakersReportExporter implements ReportExporter {
                     EvalResponse resp = userResponses.get(user.userId);
                     String status;
                     if (resp == null) {
-                        status = messageLocator.getMessage("evalresponders.status.untaken");
+                        status = messages.getMessage("evalresponders.status.untaken");
                     } else if (resp.complete) {
-                        status = messageLocator.getMessage("evalresponders.status.complete");
+                        status = messages.getMessage("evalresponders.status.complete");
                     } else {
-                        status = messageLocator.getMessage("evalresponders.status.incomplete");
+                        status = messages.getMessage("evalresponders.status.incomplete");
                     }
 
                     List<String> row = new ArrayList<>();

@@ -73,8 +73,21 @@
 
         <!-- Export buttons -->
         <th:block th:if="${hasItems and !exportOptions.isEmpty()}">
+            <div th:if="${hasNewReportStyleExports}" class="checkbox">
+                <input type="checkbox" name="newReportStyle" id="newReportStyle"
+                       aria-describedby="newReportStyleExplanation"/>
+                <label for="newReportStyle" th:text="#{viewreport.groups.select.newReportStyle.label}">
+                    Separate worksheets for course and instructor questions?
+                </label>
+                <p id="newReportStyleExplanation" class="instructionText"
+                   th:text="#{viewreport.groups.select.newReportStyle.explanation}">
+                    This report format separates course and instructor questions into distinct worksheets.
+                </p>
+            </div>
             <th:block th:each="opt : ${exportOptions}">
-                <a th:href="${opt.url}" th:text="#{__${opt.labelKey}__}" class="button">Export</a>
+                <a th:href="${opt.url}"
+                   th:attr="data-standard-url=${opt.url},data-new-report-style-url=${opt.newReportStyleUrl}"
+                   th:text="#{__${opt.labelKey}__}" class="button">Export</a>
             </th:block>
         </th:block>
 
@@ -228,6 +241,24 @@
             /*[[${hasComments ? 'allComments' : ''}]]*/ '',
             /*[[${hasTextResponses ? 'allTextResponses' : ''}]]*/  ''
         );
+    </script>
+    <script th:if="${hasNewReportStyleExports}" type="text/javascript">
+        (function () {
+            var toggle = document.getElementById("newReportStyle");
+            var links = document.querySelectorAll("[data-standard-url]");
+            if (!toggle || !links.length) return;
+
+            var updateLinks = function () {
+                for (var i = 0; i < links.length; i++) {
+                    var standardUrl = links[i].getAttribute("data-standard-url");
+                    var newReportStyleUrl = links[i].getAttribute("data-new-report-style-url");
+                    links[i].href = toggle.checked && newReportStyleUrl ? newReportStyleUrl : standardUrl;
+                }
+            };
+
+            toggle.addEventListener("change", updateLinks);
+            updateLinks();
+        }());
     </script>
 
 </div>

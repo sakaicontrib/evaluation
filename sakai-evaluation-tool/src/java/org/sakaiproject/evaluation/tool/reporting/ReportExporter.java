@@ -48,7 +48,7 @@ public interface ReportExporter {
     * @param newReportStyle toggle new report style on/off
     */
    public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream, boolean newReportStyle);
-   public void setEvalMessageLocator(EvalMessageLocator locator);
+   public void setMessageSource(ReportMessageSource messageSource);
 
    
    public String getContentType();

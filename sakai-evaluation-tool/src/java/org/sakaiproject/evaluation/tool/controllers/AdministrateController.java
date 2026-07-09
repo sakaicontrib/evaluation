@@ -19,10 +19,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Resource;
-
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.sakaiproject.evaluation.utils.EvalUtils;
@@ -41,13 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/administrate")
-public class AdministrateController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalSettings")
-    private EvalSettings evalSettings;
+public class AdministrateController extends EvalControllerSupport {
 
     /** Settings that are ternary (true/false/null → "1"/"0"/"-1") */
     private static final Set<String> TERNARY = new HashSet<>(Arrays.asList(EvalSettings.TERNARY_BOOLEAN_SETTINGS));
@@ -110,31 +101,31 @@ public class AdministrateController {
 
     @GetMapping
     public String show(Model model) {
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         if (!commonLogic.isUserAdmin(currentUserId)) {
             throw new SecurityException("Non-admin users may not access this page");
         }
 
         // Load all settings into model
         for (String key : BOOLEAN_CHECKBOXES) {
-            model.addAttribute(toAttr(key), Boolean.TRUE.equals(evalSettings.get(key)));
+            model.addAttribute(toAttr(key), Boolean.TRUE.equals(settings.get(key)));
         }
         for (String key : TERNARY) {
-            model.addAttribute(toAttr(key), toTernaryValue(evalSettings.get(key)));
+            model.addAttribute(toAttr(key), toTernaryValue(settings.get(key)));
         }
         for (String key : INTEGER_SETTINGS) {
-            Object val = evalSettings.get(key);
+            Object val = settings.get(key);
             model.addAttribute(toAttr(key), val != null ? val.toString() : "");
         }
         model.addAttribute(toAttr(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE),
-                toMustUseValue(evalSettings.get(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE)));
+                toMustUseValue(settings.get(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE)));
         model.addAttribute(toAttr(EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY),
-                evalSettings.get(EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY));
+                settings.get(EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY));
         model.addAttribute(toAttr(EvalSettings.LOCAL_CSS_PATH),
-                EvalUtils.safeStringSetting(evalSettings, EvalSettings.LOCAL_CSS_PATH));
+                EvalUtils.safeStringSetting(settings, EvalSettings.LOCAL_CSS_PATH));
 
         // Email delivery mode — message key "administrate.email.delivery" takes {0}=mode, {1}=env
-        String delivery = (String) evalSettings.get(EvalSettings.EMAIL_DELIVERY_OPTION);
+        String delivery = (String) settings.get(EvalSettings.EMAIL_DELIVERY_OPTION);
         String deliveryMode, deliveryEnv;
         if (EvalConstants.EMAIL_DELIVERY_SEND.equals(delivery)) { deliveryMode = "SEND email";   deliveryEnv = "PRODUCTION"; }
         else if (EvalConstants.EMAIL_DELIVERY_LOG.equals(delivery)) { deliveryMode = "LOG email"; deliveryEnv = "DEVELOPMENT"; }
@@ -143,9 +134,9 @@ public class AdministrateController {
         model.addAttribute("emailDeliveryEnv", deliveryEnv);
 
         // Sub-page link visibility
-        model.addAttribute("enableProviderSync", Boolean.TRUE.equals(evalSettings.get(EvalSettings.ENABLE_PROVIDER_SYNC)));
-        model.addAttribute("enableImporting", Boolean.TRUE.equals(evalSettings.get(EvalSettings.ENABLE_IMPORTING)));
-        model.addAttribute("useHierarchy", Boolean.TRUE.equals(evalSettings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS)));
+        model.addAttribute("enableProviderSync", Boolean.TRUE.equals(settings.get(EvalSettings.ENABLE_PROVIDER_SYNC)));
+        model.addAttribute("enableImporting", Boolean.TRUE.equals(settings.get(EvalSettings.ENABLE_IMPORTING)));
+        model.addAttribute("useHierarchy", Boolean.TRUE.equals(settings.get(EvalSettings.DISPLAY_HIERARCHY_OPTIONS)));
 
         // Select option values for template
         model.addAttribute("ADMIN_BOOLEAN_YES", EvalToolConstants.ADMIN_BOOLEAN_YES);
@@ -160,7 +151,7 @@ public class AdministrateController {
 
     @PostMapping
     public String save(@RequestParam Map<String, String> params) {
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         if (!commonLogic.isUserAdmin(currentUserId)) {
             throw new SecurityException("Non-admin users may not access this page");
         }
@@ -168,36 +159,36 @@ public class AdministrateController {
         // Save boolean checkboxes (absent = false)
         for (String key : BOOLEAN_CHECKBOXES) {
             boolean value = params.containsKey(toParam(key));
-            evalSettings.set(key, value);
+            settings.set(key, value);
         }
 
         // Save ternary selects
         for (String key : TERNARY) {
             String val = params.get(toParam(key));
-            if (val != null) evalSettings.set(key, fromTernaryValue(val));
+            if (val != null) settings.set(key, fromTernaryValue(val));
         }
 
         // Save integer settings
         for (String key : INTEGER_SETTINGS) {
             String val = params.get(toParam(key));
             if (val != null && !val.isEmpty()) {
-                try { evalSettings.set(key, Integer.parseInt(val)); } catch (NumberFormatException ignored) {}
+                try { settings.set(key, Integer.parseInt(val)); } catch (NumberFormatException ignored) {}
             }
         }
 
         // Save special string selects
         String mustUse = params.get(toParam(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE));
         if (mustUse != null) {
-            evalSettings.set(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE,
+            settings.set(EvalSettings.INSTRUCTOR_MUST_USE_EVALS_FROM_ABOVE,
                     EvalToolConstants.ADMIN_BOOLEAN_CONFIGURABLE.equals(mustUse) ? null : mustUse);
         }
 
         String sharing = params.get(toParam(EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY));
-        if (sharing != null) evalSettings.set(EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY, sharing);
+        if (sharing != null) settings.set(EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY, sharing);
 
         // Save string input
         String cssPath = params.getOrDefault(toParam(EvalSettings.LOCAL_CSS_PATH), "");
-        evalSettings.set(EvalSettings.LOCAL_CSS_PATH, cssPath.isEmpty() ? null : cssPath);
+        settings.set(EvalSettings.LOCAL_CSS_PATH, cssPath.isEmpty() ? null : cssPath);
 
         // Sanity check min/max list length
         Integer minList = getInteger(params, EvalSettings.EVAL_MIN_LIST_LENGTH);
@@ -206,8 +197,8 @@ public class AdministrateController {
             if (minList < 1) minList = 1;
             if (maxList < minList) maxList = minList;
             if (minList > maxList) minList = maxList;
-            evalSettings.set(EvalSettings.EVAL_MIN_LIST_LENGTH, minList);
-            evalSettings.set(EvalSettings.EVAL_MAX_LIST_LENGTH, maxList);
+            settings.set(EvalSettings.EVAL_MIN_LIST_LENGTH, minList);
+            settings.set(EvalSettings.EVAL_MAX_LIST_LENGTH, maxList);
         }
 
         log.info("Admin ({}) saved system settings", currentUserId);
@@ -216,7 +207,7 @@ public class AdministrateController {
 
     @PostMapping("/reset")
     public String resetCache() {
-        evalSettings.resetCache(null);
+        settings.resetCache(null);
         return "redirect:/administrate";
     }
 

@@ -16,22 +16,28 @@ package org.sakaiproject.evaluation.tool.controllers;
 
 import javax.annotation.Resource;
 
+import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.dao.EvalDaoInvoker;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.logic.EvalCommonLogic;
+import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
+import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.ReportingPermissions;
+import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
+import org.sakaiproject.evaluation.tool.LocalTemplateLogic;
 
 /**
  * Base class for Sakai Evaluation controllers.
  *
- * Provides the five most common service injections (present in 20+ controllers)
- * and shared helper methods for user identity, admin checks, and evaluation
- * permission enforcement.  Controllers that need additional services declare
- * those locally with their own {@code @Resource} fields.
+ * Provides shared service injections and helper methods for user identity,
+ * admin checks, and evaluation permission enforcement. Controllers that need
+ * one-off collaborators declare those locally with their own {@code @Resource}
+ * fields.
  *
- * Migration: extend this class, remove the duplicate {@code @Resource} fields
- * already covered here, and replace ad-hoc permission checks with the helpers.
+ * All Spring MVC controllers should extend this class unless they do not use
+ * evaluation services, such as exception handlers or static message endpoints.
  */
 public abstract class EvalControllerSupport {
 
@@ -49,6 +55,24 @@ public abstract class EvalControllerSupport {
 
     @Resource(name = "org.sakaiproject.evaluation.dao.EvalDaoInvoker")
     protected EvalDaoInvoker daoInvoker;
+
+    @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationSetupService")
+    protected EvalEvaluationSetupService evaluationSetupService;
+
+    @Resource(name = "org.sakaiproject.evaluation.logic.EvalDeliveryService")
+    protected EvalDeliveryService deliveryService;
+
+    @Resource(name = "org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic")
+    protected ExternalHierarchyLogic hierarchyLogic;
+
+    @Resource(name = "org.sakaiproject.evaluation.beans.EvalBeanUtils")
+    protected EvalBeanUtils evalBeanUtils;
+
+    @Resource(name = "localTemplateLogic")
+    protected LocalTemplateLogic localTemplateLogic;
+
+    @Resource(name = "org.sakaiproject.evaluation.logic.ReportingPermissions")
+    protected ReportingPermissions reportingPermissions;
 
     /** Returns the current user's internal ID. */
     protected String currentUserId() {

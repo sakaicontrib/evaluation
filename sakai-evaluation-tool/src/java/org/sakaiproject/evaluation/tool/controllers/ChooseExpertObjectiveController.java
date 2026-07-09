@@ -17,10 +17,6 @@ package org.sakaiproject.evaluation.tool.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
-
-import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.tool.utils.ScaledUtils;
@@ -40,13 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/choose_expert_objective")
-public class ChooseExpertObjectiveController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalAuthoringService")
-    private EvalAuthoringService authoringService;
+public class ChooseExpertObjectiveController extends EvalControllerSupport {
 
     @Data
     public static class ObjectiveRow {
@@ -69,7 +59,7 @@ public class ChooseExpertObjectiveController {
     public String show(@RequestParam Long templateId,
                        @RequestParam Long categoryId,
                        Model model) {
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         EvalItemGroup category = authoringService.getItemGroupById(categoryId);
 
         // objectives under this category (non-empty only)

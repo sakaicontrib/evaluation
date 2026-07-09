@@ -26,9 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.annotation.Resource;
-
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -48,13 +45,7 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequestMapping("/import_config")
 @SessionAttributes("uploadedConfig")
-public class ImportConfigController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalSettings")
-    private EvalSettings evalSettings;
+public class ImportConfigController extends EvalControllerSupport {
 
     @Data
     public static class SettingRow {
@@ -86,7 +77,7 @@ public class ImportConfigController {
                 Properties props = new Properties();
                 props.load(configFile.getInputStream());
                 props.forEach((k, v) -> uploadedConfig.put(k.toString(), v.toString()));
-                log.info("Admin ({}) uploaded config file with {} entries", commonLogic.getCurrentUserId(), uploadedConfig.size());
+                log.info("Admin ({}) uploaded config file with {} entries", currentUserId(), uploadedConfig.size());
             } catch (IOException e) {
                 log.error("Error reading uploaded config file", e);
             }
@@ -102,14 +93,14 @@ public class ImportConfigController {
             String key = entry.getKey();
             String rawValue = entry.getValue();
             try {
-                evalSettings.set(key, parseValue(key, rawValue));
+                settings.set(key, parseValue(key, rawValue));
             } catch (Exception e) {
                 log.warn("Could not set setting {}: {}", key, e.getMessage());
             }
         }
-        evalSettings.resetCache(null);
+        settings.resetCache(null);
         sessionStatus.setComplete();
-        log.info("Admin ({}) overwrote {} settings from uploaded config", commonLogic.getCurrentUserId(), uploadedConfig.size());
+        log.info("Admin ({}) overwrote {} settings from uploaded config", currentUserId(), uploadedConfig.size());
         return "redirect:/administrate";
     }
 
@@ -121,7 +112,7 @@ public class ImportConfigController {
             if (!String.class.equals(field.getType())) continue;
             try {
                 String key = field.get(null).toString();
-                Object current = evalSettings.get(key);
+                Object current = settings.get(key);
                 String currentStr = current != null ? current.toString() : "null";
                 String incoming = uploadedConfig.getOrDefault(key, "");
                 rows.add(new SettingRow(key, currentStr, incoming));
@@ -147,7 +138,7 @@ public class ImportConfigController {
     }
 
     private void checkAdmin() {
-        if (!commonLogic.isUserAdmin(commonLogic.getCurrentUserId()))
+        if (!isCurrentUserAdmin())
             throw new SecurityException("Non-admin users may not access this page");
     }
 }

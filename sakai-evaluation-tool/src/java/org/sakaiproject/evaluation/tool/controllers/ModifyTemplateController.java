@@ -14,16 +14,12 @@
  */
 package org.sakaiproject.evaluation.tool.controllers;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.dao.EvalDaoInvoker;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
-import org.sakaiproject.evaluation.tool.LocalTemplateLogic;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,19 +39,8 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @Controller
 @RequestMapping("/modify_template")
-public class ModifyTemplateController {
+public class ModifyTemplateController extends EvalControllerSupport {
 
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalSettings")
-    private EvalSettings settings;
-
-    @Resource(name = "localTemplateLogic")
-    private LocalTemplateLogic localTemplateLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.dao.EvalDaoInvoker")
-    private EvalDaoInvoker daoInvoker;
 
     @GetMapping
     public String show(@RequestParam(required = false) Long templateId,
@@ -97,7 +82,7 @@ public class ModifyTemplateController {
 
         final String effectiveTitle = title.trim();
         final String effectiveDesc = description;
-        final boolean userAdmin = commonLogic.isUserAdmin(commonLogic.getCurrentUserId());
+        final boolean userAdmin = isCurrentUserAdmin();
         // sharing param comes from select (admin); fixedSharing from hidden input (non-admin/fixed)
         final String sharingValue = resolveSharingToSave(
                 sharing != null ? sharing : fixedSharing, userAdmin);
@@ -128,7 +113,7 @@ public class ModifyTemplateController {
 
     private void populateSharingModel(Model model, String currentSharing) {
         String sharingValue = (String) settings.get(EvalSettings.TEMPLATE_SHARING_AND_VISIBILITY);
-        boolean userAdmin = commonLogic.isUserAdmin(commonLogic.getCurrentUserId());
+        boolean userAdmin = isCurrentUserAdmin();
 
         boolean showSharingDropdown = false;
         String sharingLabelKey = null;

@@ -19,10 +19,8 @@ import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,21 +31,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/export_settings")
-public class ExportSettingsController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalSettings")
-    private EvalSettings evalSettings;
+public class ExportSettingsController extends EvalControllerSupport {
 
     @GetMapping
     public void export(HttpServletResponse response) throws IOException {
-        if (!commonLogic.isUserAdmin(commonLogic.getCurrentUserId()))
+        if (!isCurrentUserAdmin())
             throw new SecurityException("Non-admin users may not access this page");
 
         response.setContentType("application/octet-stream");
-        response.setHeader("Content-Disposition", "attachment; filename=\"evalSettings.properties\"");
+        response.setHeader("Content-Disposition", "attachment; filename=\"settings.properties\"");
 
         Field[] fields = EvalSettings.class.getFields();
         Arrays.sort(fields, (a, b) -> a.getName().compareTo(b.getName()));
@@ -57,7 +49,7 @@ public class ExportSettingsController {
             if (!String.class.equals(field.getType())) continue;
             try {
                 String key = field.get(null).toString();
-                Object val = evalSettings.get(key);
+                Object val = settings.get(key);
                 out.println(key + "=" + (val != null ? val.toString() : "null"));
             } catch (IllegalAccessException e) {
                 log.warn("Cannot access field {}", field.getName());
