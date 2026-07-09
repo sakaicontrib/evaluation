@@ -118,7 +118,7 @@ Downloads are served by `ReportViewController` at `GET /report_view/download` wi
 - `_sakai25-compat.scss` contains classes removed in the upstream style overhaul that are still needed for Sakai 25 deployment.
 
 ### Shared JavaScript
-`sakai-evaluation-tool/src/webapp/content/js/utils.js` is a thin loader for `evalsys-core.js`, `evalsys-items.js`, and `evalsys-pages.js`. Templates still include only `utils.js`; do not add a global loader beyond that entry point.
+Evalsys helpers are split across `evalsys-core.js`, `evalsys-items.js`, and `evalsys-pages.js`. Templates include them via the `fragments/evalsys_scripts :: evalsys` fragment (load core, then items, then pages). Do not use `document.write` loaders or a single pseudo-bundle. Each template loads only the scripts it needs; pages that do not call `evalsys` should omit the fragment entirely.
 
 ## Database
 - Hibernate ORM with mapping files in `sakai-evaluation-api/src/java/org/sakaiproject/evaluation/dao/hbm/`

@@ -132,32 +132,6 @@ evalsys.initPreviewItem = function(selector) {
     evalsys.instrumentItems(selector);
 };
 
-evalsys.initControlItems = function() {
-    evalsys.initFacebox({verticalCenterOnClick: true, minWidth: 740});
-    jQuery('a.preview_item').facebox();
-
-    // When facebox opens, if it contains the edit form, intercept its submit
-    jQuery(document).bind('reveal.facebox', function() {
-        var $form = jQuery('#facebox #item-form');
-        if ($form.length === 0) { return; }
-        $form.off('submit.faceboxEdit').on('submit.faceboxEdit', function(e) {
-            e.preventDefault();
-            var formData = $form.serialize();
-            jQuery.ajax({
-                url: $form.attr('action'),
-                type: 'POST',
-                data: formData,
-                success: function() {
-                    jQuery(document).trigger('close.facebox');
-                    window.location.reload();
-                }
-            });
-        });
-    });
-
-    jQuery('a.edit_item').facebox();
-};
-
 evalsys.initControlItemsModal = function() {
     var modalEl = document.getElementById('itemModal');
     var modal = new bootstrap.Modal(modalEl);
@@ -339,60 +313,6 @@ evalsys.initTemplateItemsModal = function() {
 };
 
 
-//SPECIAL inits
-/**
- * This sets up the facebox lightbox system
- */
-evalsys.initFacebox = function(options) {
-    if (!evalsys.faceboxinitialized) {
-        // only run the facebox init one time
-        if (typeof jQuery.facebox !== "undefined") {
-            // Use portal-provided styling; avoid image-based close button
-            jQuery.facebox.settings.closeImage = null;
-            //jQuery.facebox.settings.opacity = 0.1;
-            //jQuery.facebox.settings.overlay = true;
-            //jQuery.facebox.settings.faceboxHtml = "some html";
-            // DOCS: https://github.com/defunkt/facebox
-            if (options && options.verticalCenterOnClick) {
-                jQuery(document).bind('beforeReveal.facebox', function() {
-                    // set the vertical position
-                    var posY = jQuery.facebox.mousePosY;
-                    var $facebox = $('#facebox');
-                    $facebox.css({
-                        'top': posY+'px'
-                    });
-                    // set the min-width
-                    if (options && options.minWidth > 0) {
-                        $facebox.css({
-                            'min-width': (options.minWidth+26) +'px'
-                        });
-                        $facebox.find('.body').css({
-                            'min-width': (options.minWidth) +'px'
-                        });
-                    }
-                });
-            }
-            jQuery(document).bind('reveal.facebox', function() {
-                // set the width
-                var $facebox = $('#facebox');
-                var faceboxWidth = $facebox.find('table.faceboxtable').width();
-                if (options && options.minWidth > 0) {
-                    faceboxWidth = faceboxWidth < options.minWidth ? options.minWidth : faceboxWidth;
-                }
-                $facebox.css({
-                    'width': (faceboxWidth+26) +'px'
-                });
-                $facebox.find('.body').css({
-                    'width': (faceboxWidth) +'px'
-                });
-            });
-            evalsys.faceboxinitialized = true;
-        } else {
-            alert("Programming error: no facebox is available!");
-        }
-    }
-};
-
 // Utility function to select/deselect all checkboxes of a given form
 evalsys.toggleCheckboxes = function( formName, checkToggle )
 {
@@ -402,29 +322,6 @@ evalsys.toggleCheckboxes = function( formName, checkToggle )
         if( elements[i].type === "checkbox" )
         {
             elements[i].checked = checkToggle;
-        }
-    }
-};
-
-// Hack function to toggle new/old report format
-evalsys.toggleReportFormat = function( formName )
-{
-    var elements = document[formName].getElementsByTagName( "input" );
-    for( var i = 0; i < elements.length; i++ )
-    {
-        if( elements[i].type === "hidden" && elements[i].name === "el-binding" && elements[i].value.indexOf( "{reportExporterBean.newReportStyle}" ) !== -1 )
-        {
-            var newValue = "";
-            var oldValue = elements[i].value.substring( elements[i].value.indexOf( "}" ) + 1 );
-            if( oldValue.toLowerCase() === "true" )
-            {
-                newValue = "false";
-            }
-            else
-            {
-                newValue = "true";
-            }
-            elements[i].value = elements[i].value.substring( 0, elements[i].value.indexOf( "}" ) + 1 ) + newValue;
         }
     }
 };
@@ -516,16 +413,24 @@ evalsys.fitMatrixLegendRows = function(scope) {
 jQuery(function() {
     evalsys.fitMatrixLegendRows();
 
-    // preview_item loaded into the legacy jQuery facebox (control_items, modify_item)
-    jQuery(document).bind('reveal.facebox', function() {
-        evalsys.fitMatrixLegendRows('#facebox');
-    });
-
-    // preview_item loaded into the Bootstrap modal (modify_template_items)
     var templateItemModal = document.getElementById('templateItemModal');
     if (templateItemModal) {
         templateItemModal.addEventListener('shown.bs.modal', function() {
             evalsys.fitMatrixLegendRows(templateItemModal);
+        });
+    }
+
+    var previewItemModal = document.getElementById('previewItemModal');
+    if (previewItemModal) {
+        previewItemModal.addEventListener('shown.bs.modal', function() {
+            evalsys.fitMatrixLegendRows(previewItemModal);
+        });
+    }
+
+    var itemModal = document.getElementById('itemModal');
+    if (itemModal) {
+        itemModal.addEventListener('shown.bs.modal', function() {
+            evalsys.fitMatrixLegendRows(itemModal);
         });
     }
 });

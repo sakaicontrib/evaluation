@@ -36,7 +36,7 @@
     <script th:src="@{/content/js/eval.template.utils.js}"></script>
     <script th:src="@{/content/js/evalAjax.js}"></script>
     <script th:src="@{/content/js/jquery/jquery.tipsy.js}"></script>
-    <script th:src="@{/content/js/utils.js}"></script>
+    <th:block th:replace="~{fragments/evalsys_scripts :: evalsys}"></th:block>
     <script th:src="@{/content/js/eval.template.loader.js}"></script>
     <script th:src="@{/content/js/eval.template.loader.events.js}"></script>
     <script th:src="@{/content/js/eval.template.sort.js}"></script>
