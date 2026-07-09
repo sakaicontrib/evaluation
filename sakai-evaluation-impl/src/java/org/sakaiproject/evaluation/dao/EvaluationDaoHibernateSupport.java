@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.dao;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -121,7 +122,7 @@ abstract class EvaluationDaoHibernateSupport extends HibernateDaoSupport {
         return results.isEmpty() ? null : results.get(0);
     }
 
-    protected <T> void saveOrUpdateAll(Set<T> entities) {
+    protected <T> void saveOrUpdateAll(Collection<T> entities) {
         if (entities == null || entities.isEmpty()) {
             return;
         }

@@ -1007,7 +1007,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         ArrayList<Long> changedUserAssignments = new ArrayList<>();
         // now the syncing logic
         HashSet<Long> assignUserToRemove = new HashSet<>();
-        HashSet<EvalAssignUser> assignUserToSave = new HashSet<>();
+        Map<String, EvalAssignUser> assignUsersToSave = new HashMap<>();
         // get all user assignments for this evaluation (and possibly limit by group)
         String[] limitGroupIds = null;
         if (evalGroupId != null) {
@@ -1111,17 +1111,17 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 }
             }
             // any remaining current set items need to be added if they are not unlinked/removed
-            assignUserToSave.addAll( makeUserAssignmentsFromUserIdSet(currentEvaluated, egid, 
+            assignUsersToSave.putAll( makeUserAssignmentsFromUserIdSet(currentEvaluated, egid,
                     EvalAssignUser.TYPE_EVALUATEE, assignGroupId, assignUserUnlinkedRemovedKeys) );
-            assignUserToSave.addAll( makeUserAssignmentsFromUserIdSet(currentAssistants, egid, 
+            assignUsersToSave.putAll( makeUserAssignmentsFromUserIdSet(currentAssistants, egid,
                     EvalAssignUser.TYPE_ASSISTANT, assignGroupId, assignUserUnlinkedRemovedKeys) );
-            assignUserToSave.addAll( makeUserAssignmentsFromUserIdSet(currentTakers, egid, 
+            assignUsersToSave.putAll( makeUserAssignmentsFromUserIdSet(currentTakers, egid,
                     EvalAssignUser.TYPE_EVALUATOR, assignGroupId, assignUserUnlinkedRemovedKeys) );
         }
 
         // now handle the actual persistent updates and log them
         String message = "Synchronized user assignments for eval ("+evaluationId+") with "+assignedGroups.size()+" assigned groups";
-        if (assignUserToRemove.isEmpty() && assignUserToSave.isEmpty()) {
+        if (assignUserToRemove.isEmpty() && assignUsersToSave.isEmpty()) {
             message += ": no changes to the user assignments ("+assignedUsers.size()+")";
         } else {
             if (removeAllowed && ! assignUserToRemove.isEmpty()) {
@@ -1131,16 +1131,14 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 message += ": removed the following assignments: " + assignUserToRemove;
                 changedUserAssignments.addAll( assignUserToRemove );
             }
-            if (! assignUserToSave.isEmpty()) {
-                for (EvalAssignUser evalAssignUser : assignUserToSave) {
+            if (! assignUsersToSave.isEmpty()) {
+                for (EvalAssignUser evalAssignUser : assignUsersToSave.values()) {
                     setAssignUserDefaults(evalAssignUser, evaluation, currentUserId);
                 }
-                // this is meant to force the assigned users set to be re-calculated
-                assignUserToSave = new HashSet<>(assignUserToSave);
-                log.debug("Saving user eval assignments: {}", assignUserToSave);
-                dao.saveAssignUsers(assignUserToSave);
-                message += ": created the following assignments: " + assignUserToSave;
-                for (EvalAssignUser evalAssignUser : assignUserToSave) {
+                log.debug("Saving user eval assignments: {}", assignUsersToSave.values());
+                dao.saveAssignUsers(assignUsersToSave.values());
+                message += ": created the following assignments: " + assignUsersToSave.values();
+                for (EvalAssignUser evalAssignUser : assignUsersToSave.values()) {
                     changedUserAssignments.add( evalAssignUser.getId() );
                 }
             }
@@ -1176,18 +1174,19 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
     /**
      * Creates the EvalAssignUsers based on userIds, evalGroupId, type,
-     * will only create ones which do not have a matching key in matchingUserGroupKeys 
-     * @return the set of newly created EvalAssignUsers
+     * will only create ones which do not have a matching key in matchingUserGroupKeys
+     * @return the map of newly created EvalAssignUsers keyed by user/group/type
      */
-    private Set<EvalAssignUser> makeUserAssignmentsFromUserIdSet(Set<String> userIds, String evalGroupId, 
+    private Map<String, EvalAssignUser> makeUserAssignmentsFromUserIdSet(Set<String> userIds, String evalGroupId,
             String typeConstant, Long assignGroupId, Set<String> matchingUserGroupKeys) {
-        HashSet<EvalAssignUser> eaus = new HashSet<>();
+        Map<String, EvalAssignUser> eaus = new HashMap<>();
         for (String userId : userIds) {
             EvalAssignUser evalAssignUser = new EvalAssignUser(userId, evalGroupId, null, typeConstant, EvalAssignUser.STATUS_LINKED);
             evalAssignUser.setAssignGroupId(assignGroupId);
-            String key = makeEvalAssignUserKey(evalAssignUser, false, false);
-            if (! matchingUserGroupKeys.contains(key)) {
-                eaus.add(evalAssignUser);
+            String userGroupKey = makeEvalAssignUserKey(evalAssignUser, false, false);
+            if (! matchingUserGroupKeys.contains(userGroupKey)) {
+                String userGroupTypeKey = makeEvalAssignUserKey(evalAssignUser, true, false);
+                eaus.put(userGroupTypeKey, evalAssignUser);
             }
         }
         return eaus;
@@ -1238,7 +1237,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             }
 
             // now create the set of all assignments to save (only save the ones that do not already exist though)
-            HashSet<EvalAssignUser> eauSet = new HashSet<>();
+            Map<String, EvalAssignUser> eausToSave = new HashMap<>();
             for (EvalAssignUser evalAssignUser : assignUsers) {
                 evalAssignUser.setLastModified( new Date() );
                 // switch over to unlinked if the status changes
@@ -1255,10 +1254,10 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                         continue; // SKIP
                     }
                 }
-                eauSet.add(evalAssignUser);
+                eausToSave.putIfAbsent(key, evalAssignUser);
             }
             // save all of the user assignments
-            dao.saveAssignUsers(eauSet);
+            dao.saveAssignUsers(eausToSave.values());
         }
     }
 

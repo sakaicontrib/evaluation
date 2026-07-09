@@ -585,6 +585,30 @@ public class EvaluationDaoPortMethodsTest extends AbstractEvaluationDaoTest {
         Assert.assertNotNull(groupLinkedUser.getId());
         Assert.assertNotNull(groupUnlinkedUser.getId());
 
+        EvalAssignUser firstEvaluationUser = new EvalAssignUser(
+                "dao-cross-eval-user",
+                "dao-cross-eval-group",
+                EvalTestDataLoad.MAINT_USER_ID,
+                EvalAssignUser.TYPE_EVALUATOR,
+                EvalAssignUser.STATUS_LINKED,
+                etdl.evaluationNew,
+                null);
+        EvalAssignUser secondEvaluationUser = new EvalAssignUser(
+                "dao-cross-eval-user",
+                "dao-cross-eval-group",
+                EvalTestDataLoad.MAINT_USER_ID,
+                EvalAssignUser.TYPE_EVALUATOR,
+                EvalAssignUser.STATUS_LINKED,
+                evalUnLocked,
+                null);
+        evaluationDao.saveAssignUsers(Arrays.asList(firstEvaluationUser, secondEvaluationUser));
+
+        Assert.assertNotNull(firstEvaluationUser.getId());
+        Assert.assertNotNull(secondEvaluationUser.getId());
+        Assert.assertNotEquals(firstEvaluationUser.getId(), secondEvaluationUser.getId());
+        Assert.assertNotNull(evaluationDao.findById(EvalAssignUser.class, firstEvaluationUser.getId()));
+        Assert.assertNotNull(evaluationDao.findById(EvalAssignUser.class, secondEvaluationUser.getId()));
+
         evaluationDao.deleteAssignUsersByIds(new Long[] {savedUser.getId()});
         Assert.assertNull(evaluationDao.findById(EvalAssignUser.class, savedUser.getId()));
 

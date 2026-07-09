@@ -14,6 +14,7 @@
  */
 package org.sakaiproject.evaluation.dao;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -54,7 +55,7 @@ public interface EvaluationAssignmentDao {
 
     public void deleteAssignHierarchyAndGroups(Set<EvalAssignHierarchy> assignHierarchies, Set<EvalAssignGroup> assignGroups);
 
-    public void saveAssignUsers(Set<EvalAssignUser> assignUsers);
+    public void saveAssignUsers(Collection<EvalAssignUser> assignUsers);
 
     public void deleteAssignUsersByIds(Long[] assignUserIds);
 

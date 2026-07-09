@@ -15,6 +15,7 @@
 package org.sakaiproject.evaluation.dao;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -282,7 +283,7 @@ abstract class EvaluationDaoAssignmentMethods extends EvaluationDaoResponseMetho
         deleteAll(assignHierarchies);
     }
 
-    public void saveAssignUsers(Set<EvalAssignUser> assignUsers) {
+    public void saveAssignUsers(Collection<EvalAssignUser> assignUsers) {
         if (assignUsers == null) {
             throw new IllegalArgumentException("assignUsers cannot be null");
         }
