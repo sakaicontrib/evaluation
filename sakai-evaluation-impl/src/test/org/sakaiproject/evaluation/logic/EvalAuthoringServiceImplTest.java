@@ -32,7 +32,6 @@ import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.util.AopTestUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,13 +46,11 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
    @Autowired
    @Qualifier("org.sakaiproject.evaluation.logic.EvalAuthoringService")
    protected EvalAuthoringService authoringService;
-   protected EvalAuthoringServiceImpl authoringServiceImpl;
 
    // run this before each test starts
    @Before
    public void onSetUpBeforeTransaction() throws Exception {
       super.onSetUpBeforeTransaction();
-      authoringServiceImpl = AopTestUtils.getTargetObject(authoringService);
    }
 
    /**
@@ -2787,7 +2784,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
 
 
       // only 1 countable item in the block template
-      Assert.assertEquals( 1, authoringServiceImpl.getItemCountForTemplate(etdl.templateAdminBlock.getId()) );
+      Assert.assertEquals( 1, authoringService.getNonBlockItemCountForTemplate(etdl.templateAdminBlock.getId()) );
 
       // test out copying a complete block
       templateItemIds = new Long[] {etdl.templateItem9B.getId(), etdl.templateItem2B.getId(), etdl.templateItem3B.getId()};
@@ -2825,7 +2822,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       }
 
       // now 2 countable items in the block template
-      Assert.assertEquals( 2, authoringServiceImpl.getItemCountForTemplate(etdl.templateAdminBlock.getId()) );
+      Assert.assertEquals( 2, authoringService.getNonBlockItemCountForTemplate(etdl.templateAdminBlock.getId()) );
 
 
       // now copy over to a new template
@@ -2851,7 +2848,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
          Assert.assertNotNull(persistence.findById(EvalTemplateItem.class, copiedId));
        }
 
-      Assert.assertEquals( 2, authoringServiceImpl.getItemCountForTemplate(etdl.templateUser.getId()) );
+      Assert.assertEquals( 2, authoringService.getNonBlockItemCountForTemplate(etdl.templateUser.getId()) );
 
       // check we can copy a bunch of things (without children) into the same template
       templateItemIds = new Long[] {etdl.templateItem1User.getId(), etdl.templateItem5User.getId()};
@@ -2862,7 +2859,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
          Assert.assertNotNull(persistence.findById(EvalTemplateItem.class, copiedId));
       }
 
-      Assert.assertEquals( 4, authoringServiceImpl.getItemCountForTemplate(etdl.templateUser.getId()) );
+      Assert.assertEquals( 4, authoringService.getNonBlockItemCountForTemplate(etdl.templateUser.getId()) );
 
       // check that trying to do an inside copy of TIs from multiple templates causes Assert.failure
       templateItemIds = new Long[] {etdl.templateItem1P.getId(), etdl.templateItem2A.getId()};

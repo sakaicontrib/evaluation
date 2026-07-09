@@ -261,7 +261,6 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
         EvalEvaluation eval = getEvaluationOrFail(evaluationId);
         eval.setCurrentReminderStatus(reminderStatus);
         persistence.update(eval);
-        persistence.forceCommit();
     }
 
     /* (non-Javadoc)
@@ -382,7 +381,6 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
         EvalEvaluation eval = getEvaluationOrFail(evaluationId);
         eval.setOwner(userId);
         persistence.update(eval);
-        persistence.forceCommit();
         return eval;
     }
 

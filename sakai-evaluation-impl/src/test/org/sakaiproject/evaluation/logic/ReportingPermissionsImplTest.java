@@ -26,7 +26,6 @@ import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.util.AopTestUtils;
 
 
 /**
@@ -38,8 +37,7 @@ public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
 
    @Autowired
    @Qualifier("org.sakaiproject.evaluation.logic.ReportingPermissions")
-   private ReportingPermissions reportingPermissionsBean;
-   protected ReportingPermissionsImpl reportingPermissions;
+   protected ReportingPermissions reportingPermissions;
    @Autowired
    @Qualifier("org.sakaiproject.evaluation.logic.EvalEvaluationService")
    private EvalEvaluationService evaluationService;
@@ -56,8 +54,6 @@ public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
    @Before
    public void onSetUpBeforeTransaction() throws Exception {
       super.onSetUpBeforeTransaction();
-
-      reportingPermissions = AopTestUtils.getTargetObject(reportingPermissionsBean);
 
       // setup the mock objects if needed
       externalLogicMock = (MockEvalExternalLogic) externalLogic;

@@ -1022,6 +1022,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
      * @return the list of {@link EvalAssignUser} ids changed during the synchronization (created, updated, deleted),
      * NOTE: deleted {@link EvalAssignUser} will not be able to be retrieved
      */
+    @Override
     public List<Long> synchronizeUserAssignmentsForced(EvalEvaluation evaluation, String evalGroupId, boolean removeAllowed) {
         Long evaluationId = evaluation.getId();
         String currentUserId = commonLogic.getCurrentUserId();
@@ -1879,7 +1880,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
      * @param eval the evaluation associated with this assignment
      * @param eah the assignment object (persistent or non)
      */
-    protected void setAssignmentDefaults(EvalEvaluation eval, EvalAssignHierarchy eah) {
+    @Override
+    public void setAssignmentDefaults(EvalEvaluation eval, EvalAssignHierarchy eah) {
         if (eval == null || eah == null) {
             throw new IllegalArgumentException("eval ("+eval+") and assigment ("+eah+") must not be null");
         }

@@ -154,7 +154,6 @@
             <testResource>
                 <directory>${basedir}/src/test</directory>
                 <includes>
-                    <include>hibernate-test.xml</include>
                     <include>hibernate.properties</include>
                     <include>spring-hibernate.xml</include>
                     <include>logic-support.xml</include>

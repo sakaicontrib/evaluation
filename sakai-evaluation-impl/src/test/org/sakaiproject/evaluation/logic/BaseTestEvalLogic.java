@@ -14,6 +14,8 @@
  */
 package org.sakaiproject.evaluation.logic;
 
+import org.junit.Assert;
+import org.junit.Before;
 import org.sakaiproject.evaluation.dao.EvaluationAdminSupportDao;
 import org.sakaiproject.evaluation.dao.EvaluationAssignmentDao;
 import org.sakaiproject.evaluation.dao.EvaluationAuthoringDao;
@@ -24,10 +26,8 @@ import org.sakaiproject.evaluation.dao.EvaluationLockDao;
 import org.sakaiproject.evaluation.dao.EvaluationQueryDao;
 import org.sakaiproject.evaluation.dao.EvaluationResponseDao;
 import org.sakaiproject.evaluation.dao.EvaluationSettingsDao;
-
-import org.junit.Assert;
-import org.junit.Before;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.test.EvalTestDaoFixture;
 import org.sakaiproject.evaluation.test.EvaluationServiceTestConfiguration;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.PreloadTestDataImpl;
@@ -53,34 +53,17 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 public abstract class BaseTestEvalLogic extends AbstractTransactionalJUnit4SpringContextTests {
 
    @Autowired
-   @Qualifier("org.sakaiproject.evaluation.dao.EvaluationDaoBase")
+   protected EvalTestDaoFixture daos;
+
    protected EvaluationDaoBase persistence;
-   @Autowired
-   @Qualifier("org.sakaiproject.evaluation.dao.EvaluationSettingsDao")
    protected EvaluationSettingsDao settingsDao;
-   @Autowired
-   @Qualifier("org.sakaiproject.evaluation.dao.EvaluationEmailTemplateDao")
    protected EvaluationEmailTemplateDao emailTemplateDao;
-   @Autowired
-   @Qualifier("org.sakaiproject.evaluation.dao.EvaluationAuthoringDao")
    protected EvaluationAuthoringDao authoringDao;
-   @Autowired
-   @Qualifier("org.sakaiproject.evaluation.dao.EvaluationAdminSupportDao")
    protected EvaluationAdminSupportDao adminSupportDao;
-   @Autowired
-   @Qualifier("org.sakaiproject.evaluation.dao.EvaluationResponseDao")
    protected EvaluationResponseDao responseDao;
-   @Autowired
-   @Qualifier("org.sakaiproject.evaluation.dao.EvaluationAssignmentDao")
    protected EvaluationAssignmentDao assignmentDao;
-   @Autowired
-   @Qualifier("org.sakaiproject.evaluation.dao.EvaluationQueryDao")
    protected EvaluationQueryDao queryDao;
-   @Autowired
-   @Qualifier("org.sakaiproject.evaluation.dao.EvaluationLockDao")
    protected EvaluationLockDao lockDao;
-   @Autowired
-   @Qualifier("org.sakaiproject.evaluation.dao.EvaluationConsolidatedEmailDao")
    protected EvaluationConsolidatedEmailDao consolidatedEmailDao;
 
    @Autowired
@@ -96,6 +79,8 @@ public abstract class BaseTestEvalLogic extends AbstractTransactionalJUnit4Sprin
 
    @Before
    public void onSetUpBeforeTransaction() throws Exception {
+      bindDaoFixture(daos);
+
       // check the preloaded test data
       Assert.assertTrue("Error preloading test data", persistence.countAll(EvalEvaluation.class) > 0);
 
@@ -105,5 +90,18 @@ public abstract class BaseTestEvalLogic extends AbstractTransactionalJUnit4Sprin
          throw new IllegalStateException("Failure in loadup of data");
       }
 
+   }
+
+   protected void bindDaoFixture(EvalTestDaoFixture fixture) {
+      persistence = fixture.persistence;
+      settingsDao = fixture.settingsDao;
+      emailTemplateDao = fixture.emailTemplateDao;
+      authoringDao = fixture.authoringDao;
+      adminSupportDao = fixture.adminSupportDao;
+      responseDao = fixture.responseDao;
+      assignmentDao = fixture.assignmentDao;
+      queryDao = fixture.queryDao;
+      lockDao = fixture.lockDao;
+      consolidatedEmailDao = fixture.consolidatedEmailDao;
    }
 }

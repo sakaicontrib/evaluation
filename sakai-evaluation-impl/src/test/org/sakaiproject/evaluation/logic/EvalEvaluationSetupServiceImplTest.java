@@ -37,7 +37,6 @@ import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
 import org.sakaiproject.evaluation.test.mocks.MockExternalHierarchyLogic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.util.AopTestUtils;
 
 
 /**
@@ -50,7 +49,6 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
     @Autowired
     @Qualifier("org.sakaiproject.evaluation.logic.EvalEvaluationSetupService")
     protected EvalEvaluationSetupService evaluationSetupService;
-    protected EvalEvaluationSetupServiceImpl evaluationSetupServiceImpl;
     @Autowired
     @Qualifier("org.sakaiproject.evaluation.logic.EvalEvaluationService")
     private EvalEvaluationService evaluationService;
@@ -65,7 +63,6 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
     @Before
     public void onSetUpBeforeTransaction() throws Exception {
         super.onSetUpBeforeTransaction();
-        evaluationSetupServiceImpl = AopTestUtils.getTargetObject(evaluationSetupService);
     }
 
     /**
@@ -982,21 +979,21 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertNull(eah.getInstructorApproval());
         Assert.assertNull(eah.getInstructorsViewResults());
         Assert.assertNull(eah.getStudentsViewResults());
-        evaluationSetupServiceImpl.setAssignmentDefaults(etdl.evaluationActive, eah);
+        evaluationSetupService.setAssignmentDefaults(etdl.evaluationActive, eah);
         Assert.assertNotNull(eah.getInstructorApproval());
         Assert.assertNotNull(eah.getInstructorsViewResults());
         Assert.assertNotNull(eah.getStudentsViewResults());
 
         // make sure it does not wipe existing settings
         eah = new EvalAssignGroup("az", "eag1", "Site", etdl.evaluationActive, false, false, false);
-        evaluationSetupServiceImpl.setAssignmentDefaults(etdl.evaluationActive, eah);
+        evaluationSetupService.setAssignmentDefaults(etdl.evaluationActive, eah);
         // TODO - temporary disable
         //      Assert.assertEquals(Boolean.FALSE, eah.getInstructorApproval());
         Assert.assertEquals(Boolean.FALSE, eah.getInstructorsViewResults());
         Assert.assertEquals(Boolean.FALSE, eah.getStudentsViewResults());
 
         eah = new EvalAssignGroup("az", "eag1", "Site", etdl.evaluationActive, true, true, true);
-        evaluationSetupServiceImpl.setAssignmentDefaults(etdl.evaluationActive, eah);
+        evaluationSetupService.setAssignmentDefaults(etdl.evaluationActive, eah);
         Assert.assertEquals(Boolean.TRUE, eah.getInstructorApproval());
         Assert.assertEquals(Boolean.TRUE, eah.getInstructorsViewResults());
         Assert.assertEquals(Boolean.TRUE, eah.getStudentsViewResults());
@@ -1106,7 +1103,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
         saveSiteAssignGroup(evaluation, EvalTestDataLoad.SITE2_REF);
 
-        List<Long> changedIds = evaluationSetupServiceImpl.synchronizeUserAssignmentsForced(evaluation, EvalTestDataLoad.SITE2_REF, true);
+        List<Long> changedIds = evaluationSetupService.synchronizeUserAssignmentsForced(evaluation, EvalTestDataLoad.SITE2_REF, true);
         Assert.assertEquals(4, changedIds.size());
 
         List<EvalAssignUser> participants = evaluationService.getParticipantsForEval(evaluationId, null,
@@ -1135,7 +1132,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertNotNull(participants);
         Assert.assertTrue(participants.isEmpty());
 
-        List<Long> changedIds = evaluationSetupServiceImpl.synchronizeUserAssignmentsForced(evaluation, EvalTestDataLoad.SITE2_REF, true);
+        List<Long> changedIds = evaluationSetupService.synchronizeUserAssignmentsForced(evaluation, EvalTestDataLoad.SITE2_REF, true);
         Assert.assertEquals(3, changedIds.size());
 
         participants = evaluationService.getParticipantsForEval(evaluationId, null,
@@ -1151,7 +1148,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         persistence.update(unlinked);
         persistence.update(removed);
 
-        changedIds = evaluationSetupServiceImpl.synchronizeUserAssignmentsForced(evaluation, EvalTestDataLoad.SITE2_REF, true);
+        changedIds = evaluationSetupService.synchronizeUserAssignmentsForced(evaluation, EvalTestDataLoad.SITE2_REF, true);
         Assert.assertTrue(changedIds.isEmpty());
 
         participants = evaluationService.getParticipantsForEval(evaluationId, null,
@@ -1648,7 +1645,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertTrue(currentEAUs > 0);
 
         evaluation = evaluationService.getEvaluationById(evaluationId);
-        evaluationSetupServiceImpl.synchronizeUserAssignmentsForced(evaluation, null, false);
+        evaluationSetupService.synchronizeUserAssignmentsForced(evaluation, null, false);
 
         currentAssign = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, null, null, null, null);
@@ -1673,7 +1670,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertTrue(currentEAUs > 0);
 
         evaluation = evaluationService.getEvaluationById(evaluationId);
-        evaluationSetupServiceImpl.synchronizeUserAssignmentsForced(evaluation, null, false);
+        evaluationSetupService.synchronizeUserAssignmentsForced(evaluation, null, false);
     }
 
     /**

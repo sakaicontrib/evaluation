@@ -140,7 +140,7 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
              * locks.
              */
             if (checkBasedOnRole) {
-                groupIdsTogo = getViewableGroupsForEvalAndUserByRole(evaluation, currentUserId, null);
+                groupIdsTogo = getViewableGroupsForEvalAndUserByRoleInternal(evaluation, currentUserId, null);
             } else {
                 // user can view all groups
                 // Should the includeUnapproved be true or false for this use case?? (swg) - false -AZ
@@ -208,7 +208,7 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
      */
     private boolean checkGroupsForEvalUserGroups(EvalEvaluation evaluation, String[] groupIds, String userId) {
         boolean allowed = false;
-        FlagHashSet<String> fhs = getViewableGroupsForEvalAndUserByRole(evaluation, userId, groupIds);
+        FlagHashSet<String> fhs = getViewableGroupsForEvalAndUserByRoleInternal(evaluation, userId, groupIds);
         if ( groupIds == null) {
             // checked all groups so compare to the totalCount
             if (fhs.size() == fhs.totalCount) {
@@ -242,7 +242,12 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
      * if null then check all groups for this evaluation
      * @return the set of evalGroupIds that can be viewed by this user
      */
-    protected FlagHashSet<String> getViewableGroupsForEvalAndUserByRole(EvalEvaluation eval, String userId, String[] groupIds) {
+    @Override
+    public Set<String> getViewableGroupsForEvalAndUserByRole(EvalEvaluation eval, String userId, String[] groupIds) {
+        return getViewableGroupsForEvalAndUserByRoleInternal(eval, userId, groupIds);
+    }
+
+    private FlagHashSet<String> getViewableGroupsForEvalAndUserByRoleInternal(EvalEvaluation eval, String userId, String[] groupIds) {
         if (eval == null || userId == null || "".equals(userId)) {
             throw new IllegalArgumentException("eval and userId must be set");
         }
@@ -337,7 +342,8 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
      * otherwise the role is treated as the student/learner/evaluator
      * @return the set of viewable evalGroupIds
      */
-    protected FlagHashSet<String> getEvalGroupIdsForUserRole(Long evaluationId, String userId, String[] groupIds, boolean isUserInstructor) {
+    @Override
+    public Set<String> getEvalGroupIdsForUserRole(Long evaluationId, String userId, String[] groupIds, boolean isUserInstructor) {
         FlagHashSet<String> viewableGroupIds = new FlagHashSet<>();
         String type = EvalAssignUser.TYPE_EVALUATOR;
         if (isUserInstructor) {

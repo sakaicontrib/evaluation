@@ -19,11 +19,6 @@ import java.util.Properties;
 
 import org.sakaiproject.evaluation.dao.EvaluationDaoBase;
 import org.sakaiproject.evaluation.dao.PreloadDataImpl;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.EvalEmailsLogic;
-import org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
-import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalJobLogic;
 import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
 import org.sakaiproject.evaluation.test.mocks.MockEvalJobLogic;
@@ -34,6 +29,7 @@ import org.sakaiproject.test.SakaiTestConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.PropertySource;
@@ -44,6 +40,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @Configuration
 @EnableTransactionManagement
+@ComponentScan("org.sakaiproject.evaluation.test")
 @ImportResource({
         "classpath:org/sakaiproject/evaluation/spring-hibernate.xml",
         "classpath:org/sakaiproject/evaluation/logic-support.xml",
@@ -84,18 +81,6 @@ public class EvaluationServiceTestConfiguration extends SakaiTestConfiguration {
     @Bean(name = "org.sakaiproject.evaluation.logic.EvalJobLogic")
     public EvalJobLogic evalJobLogic() {
         return new MockEvalJobLogic();
-    }
-
-    @Bean(name = "org.sakaiproject.evaluation.logic.EvalEmailsLogic", initMethod = "init")
-    public EvalEmailsLogic evalEmailsLogic(
-            EvalCommonLogic commonLogic,
-            EvalSettings settings,
-            EvalEvaluationService evaluationService) {
-        EvalEmailsLogicImpl emailsLogic = new EvalEmailsLogicImpl();
-        emailsLogic.setCommonLogic(commonLogic);
-        emailsLogic.setSettings(settings);
-        emailsLogic.setEvaluationService(evaluationService);
-        return emailsLogic;
     }
 
     @Bean(name = "org.sakaiproject.evaluation.test.PreloadTestData", initMethod = "init")

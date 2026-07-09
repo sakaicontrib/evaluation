@@ -18,89 +18,24 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
-import org.sakaiproject.evaluation.model.EvalAdhocGroup;
-import org.sakaiproject.evaluation.model.EvalAdhocUser;
-import org.sakaiproject.evaluation.model.EvalAdmin;
-import org.sakaiproject.evaluation.model.EvalAnswer;
-import org.sakaiproject.evaluation.model.EvalAssignGroup;
-import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
-import org.sakaiproject.evaluation.model.EvalAssignUser;
-import org.sakaiproject.evaluation.model.EvalConfig;
-import org.sakaiproject.evaluation.model.EvalEmailProcessingData;
-import org.sakaiproject.evaluation.model.EvalEmailTemplate;
+import org.sakaiproject.evaluation.logic.BaseTestEvalLogic;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.model.EvalGroupNodes;
-import org.sakaiproject.evaluation.model.EvalHierarchyRule;
 import org.sakaiproject.evaluation.model.EvalItem;
-import org.sakaiproject.evaluation.model.EvalItemGroup;
-import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalScale;
-import org.sakaiproject.evaluation.model.EvalTemplate;
-import org.sakaiproject.evaluation.model.EvalTemplateItem;
-import org.sakaiproject.evaluation.test.EvaluationServiceTestConfiguration;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
-import org.sakaiproject.evaluation.test.PreloadTestDataImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
-
-import lombok.extern.slf4j.Slf4j;
 
 
 /**
  * Shared Spring fixture for evaluation DAO tests.
  */
-@ContextConfiguration(classes = EvaluationServiceTestConfiguration.class)
-public abstract class AbstractEvaluationDaoTest extends AbstractTransactionalJUnit4SpringContextTests {
-
-    @Autowired
-    @Qualifier("org.sakaiproject.evaluation.dao.EvaluationDaoBase")
-    protected EvaluationDaoBase persistence;
-    @Autowired
-    @Qualifier("org.sakaiproject.evaluation.dao.EvaluationSettingsDao")
-    protected EvaluationSettingsDao settingsDao;
-    @Autowired
-    @Qualifier("org.sakaiproject.evaluation.dao.EvaluationEmailTemplateDao")
-    protected EvaluationEmailTemplateDao emailTemplateDao;
-    @Autowired
-    @Qualifier("org.sakaiproject.evaluation.dao.EvaluationAuthoringDao")
-    protected EvaluationAuthoringDao authoringDao;
-    @Autowired
-    @Qualifier("org.sakaiproject.evaluation.dao.EvaluationAdminSupportDao")
-    protected EvaluationAdminSupportDao adminSupportDao;
-    @Autowired
-    @Qualifier("org.sakaiproject.evaluation.dao.EvaluationResponseDao")
-    protected EvaluationResponseDao responseDao;
-    @Autowired
-    @Qualifier("org.sakaiproject.evaluation.dao.EvaluationAssignmentDao")
-    protected EvaluationAssignmentDao assignmentDao;
-    @Autowired
-    @Qualifier("org.sakaiproject.evaluation.dao.EvaluationQueryDao")
-    protected EvaluationQueryDao queryDao;
-    @Autowired
-    @Qualifier("org.sakaiproject.evaluation.dao.EvaluationLockDao")
-    protected EvaluationLockDao lockDao;
-    @Autowired
-    @Qualifier("org.sakaiproject.evaluation.dao.EvaluationConsolidatedEmailDao")
-    protected EvaluationConsolidatedEmailDao consolidatedEmailDao;
-    @Autowired
-    @Qualifier("org.sakaiproject.evaluation.test.PreloadTestData")
-    private PreloadTestDataImpl preloadTestData;
-
-    protected EvalTestDataLoad etdl;
+public abstract class AbstractEvaluationDaoTest extends BaseTestEvalLogic {
 
     protected EvalScale scaleLocked;
     protected EvalItem itemLocked;
@@ -111,15 +46,12 @@ public abstract class AbstractEvaluationDaoTest extends AbstractTransactionalJUn
 
     // run this before each test starts
     @Before
+    @Override
     public void onSetUpBeforeTransaction() throws Exception {
+        super.onSetUpBeforeTransaction();
+
         // check the preloaded data
         Assert.assertTrue("Error preloading data", persistence.countAll(EvalScale.class) > 0);
-
-        // check the preloaded test data
-        Assert.assertTrue("Error preloading test data", persistence.countAll(EvalEvaluation.class) > 0);
-
-        // get test objects
-        etdl = preloadTestData.getEtdl();
 
         // preload additional data if desired
         List<String> optionsA = new ArrayList<String>( Arrays.asList("Male", "Female", "Unknown"));
