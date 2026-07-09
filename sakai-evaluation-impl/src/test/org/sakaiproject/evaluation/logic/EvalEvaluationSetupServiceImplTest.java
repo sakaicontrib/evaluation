@@ -1139,6 +1139,31 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
     }
 
     @Test
+    public void testSynchronizeUserAssignmentsForcedPreservesSameUserAcrossAssignmentTypes() {
+        externalLogic.setCurrentUserId(EvalTestDataLoad.MAINT_USER_ID);
+        EvalEvaluation evaluation = etdl.evaluationNew;
+        evaluation.setAllRolesParticipate(Boolean.TRUE);
+        evaluation.setSectionAwareness(Boolean.FALSE);
+        evaluationDao.update(evaluation);
+        Long evaluationId = evaluation.getId();
+
+        saveSiteAssignGroup(evaluation, EvalTestDataLoad.SITE2_REF);
+
+        List<Long> changedIds = evaluationSetupService.synchronizeUserAssignmentsForced(evaluation, EvalTestDataLoad.SITE2_REF, true);
+        Assert.assertEquals(4, changedIds.size());
+
+        List<EvalAssignUser> participants = evaluationService.getParticipantsForEval(evaluationId, null,
+                new String[] {EvalTestDataLoad.SITE2_REF}, null, EvalEvaluationService.STATUS_ANY, null, null);
+        Assert.assertEquals(4, participants.size());
+        Assert.assertEquals(1, countAssignments(participants, EvalAssignUser.TYPE_EVALUATEE, EvalAssignUser.STATUS_LINKED));
+        Assert.assertEquals(3, countAssignments(participants, EvalAssignUser.TYPE_EVALUATOR, EvalAssignUser.STATUS_LINKED));
+        Assert.assertEquals(EvalAssignUser.STATUS_LINKED,
+                findAssignment(participants, EvalTestDataLoad.MAINT_USER_ID, EvalAssignUser.TYPE_EVALUATEE).getStatus());
+        Assert.assertEquals(EvalAssignUser.STATUS_LINKED,
+                findAssignment(participants, EvalTestDataLoad.MAINT_USER_ID, EvalAssignUser.TYPE_EVALUATOR).getStatus());
+    }
+
+    @Test
     public void testSynchronizeUserAssignmentsForcedCreatesAndPreservesManualStatuses() {
         externalLogic.setCurrentUserId(EvalTestDataLoad.MAINT_USER_ID);
         EvalEvaluation evaluation = etdl.evaluationNew;
@@ -1146,9 +1171,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         evaluationDao.update(evaluation);
         Long evaluationId = evaluation.getId();
 
-        EvalAssignGroup assignGroup = new EvalAssignGroup(EvalTestDataLoad.MAINT_USER_ID, EvalTestDataLoad.SITE2_REF,
-                EvalConstants.GROUP_TYPE_SITE, evaluation, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
-        evaluationDao.save(assignGroup);
+        saveSiteAssignGroup(evaluation, EvalTestDataLoad.SITE2_REF);
 
         List<EvalAssignUser> participants = evaluationService.getParticipantsForEval(evaluationId, null,
                 new String[] {EvalTestDataLoad.SITE2_REF}, null, EvalEvaluationService.STATUS_ANY, null, null);
@@ -1184,6 +1207,13 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         List<EvalAssignUser> visibleParticipants = evaluationService.getParticipantsForEval(evaluationId, null,
                 new String[] {EvalTestDataLoad.SITE2_REF}, null, null, null, null);
         Assert.assertEquals(2, visibleParticipants.size());
+    }
+
+    private EvalAssignGroup saveSiteAssignGroup(EvalEvaluation evaluation, String evalGroupId) {
+        EvalAssignGroup assignGroup = new EvalAssignGroup(EvalTestDataLoad.MAINT_USER_ID, evalGroupId,
+                EvalConstants.GROUP_TYPE_SITE, evaluation, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
+        evaluationDao.save(assignGroup);
+        return assignGroup;
     }
 
     private int countAssignments(List<EvalAssignUser> participants, String type, String status) {
