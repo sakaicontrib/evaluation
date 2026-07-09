@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.proxy.HibernateProxy;
 import org.junit.Assert;
 import org.junit.Before;
@@ -84,16 +83,11 @@ public class EvaluationDaoPortMethodsTest extends AbstractEvaluationDaoTest {
         evaluationDao.save(template);
         Long templateId = template.getId();
 
-        SessionFactory sessionFactory = applicationContext.getBean(
-                "org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory", SessionFactory.class);
-        Session session = sessionFactory.getCurrentSession();
-        session.flush();
-        session.clear();
-
-        EvalTemplate templateProxy = session.load(EvalTemplate.class, templateId);
+        EvalTemplate templateProxy = loadUninitializedProxy(EvalTemplate.class, templateId);
         Assert.assertTrue(templateProxy instanceof HibernateProxy);
 
         evaluationDao.delete(templateProxy);
+        Session session = currentSession();
         session.flush();
         session.clear();
 
@@ -109,9 +103,7 @@ public class EvaluationDaoPortMethodsTest extends AbstractEvaluationDaoTest {
         evaluationDao.save(detachedTemplate);
         Long templateId = detachedTemplate.getId();
 
-        SessionFactory sessionFactory = applicationContext.getBean(
-                "org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory", SessionFactory.class);
-        Session session = sessionFactory.getCurrentSession();
+        Session session = currentSession();
         session.flush();
         session.evict(detachedTemplate);
 

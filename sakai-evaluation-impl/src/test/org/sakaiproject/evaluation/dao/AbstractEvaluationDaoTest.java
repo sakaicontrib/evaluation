@@ -14,6 +14,7 @@
  */
 package org.sakaiproject.evaluation.dao;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -22,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -125,6 +128,19 @@ public abstract class AbstractEvaluationDaoTest extends AbstractTransactionalJUn
 
         evaluationDao.save( evalUnLocked );
 
+    }
+
+    protected Session currentSession() {
+        SessionFactory sessionFactory = applicationContext.getBean(
+                "org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory", SessionFactory.class);
+        return sessionFactory.getCurrentSession();
+    }
+
+    protected <T> T loadUninitializedProxy(Class<T> type, Serializable id) {
+        Session session = currentSession();
+        session.flush();
+        session.clear();
+        return session.load(type, id);
     }
 
 }
