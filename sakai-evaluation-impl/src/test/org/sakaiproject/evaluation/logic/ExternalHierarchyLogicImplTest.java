@@ -14,11 +14,11 @@
  */
 package org.sakaiproject.evaluation.logic;
 
-import org.sakaiproject.evaluation.test.DaoTestWiring;
-
 import org.junit.Before;
 import org.junit.Test;
-import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogicImpl;
+import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 
 /**
@@ -30,20 +30,13 @@ import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogicImpl;
  */
 public class ExternalHierarchyLogicImplTest extends BaseTestEvalLogic {
 
-   protected ExternalHierarchyLogicImpl hierarchyLogicImpl;
+   @Autowired
+   @Qualifier("org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic")
+   protected ExternalHierarchyLogic hierarchyLogic;
    // run this before each test starts
    @Before
    public void onSetUpBeforeTransaction() throws Exception {
       super.onSetUpBeforeTransaction();
-
-      // load up any other needed spring beans
-
-      // setup the mock objects if needed
-
-      // create and setup the object to be tested
-      hierarchyLogicImpl = new ExternalHierarchyLogicImpl();
-      DaoTestWiring.wireExternalHierarchyLogic(hierarchyLogicImpl, daoPorts);
-      //hierarchyLogicImpl.setHierarchyService(hierarchyService);
 
    }
 

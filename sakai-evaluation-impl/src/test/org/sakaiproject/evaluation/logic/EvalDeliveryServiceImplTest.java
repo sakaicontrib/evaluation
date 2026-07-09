@@ -14,8 +14,6 @@
  */
 package org.sakaiproject.evaluation.logic;
 
-import org.sakaiproject.evaluation.test.DaoTestWiring;
-
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -26,15 +24,14 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.exceptions.ResponseSaveException;
-import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
-import org.sakaiproject.evaluation.test.mocks.MockEvalJobLogic;
-import org.sakaiproject.evaluation.test.mocks.MockExternalHierarchyLogic;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 
 /**
@@ -44,9 +41,15 @@ import org.sakaiproject.evaluation.utils.TemplateItemUtils;
  */
 public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
 
-    protected EvalDeliveryServiceImpl deliveryService;
+    @Autowired
+    @Qualifier("org.sakaiproject.evaluation.logic.EvalDeliveryService")
+    protected EvalDeliveryService deliveryService;
+    @Autowired
+    @Qualifier("org.sakaiproject.evaluation.logic.EvalSettings")
     protected EvalSettings settings;
-    protected EvalEvaluationSetupServiceImpl evaluationSetupService; // needed to load up evals before test
+    @Autowired
+    @Qualifier("org.sakaiproject.evaluation.logic.EvalEvaluationSetupService")
+    protected EvalEvaluationSetupService evaluationSetupService; // needed to load up evals before test
 
     private EvalEvaluation evaluationClosedTwo;
     private EvalEvaluation evaluationActiveTwo;
@@ -57,58 +60,6 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
     @Before
     public void onSetUpBeforeTransaction() throws Exception {
         super.onSetUpBeforeTransaction();
-
-        // load up any other needed spring beans
-        settings = (EvalSettings) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalSettings");
-        if (settings == null) {
-            throw new NullPointerException("EvalSettings could not be retrieved from spring evalGroupId");
-        }
-
-        EvalSecurityChecksImpl securityChecks = 
-            (EvalSecurityChecksImpl) applicationContext.getBean("org.sakaiproject.evaluation.logic.externals.EvalSecurityChecks");
-        if (securityChecks == null) {
-            throw new NullPointerException("EvalSecurityChecksImpl could not be retrieved from spring context");
-        }
-
-        EvalEvaluationService evaluationService = (EvalEvaluationService) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalEvaluationService");
-        if (evaluationService == null) {
-            throw new NullPointerException("EvalEvaluationService could not be retrieved from spring context");
-        }
-
-        // setup the mock objects if needed
-        MockExternalHierarchyLogic hierarchyLogic = new MockExternalHierarchyLogic();
-
-        // create the other needed logic impls
-        EvalAuthoringServiceImpl authoringServiceImpl = new EvalAuthoringServiceImpl();
-        DaoTestWiring.wireEvalAuthoringService(authoringServiceImpl, daoPorts);
-        authoringServiceImpl.setCommonLogic(commonLogic);
-        authoringServiceImpl.setSettings(settings);
-        authoringServiceImpl.setSecurityChecks(securityChecks);
-
-        EvalEmailsLogicImpl emailsLogic = new EvalEmailsLogicImpl();
-        emailsLogic.setCommonLogic(commonLogic);
-        emailsLogic.setEvaluationService(evaluationService);
-        emailsLogic.setSettings(settings);
-
-        evaluationSetupService = new EvalEvaluationSetupServiceImpl();
-        evaluationSetupService.setAuthoringService(authoringServiceImpl);
-        evaluationSetupService.setCommonLogic(commonLogic);
-        DaoTestWiring.wireEvalEvaluationSetupService(evaluationSetupService, daoPorts);
-        evaluationSetupService.setEmails(emailsLogic);
-        evaluationSetupService.setEvalJobLogic( new MockEvalJobLogic() );
-        evaluationSetupService.setEvaluationService(evaluationService);
-        evaluationSetupService.setHierarchyLogic(hierarchyLogic);
-        evaluationSetupService.setSecurityChecks(securityChecks);
-        evaluationSetupService.setSettings(settings);
-
-        // create and setup the object to be tested
-        deliveryService = new EvalDeliveryServiceImpl();
-        DaoTestWiring.wireEvalDeliveryService(deliveryService, daoPorts);
-        deliveryService.setCommonLogic(commonLogic);
-        deliveryService.setHierarchyLogic( hierarchyLogic );
-        deliveryService.setEvaluationService(evaluationService);
-        deliveryService.setSettings(settings);
-        deliveryService.setAuthoringService( authoringServiceImpl );
 
         // Evaluation Complete (ended yesterday, viewable tomorrow), recent close
         evaluationClosedTwo = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, 

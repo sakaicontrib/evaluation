@@ -14,8 +14,6 @@
  */
 package org.sakaiproject.evaluation.logic;
 
-import org.sakaiproject.evaluation.test.DaoTestWiring;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,7 +23,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.EvalScale;
@@ -33,6 +30,9 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.util.AopTestUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,34 +44,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
 
-   protected EvalAuthoringServiceImpl authoringService;
+   @Autowired
+   @Qualifier("org.sakaiproject.evaluation.logic.EvalAuthoringService")
+   protected EvalAuthoringService authoringService;
+   protected EvalAuthoringServiceImpl authoringServiceImpl;
 
    // run this before each test starts
    @Before
    public void onSetUpBeforeTransaction() throws Exception {
       super.onSetUpBeforeTransaction();
-
-      // load up any other needed spring beans
-      EvalSettings settings = (EvalSettings) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalSettings");
-      if (settings == null) {
-         throw new NullPointerException("EvalSettings could not be retrieved from spring context");
-      }
-
-      EvalSecurityChecksImpl securityChecks = 
-         (EvalSecurityChecksImpl) applicationContext.getBean("org.sakaiproject.evaluation.logic.externals.EvalSecurityChecks");
-      if (securityChecks == null) {
-         throw new NullPointerException("EvalSecurityChecksImpl could not be retrieved from spring context");
-      }
-      
-      // setup the mock objects if needed
-
-      // create and setup the object to be tested
-      authoringService = new EvalAuthoringServiceImpl();
-      DaoTestWiring.wireEvalAuthoringService(authoringService, daoPorts);
-      authoringService.setCommonLogic(commonLogic);
-      authoringService.setSettings(settings);
-      authoringService.setSecurityChecks(securityChecks);
-
+      authoringServiceImpl = AopTestUtils.getTargetObject(authoringService);
    }
 
    /**
@@ -2805,7 +2787,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
 
 
       // only 1 countable item in the block template
-      Assert.assertEquals( 1, authoringService.getItemCountForTemplate(etdl.templateAdminBlock.getId()) );
+      Assert.assertEquals( 1, authoringServiceImpl.getItemCountForTemplate(etdl.templateAdminBlock.getId()) );
 
       // test out copying a complete block
       templateItemIds = new Long[] {etdl.templateItem9B.getId(), etdl.templateItem2B.getId(), etdl.templateItem3B.getId()};
@@ -2843,7 +2825,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       }
 
       // now 2 countable items in the block template
-      Assert.assertEquals( 2, authoringService.getItemCountForTemplate(etdl.templateAdminBlock.getId()) );
+      Assert.assertEquals( 2, authoringServiceImpl.getItemCountForTemplate(etdl.templateAdminBlock.getId()) );
 
 
       // now copy over to a new template
@@ -2869,7 +2851,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
          Assert.assertNotNull(persistence.findById(EvalTemplateItem.class, copiedId));
        }
 
-      Assert.assertEquals( 2, authoringService.getItemCountForTemplate(etdl.templateUser.getId()) );
+      Assert.assertEquals( 2, authoringServiceImpl.getItemCountForTemplate(etdl.templateUser.getId()) );
 
       // check we can copy a bunch of things (without children) into the same template
       templateItemIds = new Long[] {etdl.templateItem1User.getId(), etdl.templateItem5User.getId()};
@@ -2880,7 +2862,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
          Assert.assertNotNull(persistence.findById(EvalTemplateItem.class, copiedId));
       }
 
-      Assert.assertEquals( 4, authoringService.getItemCountForTemplate(etdl.templateUser.getId()) );
+      Assert.assertEquals( 4, authoringServiceImpl.getItemCountForTemplate(etdl.templateUser.getId()) );
 
       // check that trying to do an inside copy of TIs from multiple templates causes Assert.failure
       templateItemIds = new Long[] {etdl.templateItem1P.getId(), etdl.templateItem2A.getId()};

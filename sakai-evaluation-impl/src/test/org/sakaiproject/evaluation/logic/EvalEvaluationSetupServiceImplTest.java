@@ -14,8 +14,6 @@
  */
 package org.sakaiproject.evaluation.logic;
 
-import org.sakaiproject.evaluation.test.DaoTestWiring;
-
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -25,11 +23,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.exceptions.BlankRequiredFieldException;
 import org.sakaiproject.evaluation.logic.exceptions.InvalidDatesException;
-import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
@@ -38,8 +34,10 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
-import org.sakaiproject.evaluation.test.mocks.MockEvalJobLogic;
 import org.sakaiproject.evaluation.test.mocks.MockExternalHierarchyLogic;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.util.AopTestUtils;
 
 
 /**
@@ -49,68 +47,25 @@ import org.sakaiproject.evaluation.test.mocks.MockExternalHierarchyLogic;
  */
 public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
-    protected EvalEvaluationSetupServiceImpl evaluationSetupService;
+    @Autowired
+    @Qualifier("org.sakaiproject.evaluation.logic.EvalEvaluationSetupService")
+    protected EvalEvaluationSetupService evaluationSetupService;
+    protected EvalEvaluationSetupServiceImpl evaluationSetupServiceImpl;
+    @Autowired
+    @Qualifier("org.sakaiproject.evaluation.logic.EvalEvaluationService")
     private EvalEvaluationService evaluationService;
+    @Autowired
+    @Qualifier("org.sakaiproject.evaluation.logic.EvalAuthoringService")
     private EvalAuthoringService authoringService;
+    @Autowired
+    @Qualifier("org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic")
     private MockExternalHierarchyLogic hierarchyLogic;
 
     // run this before each test starts
     @Before
     public void onSetUpBeforeTransaction() throws Exception {
         super.onSetUpBeforeTransaction();
-
-        // load up any other needed spring beans
-        EvalSettings settings = (EvalSettings) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalSettings");
-        if (settings == null) {
-            throw new NullPointerException("EvalSettings could not be retrieved from spring context");
-        }
-
-        EvalSecurityChecksImpl securityChecks = 
-            (EvalSecurityChecksImpl) applicationContext.getBean("org.sakaiproject.evaluation.logic.externals.EvalSecurityChecks");
-        if (securityChecks == null) {
-            throw new NullPointerException("EvalSecurityChecksImpl could not be retrieved from spring context");
-        }
-
-        EvalBeanUtils evalBeanUtils = (EvalBeanUtils) applicationContext.getBean(EvalBeanUtils.class.getName());
-        if (evalBeanUtils == null) {
-            throw new NullPointerException("EvalEvaluationService could not be retrieved from spring context");
-        }
-
-        evaluationService = (EvalEvaluationService) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalEvaluationService");
-        if (evaluationService == null) {
-            throw new NullPointerException("EvalEvaluationService could not be retrieved from spring context");
-        }
-
-        // setup the mock objects if needed
-        EvalEmailsLogicImpl emailsLogicImpl = new EvalEmailsLogicImpl();
-        emailsLogicImpl.setEvaluationService(evaluationService);
-        emailsLogicImpl.setCommonLogic(commonLogic);
-        emailsLogicImpl.setSettings(settings);
-
-        // create the other needed logic impls
-        EvalAuthoringServiceImpl authoringServiceImpl = new EvalAuthoringServiceImpl();
-        DaoTestWiring.wireEvalAuthoringService(authoringServiceImpl, daoPorts);
-        authoringServiceImpl.setCommonLogic(commonLogic);
-        authoringServiceImpl.setSecurityChecks(securityChecks);
-        authoringServiceImpl.setSettings(settings);
-        authoringService = authoringServiceImpl;
-
-
-        // create and setup the object to be tested
-        evaluationSetupService = new EvalEvaluationSetupServiceImpl();
-        DaoTestWiring.wireEvalEvaluationSetupService(evaluationSetupService, daoPorts);
-        evaluationSetupService.setCommonLogic(commonLogic);
-        hierarchyLogic = new MockExternalHierarchyLogic();
-        evaluationSetupService.setHierarchyLogic(hierarchyLogic);
-        evaluationSetupService.setSettings(settings);
-        evaluationSetupService.setSecurityChecks(securityChecks);
-        evaluationSetupService.setEvaluationService(evaluationService);
-        evaluationSetupService.setExternalLogic(externalLogic);
-        evaluationSetupService.setEvalJobLogic( new MockEvalJobLogic() ); // set to the mock object
-        evaluationSetupService.setEmails(emailsLogicImpl);
-        evaluationSetupService.setAuthoringService(authoringServiceImpl);
-        evaluationSetupService.setEvalBeanUtils(evalBeanUtils);
-
+        evaluationSetupServiceImpl = AopTestUtils.getTargetObject(evaluationSetupService);
     }
 
     /**
@@ -1027,21 +982,21 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertNull(eah.getInstructorApproval());
         Assert.assertNull(eah.getInstructorsViewResults());
         Assert.assertNull(eah.getStudentsViewResults());
-        evaluationSetupService.setAssignmentDefaults(etdl.evaluationActive, eah);
+        evaluationSetupServiceImpl.setAssignmentDefaults(etdl.evaluationActive, eah);
         Assert.assertNotNull(eah.getInstructorApproval());
         Assert.assertNotNull(eah.getInstructorsViewResults());
         Assert.assertNotNull(eah.getStudentsViewResults());
 
         // make sure it does not wipe existing settings
         eah = new EvalAssignGroup("az", "eag1", "Site", etdl.evaluationActive, false, false, false);
-        evaluationSetupService.setAssignmentDefaults(etdl.evaluationActive, eah);
+        evaluationSetupServiceImpl.setAssignmentDefaults(etdl.evaluationActive, eah);
         // TODO - temporary disable
         //      Assert.assertEquals(Boolean.FALSE, eah.getInstructorApproval());
         Assert.assertEquals(Boolean.FALSE, eah.getInstructorsViewResults());
         Assert.assertEquals(Boolean.FALSE, eah.getStudentsViewResults());
 
         eah = new EvalAssignGroup("az", "eag1", "Site", etdl.evaluationActive, true, true, true);
-        evaluationSetupService.setAssignmentDefaults(etdl.evaluationActive, eah);
+        evaluationSetupServiceImpl.setAssignmentDefaults(etdl.evaluationActive, eah);
         Assert.assertEquals(Boolean.TRUE, eah.getInstructorApproval());
         Assert.assertEquals(Boolean.TRUE, eah.getInstructorsViewResults());
         Assert.assertEquals(Boolean.TRUE, eah.getStudentsViewResults());
@@ -1151,7 +1106,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
         saveSiteAssignGroup(evaluation, EvalTestDataLoad.SITE2_REF);
 
-        List<Long> changedIds = evaluationSetupService.synchronizeUserAssignmentsForced(evaluation, EvalTestDataLoad.SITE2_REF, true);
+        List<Long> changedIds = evaluationSetupServiceImpl.synchronizeUserAssignmentsForced(evaluation, EvalTestDataLoad.SITE2_REF, true);
         Assert.assertEquals(4, changedIds.size());
 
         List<EvalAssignUser> participants = evaluationService.getParticipantsForEval(evaluationId, null,
@@ -1180,7 +1135,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertNotNull(participants);
         Assert.assertTrue(participants.isEmpty());
 
-        List<Long> changedIds = evaluationSetupService.synchronizeUserAssignmentsForced(evaluation, EvalTestDataLoad.SITE2_REF, true);
+        List<Long> changedIds = evaluationSetupServiceImpl.synchronizeUserAssignmentsForced(evaluation, EvalTestDataLoad.SITE2_REF, true);
         Assert.assertEquals(3, changedIds.size());
 
         participants = evaluationService.getParticipantsForEval(evaluationId, null,
@@ -1196,7 +1151,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         persistence.update(unlinked);
         persistence.update(removed);
 
-        changedIds = evaluationSetupService.synchronizeUserAssignmentsForced(evaluation, EvalTestDataLoad.SITE2_REF, true);
+        changedIds = evaluationSetupServiceImpl.synchronizeUserAssignmentsForced(evaluation, EvalTestDataLoad.SITE2_REF, true);
         Assert.assertTrue(changedIds.isEmpty());
 
         participants = evaluationService.getParticipantsForEval(evaluationId, null,
@@ -1693,7 +1648,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertTrue(currentEAUs > 0);
 
         evaluation = evaluationService.getEvaluationById(evaluationId);
-        evaluationSetupService.synchronizeUserAssignmentsForced(evaluation, null, false);
+        evaluationSetupServiceImpl.synchronizeUserAssignmentsForced(evaluation, null, false);
 
         currentAssign = evaluationService.getParticipantsForEval(evaluationId, null, 
                 null, null, null, null, null);
@@ -1718,7 +1673,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertTrue(currentEAUs > 0);
 
         evaluation = evaluationService.getEvaluationById(evaluationId);
-        evaluationSetupService.synchronizeUserAssignmentsForced(evaluation, null, false);
+        evaluationSetupServiceImpl.synchronizeUserAssignmentsForced(evaluation, null, false);
     }
 
     /**

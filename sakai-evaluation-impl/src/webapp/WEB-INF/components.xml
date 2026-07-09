@@ -36,67 +36,7 @@
     <import resource="logic-backup.xml" />
 
     <!-- create the logic service beans (SERVICES level) -->
-    <bean id="org.sakaiproject.evaluation.logic.EvalAuthoringService"
-        class="org.sakaiproject.evaluation.logic.EvalAuthoringServiceImpl"
-        init-method="init">
-        <property name="persistence" ref="org.sakaiproject.evaluation.dao.EvaluationDaoBase" />
-        <property name="authoringDao" ref="org.sakaiproject.evaluation.dao.EvaluationAuthoringDao" />
-        <property name="lockDao" ref="org.sakaiproject.evaluation.dao.EvaluationLockDao" />
-        <property name="commonLogic"
-            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
-        <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-        <property name="securityChecks"
-            ref="org.sakaiproject.evaluation.logic.externals.EvalSecurityChecks" />
-    </bean>
-
-    <bean id="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService"
-        class="org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl"
-        init-method="init">
-        <property name="externalLogic"
-                  ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
-        <property name="persistence" ref="org.sakaiproject.evaluation.dao.EvaluationDaoBase" />
-        <property name="queryDao" ref="org.sakaiproject.evaluation.dao.EvaluationQueryDao" />
-        <property name="assignmentDao" ref="org.sakaiproject.evaluation.dao.EvaluationAssignmentDao" />
-        <property name="responseDao" ref="org.sakaiproject.evaluation.dao.EvaluationResponseDao" />
-        <property name="emailTemplateDao" ref="org.sakaiproject.evaluation.dao.EvaluationEmailTemplateDao" />
-        <property name="lockDao" ref="org.sakaiproject.evaluation.dao.EvaluationLockDao" />
-        <property name="commonLogic"
-            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
-        <property name="hierarchyLogic"
-            ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
-        <property name="evaluationService"
-            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
-        <property name="securityChecks"
-            ref="org.sakaiproject.evaluation.logic.externals.EvalSecurityChecks" />
-        <property name="evalJobLogic"
-            ref="org.sakaiproject.evaluation.logic.EvalJobLogic" />
-        <property name="emails" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
-        <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-        <property name="authoringService"
-            ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
-        <property name="evalBeanUtils"
-            ref="org.sakaiproject.evaluation.beans.EvalBeanUtils" />
-    </bean>
-
-    <bean id="org.sakaiproject.evaluation.logic.EvalDeliveryService"
-        class="org.sakaiproject.evaluation.logic.EvalDeliveryServiceImpl"
-        init-method="init">
-        <property name="persistence" ref="org.sakaiproject.evaluation.dao.EvaluationDaoBase" />
-        <property name="queryDao" ref="org.sakaiproject.evaluation.dao.EvaluationQueryDao" />
-        <property name="responseDao" ref="org.sakaiproject.evaluation.dao.EvaluationResponseDao" />
-        <property name="lockDao" ref="org.sakaiproject.evaluation.dao.EvaluationLockDao" />
-        <property name="commonLogic"
-            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
-        <property name="hierarchyLogic"
-            ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
-        <property name="evaluationService"
-            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
-        <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
-        <property name="authoringService"
-            ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
-        <property name="emailsLogic"
-            ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
-    </bean>
+    <import resource="classpath:org/sakaiproject/evaluation/logic-services.xml" />
 
 
     <!-- DATA PRELOADING -->

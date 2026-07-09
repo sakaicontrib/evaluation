@@ -14,19 +14,19 @@
  */
 package org.sakaiproject.evaluation.logic;
 
-import org.sakaiproject.evaluation.test.DaoTestWiring;
-
 import java.util.Set;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.util.AopTestUtils;
 
 
 /**
@@ -36,8 +36,15 @@ import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
  */
 public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
 
+   @Autowired
+   @Qualifier("org.sakaiproject.evaluation.logic.ReportingPermissions")
+   private ReportingPermissions reportingPermissionsBean;
    protected ReportingPermissionsImpl reportingPermissions;
+   @Autowired
+   @Qualifier("org.sakaiproject.evaluation.logic.EvalEvaluationService")
    private EvalEvaluationService evaluationService;
+   @Autowired
+   @Qualifier("org.sakaiproject.evaluation.logic.EvalSettings")
    private EvalSettings settings;
    private MockEvalExternalLogic externalLogicMock;
 
@@ -50,32 +57,10 @@ public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
    public void onSetUpBeforeTransaction() throws Exception {
       super.onSetUpBeforeTransaction();
 
-      // load up any other needed spring beans
-      settings = (EvalSettings) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalSettings");
-      if (settings == null) {
-         throw new NullPointerException("EvalSettings could not be retrieved from spring context");
-      }
-
-      EvalBeanUtils evalBeanUtils = (EvalBeanUtils) applicationContext.getBean("org.sakaiproject.evaluation.beans.EvalBeanUtils");
-      if (evalBeanUtils == null) {
-         throw new NullPointerException("EvalBeanUtils could not be retrieved from spring context");
-      }
-
-      evaluationService = (EvalEvaluationService) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalEvaluationService");
-      if (evaluationService == null) {
-         throw new NullPointerException("EvalEvaluationService could not be retrieved from spring context");
-      }
+      reportingPermissions = AopTestUtils.getTargetObject(reportingPermissionsBean);
 
       // setup the mock objects if needed
       externalLogicMock = (MockEvalExternalLogic) externalLogic;
-      
-      //create and setup the object to be tested
-      reportingPermissions = new ReportingPermissionsImpl();
-      DaoTestWiring.wireReportingPermissions(reportingPermissions, daoPorts);
-      reportingPermissions.setEvalBeanUtils(evalBeanUtils);
-      reportingPermissions.setEvalSettings(settings);
-      reportingPermissions.setEvaluationService(evaluationService);
-      reportingPermissions.setCommonLogic(commonLogic);
 
       // store the current settings so we can muck around with them
       instructorViewResults = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);

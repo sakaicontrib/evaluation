@@ -14,8 +14,6 @@
  */
 package org.sakaiproject.evaluation.logic;
 
-import org.sakaiproject.evaluation.test.DaoTestWiring;
-
 import java.util.Date;
 import java.util.HashSet;
 
@@ -25,7 +23,6 @@ import org.junit.Test;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.jobmonitor.JobStatusReporter;
 import org.sakaiproject.evaluation.logic.exceptions.ResponseSaveException;
-import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.logic.model.EvalEmailMessage;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAnswer;
@@ -36,14 +33,20 @@ import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
-import org.sakaiproject.evaluation.test.mocks.MockExternalHierarchyLogic;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.util.AopTestUtils;
 
 /**
  * Focused response-save regression tests for the GenericDAO removal.
  */
 public class EvalDeliveryServiceImplResponseSaveTest extends BaseTestEvalLogic {
 
-    private EvalDeliveryServiceImpl deliveryService;
+    @Autowired
+    @Qualifier("org.sakaiproject.evaluation.logic.EvalDeliveryService")
+    private EvalDeliveryService deliveryService;
+    @Autowired
+    @Qualifier("org.sakaiproject.evaluation.logic.EvalSettings")
     private EvalSettings settings;
     private RecordingEmailsLogic emailsLogic;
 
@@ -52,30 +55,11 @@ public class EvalDeliveryServiceImplResponseSaveTest extends BaseTestEvalLogic {
     public void onSetUpBeforeTransaction() throws Exception {
         super.onSetUpBeforeTransaction();
 
-        settings = (EvalSettings) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalSettings");
-        EvalEvaluationService evaluationService = (EvalEvaluationService) applicationContext.getBean(
-                "org.sakaiproject.evaluation.logic.EvalEvaluationService");
-        EvalSecurityChecksImpl securityChecks = (EvalSecurityChecksImpl) applicationContext.getBean(
-                "org.sakaiproject.evaluation.logic.externals.EvalSecurityChecks");
-
-        EvalAuthoringServiceImpl authoringService = new EvalAuthoringServiceImpl();
-        DaoTestWiring.wireEvalAuthoringService(authoringService, daoPorts);
-        authoringService.setCommonLogic(commonLogic);
-        authoringService.setSettings(settings);
-        authoringService.setSecurityChecks(securityChecks);
-
         settings.set(EvalSettings.ENABLE_SUBMISSION_CONFIRMATION_EMAIL, Boolean.FALSE);
 
         emailsLogic = new RecordingEmailsLogic();
-
-        deliveryService = new EvalDeliveryServiceImpl();
-        DaoTestWiring.wireEvalDeliveryService(deliveryService, daoPorts);
-        deliveryService.setCommonLogic(commonLogic);
-        deliveryService.setEvaluationService(evaluationService);
-        deliveryService.setSettings(settings);
-        deliveryService.setAuthoringService(authoringService);
-        deliveryService.setHierarchyLogic(new MockExternalHierarchyLogic());
-        deliveryService.setEmailsLogic(emailsLogic);
+        EvalDeliveryServiceImpl deliveryServiceImpl = AopTestUtils.getTargetObject(deliveryService);
+        deliveryServiceImpl.setEmailsLogic(emailsLogic);
     }
 
     @Test

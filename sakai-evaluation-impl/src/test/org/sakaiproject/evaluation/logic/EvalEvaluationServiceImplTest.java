@@ -14,8 +14,6 @@
  */
 package org.sakaiproject.evaluation.logic;
 
-import org.sakaiproject.evaluation.test.DaoTestWiring;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +24,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.constant.EvalEmailConstants;
-import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalReminderStatus;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
@@ -36,6 +33,8 @@ import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -48,35 +47,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
-    protected EvalEvaluationServiceImpl evaluationService;
-    protected EvalSettings settings;
+    @Autowired
+    @Qualifier("org.sakaiproject.evaluation.logic.EvalEvaluationService")
+    protected EvalEvaluationService evaluationService;
 
     // run this before each test starts
     @Before
     public void onSetUpBeforeTransaction() throws Exception {
         super.onSetUpBeforeTransaction();
-
-        // load up any other needed spring beans
-        settings = (EvalSettings) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalSettings");
-        if (settings == null) {
-            throw new NullPointerException("EvalSettings could not be retrieved from spring evalGroupId");
-        }
-
-        EvalSecurityChecksImpl securityChecks = 
-            (EvalSecurityChecksImpl) applicationContext.getBean("org.sakaiproject.evaluation.logic.externals.EvalSecurityChecks");
-        if (securityChecks == null) {
-            throw new NullPointerException("EvalSecurityChecksImpl could not be retrieved from spring context");
-        }
-
-        // setup the mock objects if needed
-
-        // create and setup the object to be tested
-        evaluationService = new EvalEvaluationServiceImpl();
-        DaoTestWiring.wireEvalEvaluationService(evaluationService, daoPorts);
-        evaluationService.setCommonLogic(commonLogic);
-        evaluationService.setSecurityChecks(securityChecks);
-        evaluationService.setSettings(settings);
-
     }
 
 

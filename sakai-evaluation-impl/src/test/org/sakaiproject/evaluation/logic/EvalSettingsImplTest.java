@@ -14,13 +14,12 @@
  */
 package org.sakaiproject.evaluation.logic;
 
-import org.sakaiproject.evaluation.test.DaoTestWiring;
-
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.sakaiproject.evaluation.model.EvalConfig;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * Test case for EvaluationSettingsImpl
@@ -29,7 +28,9 @@ import org.sakaiproject.evaluation.model.EvalConfig;
  */
 public class EvalSettingsImplTest extends BaseTestEvalLogic {
 
-	private EvalSettingsImpl evalSettings;
+	@Autowired
+	@Qualifier("org.sakaiproject.evaluation.logic.EvalSettings")
+	private EvalSettings evalSettings;
 
 	private EvalConfig config1;
 	private EvalConfig config3;
@@ -51,15 +52,6 @@ public class EvalSettingsImplTest extends BaseTestEvalLogic {
 	@Before
 	public void onSetUpBeforeTransaction() throws Exception {
 	   super.onSetUpBeforeTransaction();
-
-      // load up any other needed spring beans
-
-		// setup the mock objects if needed
-
-		// create and setup the object to be tested
-		evalSettings = new EvalSettingsImpl();
-		DaoTestWiring.wireEvalSettings(evalSettings, daoPorts);
-		evalSettings.setExternalLogic(externalLogic);
 
 		// create test objects
 		config1 = new EvalConfig(TEST_NAME1, TEST_VALUE1);
