@@ -21,7 +21,7 @@ import org.sakaiproject.evaluation.model.EvalConfig;
 /**
  * Hibernate-backed implementation methods for the matching evaluation DAO port.
  */
-abstract class EvaluationDaoSettingsMethods extends EvaluationDaoHibernateSupport {
+public class EvaluationSettingsDaoImpl extends EvaluationDaoHibernateSupport implements EvaluationSettingsDao {
 
     public int countEvalConfigs() {
         Long count = currentSession().createQuery(

@@ -14,6 +14,11 @@
  */
 package org.sakaiproject.evaluation.logic;
 
+import org.sakaiproject.evaluation.dao.EvaluationLockDao;
+import org.sakaiproject.evaluation.dao.EvaluationDaoBase;
+import org.sakaiproject.evaluation.dao.EvaluationQueryDao;
+import org.sakaiproject.evaluation.dao.EvaluationResponseDao;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,7 +30,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.exceptions.ResponseSaveException;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.model.EvalAnswer;
@@ -53,9 +57,24 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
     protected final String EVENT_RESPONSE_CREATED =                   "eval.response.created";
     protected final String EVENT_RESPONSE_UPDATED =                   "eval.response.updated";
 
-    private EvaluationDao dao;
-    public void setDao(EvaluationDao dao) {
-        this.dao = dao;
+    private EvaluationDaoBase persistence;
+    public void setPersistence(EvaluationDaoBase persistence) {
+        this.persistence = persistence;
+    }
+
+    private EvaluationQueryDao queryDao;
+    public void setQueryDao(EvaluationQueryDao queryDao) {
+        this.queryDao = queryDao;
+    }
+
+    private EvaluationResponseDao responseDao;
+    public void setResponseDao(EvaluationResponseDao responseDao) {
+        this.responseDao = responseDao;
+    }
+
+    private EvaluationLockDao lockDao;
+    public void setLockDao(EvaluationLockDao lockDao) {
+        this.lockDao = lockDao;
     }
 
     private EvalCommonLogic commonLogic;
@@ -155,7 +174,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                         // all parts are null so ignore this answer
                         it.remove();
                         if (answer.getId() != null) {
-                            dao.delete(answer);
+                            persistence.delete(answer);
                         }
                     } else {
                         // some parts are not null so do the fixup and store the answer before saving
@@ -185,7 +204,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
             }
 
             try {
-                dao.saveResponseAndAnswers(response, response.getAnswers());
+                responseDao.saveResponseAndAnswers(response, response.getAnswers());
             } catch (Exception e) {
                 // failed to save so we should assume for now this is caused by the darn unique constraint
                 log.warn("Unable to save response ("+response.getId()+") and answers for this evaluation (" 
@@ -201,8 +220,8 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                  * and not just creating the empty response so lock related evaluation
                  */
                 log.info("Locking evaluation (" + response.getEvaluation().getId() + ") and associated entities");
-                EvalEvaluation evaluation = (EvalEvaluation) dao.findById(EvalEvaluation.class, response.getEvaluation().getId());
-                dao.lockEvaluation(evaluation, true);
+                EvalEvaluation evaluation = (EvalEvaluation) persistence.findById(EvalEvaluation.class, response.getEvaluation().getId());
+                lockDao.lockEvaluation(evaluation, true);
                 completeMessage = ", response is complete";
             }
 
@@ -243,7 +262,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
     public EvalResponse getResponseById(Long responseId) {
         log.debug("responseId: " + responseId);
         // get the response by passing in id
-        EvalResponse response = (EvalResponse) dao.findById(EvalResponse.class, responseId);
+        EvalResponse response = (EvalResponse) persistence.findById(EvalResponse.class, responseId);
         return response;
     }
 
@@ -251,13 +270,13 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
         if (evaluationId == null || userId == null || evalGroupId == null) {
             throw new IllegalArgumentException("inputs must all be set");
         }
-        EvalEvaluation evaluation = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
+        EvalEvaluation evaluation = (EvalEvaluation) persistence.findById(EvalEvaluation.class, evaluationId);
         if (evaluation == null) {
             throw new IllegalArgumentException("Invalid evaluation, cannot find evaluation: " + evaluationId);
         }
 
         EvalResponse response = null;
-        List<EvalResponse> responses = dao.getEvaluationResponsesForUserAndGroup(evaluationId, userId, evalGroupId);
+        List<EvalResponse> responses = responseDao.getEvaluationResponsesForUserAndGroup(evaluationId, userId, evalGroupId);
         if (responses.isEmpty()) {
             // create a new response and save it
             response = new EvalResponse(userId, evalGroupId, evaluation, new Date());
@@ -282,7 +301,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
         }
 
         // check that the ids are actually valid
-        int count = dao.countEvaluationsByIds(evaluationIds);
+        int count = queryDao.countEvaluationsByIds(evaluationIds);
         if (count != evaluationIds.length) {
             throw new IllegalArgumentException("One or more invalid evaluation ids in evaluationIds: " + evaluationIds);
         }
@@ -294,17 +313,17 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
             ownerUserId = userId;
         }
 
-        return dao.getEvaluationResponsesForUser(evaluationIds, ownerUserId, completed);
+        return responseDao.getEvaluationResponsesForUser(evaluationIds, ownerUserId, completed);
     }
 
     public int countResponses(Long evaluationId, String evalGroupId, Boolean completed) {
         log.debug("evaluationId: " + evaluationId + ", evalGroupId: " + evalGroupId);
 
-        if (dao.countEvaluationById(evaluationId) <= 0) {
+        if (queryDao.countEvaluationById(evaluationId) <= 0) {
             throw new IllegalArgumentException("Could not find evaluation with id: " + evaluationId);
         }
 
-        return dao.countResponses(evaluationId, evalGroupId, completed);
+        return responseDao.countResponses(evaluationId, evalGroupId, completed);
     }
 
     /* (non-Javadoc)
@@ -313,11 +332,11 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
     public List<Long> getEvalResponseIds(Long evaluationId, String[] evalGroupIds, Boolean completed) {
         log.debug("evaluationId: " + evaluationId);
 
-        if (dao.countEvaluationById(evaluationId) <= 0) {
+        if (queryDao.countEvaluationById(evaluationId) <= 0) {
             throw new IllegalArgumentException("Could not find evaluation with id: " + evaluationId);
         }
 
-        return dao.getResponseIds(evaluationId, evalGroupIds, null, completed);
+        return responseDao.getResponseIds(evaluationId, evalGroupIds, null, completed);
     }
 
     /* (non-Javadoc)
@@ -326,11 +345,11 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
     public List<EvalResponse> getEvaluationResponses(Long evaluationId, String[] evalGroupIds, Boolean completed) {
         log.debug("evaluationId: " + evaluationId);
 
-        if (dao.countEvaluationById(evaluationId) <= 0) {
+        if (queryDao.countEvaluationById(evaluationId) <= 0) {
             throw new IllegalArgumentException("Could not find evaluation with id: " + evaluationId);
         }
 
-        return dao.getEvaluationResponses(evaluationId, evalGroupIds, completed);
+        return responseDao.getEvaluationResponses(evaluationId, evalGroupIds, completed);
     }
 
 
@@ -341,11 +360,11 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
     public List<EvalAnswer> getAnswersForEval(Long evaluationId, String[] evalGroupIds, Long[] templateItemIds) {
         log.debug("evaluationId: " + evaluationId);
 
-        if (dao.countEvaluationById(evaluationId) <= 0) {
+        if (queryDao.countEvaluationById(evaluationId) <= 0) {
             throw new IllegalArgumentException("Could not find evaluation with id: " + evaluationId);
         }
 
-        List<EvalAnswer> answers = dao.getAnswers(evaluationId, evalGroupIds, templateItemIds);
+        List<EvalAnswer> answers = responseDao.getAnswers(evaluationId, evalGroupIds, templateItemIds);
 
         for (EvalAnswer answer : answers) {
             // decode the stored answers into the int array
@@ -363,7 +382,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
     public boolean canModifyResponse(String userId, Long responseId) {
         log.debug("userId: " + userId + ", responseId: " + responseId);
         // get the response by id
-        EvalResponse response = (EvalResponse) dao.findById(EvalResponse.class, responseId);
+        EvalResponse response = (EvalResponse) persistence.findById(EvalResponse.class, responseId);
         if (response == null) {
             throw new IllegalArgumentException("Cannot find response with id: " + responseId);
         }

@@ -14,6 +14,9 @@
  */
 package org.sakaiproject.evaluation.dao;
 
+import org.sakaiproject.evaluation.dao.EvaluationAdminSupportDao;
+import org.sakaiproject.evaluation.dao.EvaluationDaoBase;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -34,8 +37,15 @@ import lombok.extern.slf4j.Slf4j;
 public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
 {
 
-    @Setter
-    private EvaluationDao dao;
+    private EvaluationAdminSupportDao adminSupportDao;
+    public void setAdminSupportDao(EvaluationAdminSupportDao adminSupportDao) {
+        this.adminSupportDao = adminSupportDao;
+    }
+
+    private EvaluationDaoBase persistence;
+    public void setPersistence(EvaluationDaoBase persistence) {
+        this.persistence = persistence;
+    }
 
     /*
      * (non-Javadoc)
@@ -81,7 +91,7 @@ public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
         String finalRuleText = applyQualifierToRuleText( ruleText, qualifier );
 
         EvalHierarchyRule rule = new EvalHierarchyRule( nodeID, finalRuleText, option );
-        dao.create( rule );
+        persistence.create( rule );
     }
 
     /*
@@ -101,7 +111,7 @@ public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
             throw new IllegalArgumentException( "Can't find hierarchy node rule: " + "ruleID=" + ruleID );
         }
 
-        dao.delete( rule );
+        persistence.delete( rule );
     }
 
     /*
@@ -118,7 +128,7 @@ public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
         List<EvalHierarchyRule> rules = getAllByNodeID( nodeID );
         if( !rules.isEmpty() )
         {
-            dao.deleteHierarchyRules( new HashSet<>( rules ) );
+            adminSupportDao.deleteHierarchyRules( new HashSet<>( rules ) );
         }
     }
 
@@ -148,7 +158,7 @@ public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
             rule.setRule( finalRuleText );
             rule.setOpt( option );
             rule.setNodeID( nodeID );
-            dao.update( rule );
+            persistence.update( rule );
         }
     }
 
@@ -200,7 +210,7 @@ public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
             log.debug( "getAllRules()" );
         }
 
-        List<EvalHierarchyRule> rules = dao.getAllHierarchyRules();
+        List<EvalHierarchyRule> rules = adminSupportDao.getAllHierarchyRules();
         return convertRules( rules );
     }
 
@@ -221,7 +231,7 @@ public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
         {
             return null;
         }
-        return dao.getHierarchyRuleById( ruleID );
+        return adminSupportDao.getHierarchyRuleById( ruleID );
     }
 
     /**
@@ -241,7 +251,7 @@ public class EvalHierarchyRuleSupportImpl implements EvalHierarchyRuleSupport
         {
             return Collections.emptyList();
         }
-        List<EvalHierarchyRule> rules = dao.getHierarchyRulesByNodeId( nodeID );
+        List<EvalHierarchyRule> rules = adminSupportDao.getHierarchyRulesByNodeId( nodeID );
         if( rules == null )
         {
             return Collections.emptyList();

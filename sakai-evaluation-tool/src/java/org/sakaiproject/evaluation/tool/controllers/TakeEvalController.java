@@ -36,6 +36,8 @@ import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalResponse;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.tool.utils.EvalItemViewData;
+import org.sakaiproject.evaluation.tool.utils.EvalItemViewDataBuilder;
 import org.sakaiproject.evaluation.tool.utils.ScaleOptionsBuilder;
 import org.sakaiproject.evaluation.tool.utils.ScaleOptionsBuilder.OptionData;
 import org.sakaiproject.evaluation.tool.utils.ScaleOptionsBuilder.SteppedRow;
@@ -71,53 +73,7 @@ public class TakeEvalController extends EvalControllerSupport {
     // ---- DTOs ----------------------------------------------------------------
 
     /** Item data for rendering and form binding */
-    @Data
-    public static class FormItemData implements ScaleOptionsBuilder.ItemScaleOptionsTarget {
-        // Item metadata
-        String itemType;
-        String itemText;
-        int displayNumber;
-        int displayRows;
-        boolean usesNA;
-        boolean usesComment;
-        boolean compulsory;
-
-        // Scale rendering
-        String scaleDisplaySetting;
-        List<OptionData> options;
-        String startLabel;
-        String endLabel;
-        String startClass;
-        String endClass;
-        String idealImageUrl;
-        String matrixLabelStart;
-        String matrixLabelEnd;
-        String matrixLabelMiddle;
-        List<SteppedRow> steppedRows;
-        List<FormItemData> childItems;
-
-        // Form binding (for take_eval)
-        int answerIndex;           // position in answers[] list
-        Long templateItemId;
-        Long existingAnswerId;     // null if new answer
-        String associatedId;       // null for course items
-        String associatedType;     // null for course items
-
-        // Current answer values (pre-fill form)
-        Integer currentNumeric;
-        String currentText;
-        boolean currentNA;
-        String currentComment;
-        List<Integer> currentMultipleAnswers;
-
-        boolean odd;
-
-        // Helper: unique input name suffix for this item
-        public String getInputKey() {
-            return associatedId != null
-                    ? templateItemId + "_" + associatedId.replaceAll("[^a-zA-Z0-9]", "_")
-                    : String.valueOf(templateItemId);
-        }
+    public static class FormItemData extends EvalItemViewDataBuilder.TakeEvalItemData {
     }
 
     /** Wrapper for indexed form submission */
@@ -422,7 +378,7 @@ public class TakeEvalController extends EvalControllerSupport {
                             childFids.add(childFid);
                             answerIndex++;
                         }
-                        parentFid.setChildItems(childFids);
+                        parentFid.setChildItems(new ArrayList<EvalItemViewData>(childFids));
                         ngd.getItems().add(parentFid);
                         displayNumber += children.size();
 
@@ -659,59 +615,8 @@ public class TakeEvalController extends EvalControllerSupport {
     private FormItemData buildFormItemData(EvalTemplateItem ti, int displayNumber,
             String associatedId, String associatedType, int answerIndex,
             EvalAnswer existing, Locale locale) {
-
-        FormItemData d = new FormItemData();
-        String type = TemplateItemUtils.getTemplateItemType(ti);
-        d.setItemType(type);
-        d.setItemText(ti.getItem().getItemText());
-        d.setDisplayNumber(displayNumber);
-        d.setUsesNA(Boolean.TRUE.equals(ti.getUsesNA()));
-        d.setUsesComment(Boolean.TRUE.equals(ti.getUsesComment()));
-        d.setCompulsory(Boolean.TRUE.equals(ti.isCompulsory()));
-        d.setAnswerIndex(answerIndex);
-        d.setTemplateItemId(ti.getId());
-        d.setAssociatedId(associatedId);
-        d.setAssociatedType(associatedType);
-
-        if (existing != null) {
-            d.setExistingAnswerId(existing.getId());
-            d.setCurrentNumeric(existing.getNumeric());
-            d.setCurrentText(existing.getText());
-            d.setCurrentNA(EvalUtils.decodeAnswerNA(existing));
-            d.setCurrentComment(existing.getComment());
-            if (existing.multipleAnswers != null) {
-                List<Integer> maList = new ArrayList<>();
-                for (Integer v : existing.multipleAnswers) {
-                    if (v != null) maList.add(v);
-                }
-                d.setCurrentMultipleAnswers(maList);
-            }
-        }
-
-        if (EvalConstants.ITEM_TYPE_TEXT.equals(type)) {
-            d.setDisplayRows(ti.getDisplayRows() != null ? ti.getDisplayRows() : 3);
-
-        } else if (EvalConstants.ITEM_TYPE_SCALED.equals(type)) {
-            populateScaleData(d, ti);
-
-        } else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(type)
-                || EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(type)) {
-            populateChoiceData(d, ti);
-
-        } else if (EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(type)) {
-            populateScaleData(d, ti);
-        }
-
-        return d;
-    }
-
-    private void populateScaleData(FormItemData d, EvalTemplateItem ti) {
-        ScaleOptionsBuilder.applyTo(d, ScaleOptionsBuilder.forTemplateItem(ti));
-    }
-
-    private void populateChoiceData(FormItemData d, EvalTemplateItem ti) {
-        ScaleOptionsBuilder.applyTo(d, ScaleOptionsBuilder.forChoiceTemplateItem(ti, d.getCurrentMultipleAnswers()));
-        d.setUsesNA(Boolean.TRUE.equals(ti.getUsesNA()));
+        return EvalItemViewDataBuilder.buildForTake(
+                ti, displayNumber, associatedId, associatedType, answerIndex, existing, new FormItemData());
     }
 
     private EvalAnswer findAnswerInResponse(EvalResponse response, Long answerId) {

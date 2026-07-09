@@ -14,9 +14,20 @@
  */
 package org.sakaiproject.evaluation.logic;
 
+import org.sakaiproject.evaluation.dao.EvaluationAdminSupportDao;
+import org.sakaiproject.evaluation.dao.EvaluationAssignmentDao;
+import org.sakaiproject.evaluation.dao.EvaluationAuthoringDao;
+import org.sakaiproject.evaluation.dao.EvaluationConsolidatedEmailDao;
+import org.sakaiproject.evaluation.dao.EvaluationDaoBase;
+import org.sakaiproject.evaluation.dao.EvaluationEmailTemplateDao;
+import org.sakaiproject.evaluation.dao.EvaluationLockDao;
+import org.sakaiproject.evaluation.dao.EvaluationQueryDao;
+import org.sakaiproject.evaluation.dao.EvaluationResponseDao;
+import org.sakaiproject.evaluation.dao.EvaluationSettingsDao;
+import org.sakaiproject.evaluation.test.DaoTestWiring;
+
 import org.junit.Assert;
 import org.junit.Before;
-import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.PreloadTestDataImpl;
@@ -42,7 +53,18 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 		"classpath:org/sakaiproject/evaluation/logic-support.xml"})
 public abstract class BaseTestEvalLogic extends AbstractTransactionalJUnit4SpringContextTests {
 
-   protected EvaluationDao evaluationDao;
+   protected EvaluationDaoBase persistence;
+   protected EvaluationSettingsDao settingsDao;
+   protected EvaluationEmailTemplateDao emailTemplateDao;
+   protected EvaluationAuthoringDao authoringDao;
+   protected EvaluationAdminSupportDao adminSupportDao;
+   protected EvaluationResponseDao responseDao;
+   protected EvaluationAssignmentDao assignmentDao;
+   protected EvaluationQueryDao queryDao;
+   protected EvaluationLockDao lockDao;
+   protected EvaluationConsolidatedEmailDao consolidatedEmailDao;
+   protected final DaoTestWiring.DaoPorts daoPorts = new DaoTestWiring.DaoPorts();
+
    protected EvalCommonLogic commonLogic;
    protected MockEvalExternalLogic externalLogic;
    protected EvalTestDataLoad etdl;
@@ -50,11 +72,7 @@ public abstract class BaseTestEvalLogic extends AbstractTransactionalJUnit4Sprin
    @Before
    public void onSetUpBeforeTransaction() throws Exception {
 
-      // load the spring created dao class bean from the Spring Application Context
-      evaluationDao = (EvaluationDao) applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationDao");
-      if (evaluationDao == null) {
-         throw new NullPointerException("DAO could not be retrieved from spring context");
-      }
+      loadDaoPorts();
 
       externalLogic = (MockEvalExternalLogic) applicationContext.getBean("org.sakaiproject.evaluation.logic.externals.EvalExternalLogic");
       if (externalLogic == null) {
@@ -67,7 +85,7 @@ public abstract class BaseTestEvalLogic extends AbstractTransactionalJUnit4Sprin
       }
 
       // check the preloaded test data
-      Assert.assertTrue("Error preloading test data", evaluationDao.countAll(EvalEvaluation.class) > 0);
+      Assert.assertTrue("Error preloading test data", persistence.countAll(EvalEvaluation.class) > 0);
 
       PreloadTestDataImpl ptd = (PreloadTestDataImpl) applicationContext.getBean("org.sakaiproject.evaluation.test.PreloadTestData");
       if (ptd == null) {
@@ -80,5 +98,32 @@ public abstract class BaseTestEvalLogic extends AbstractTransactionalJUnit4Sprin
          throw new IllegalStateException("Failure in loadup of data");
       }
 
+   }
+
+   protected void loadDaoPorts() {
+      persistence = applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationDaoBase", EvaluationDaoBase.class);
+      settingsDao = applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationSettingsDao", EvaluationSettingsDao.class);
+      emailTemplateDao = applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationEmailTemplateDao", EvaluationEmailTemplateDao.class);
+      authoringDao = applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationAuthoringDao", EvaluationAuthoringDao.class);
+      adminSupportDao = applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationAdminSupportDao", EvaluationAdminSupportDao.class);
+      responseDao = applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationResponseDao", EvaluationResponseDao.class);
+      assignmentDao = applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationAssignmentDao", EvaluationAssignmentDao.class);
+      queryDao = applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationQueryDao", EvaluationQueryDao.class);
+      lockDao = applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationLockDao", EvaluationLockDao.class);
+      consolidatedEmailDao = applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationConsolidatedEmailDao", EvaluationConsolidatedEmailDao.class);
+      if (persistence == null) {
+         throw new NullPointerException("DAO could not be retrieved from spring context");
+      }
+
+      daoPorts.persistence = persistence;
+      daoPorts.settingsDao = settingsDao;
+      daoPorts.emailTemplateDao = emailTemplateDao;
+      daoPorts.authoringDao = authoringDao;
+      daoPorts.adminSupportDao = adminSupportDao;
+      daoPorts.responseDao = responseDao;
+      daoPorts.assignmentDao = assignmentDao;
+      daoPorts.queryDao = queryDao;
+      daoPorts.lockDao = lockDao;
+      daoPorts.consolidatedEmailDao = consolidatedEmailDao;
    }
 }

@@ -14,13 +14,15 @@
  */
 package org.sakaiproject.evaluation.logic;
 
+import org.sakaiproject.evaluation.dao.EvaluationDaoBase;
+import org.sakaiproject.evaluation.dao.EvaluationSettingsDao;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalConfig;
 import org.sakaiproject.evaluation.utils.SettingsLogicUtils;
@@ -35,9 +37,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class EvalSettingsImpl implements EvalSettings {
 
-    private EvaluationDao dao;
-    public void setDao(EvaluationDao dao) {
-        this.dao = dao;
+    private EvaluationDaoBase persistence;
+    public void setPersistence(EvaluationDaoBase persistence) {
+        this.persistence = persistence;
+    }
+
+    private EvaluationSettingsDao settingsDao;
+    public void setSettingsDao(EvaluationSettingsDao settingsDao) {
+        this.settingsDao = settingsDao;
     }
 
     private EvalExternalLogic externalLogic;
@@ -63,7 +70,7 @@ public class EvalSettingsImpl implements EvalSettings {
         booleanSettings.addAll( Arrays.asList( BOOLEAN_SETTINGS ) );
 
         // count the current config settings
-        int count = dao.countEvalConfigs();
+        int count = settingsDao.countEvalConfigs();
         if (count > 0) {
             log.info("Updating boolean only evaluation system settings to ensure they are not null...");
             // check the existing boolean settings for null values and fix them if they are null
@@ -147,7 +154,7 @@ public class EvalSettingsImpl implements EvalSettings {
         }
 
         try {
-            dao.save(c); // now save in the database
+            persistence.save(c); // now save in the database
             externalLogic.registerEntityEvent(EVENT_SET_ONE_CONFIG, EvalConfig.class, settingConstant); // register event
             configCache.put(name, c); // update the cache
         } catch (Exception e) {
@@ -177,7 +184,7 @@ public class EvalSettingsImpl implements EvalSettings {
             }
         }
         if (! found) {
-            config = dao.getEvalConfigByName(name);
+            config = settingsDao.getEvalConfigByName(name);
             if (config != null) {
                 log.debug("Found admin setting for this constant:" + name);
             } else {
@@ -208,7 +215,7 @@ public class EvalSettingsImpl implements EvalSettings {
             // clear out cache
             configCache.clear();
             // reload all cache items
-            List<EvalConfig> l = dao.getAllEvalConfigs();
+            List<EvalConfig> l = settingsDao.getAllEvalConfigs();
             for (EvalConfig config : l) {
                 // copy the values to avoid putting persistent objects in the cache
                 config = new EvalConfig(config.getName(), config.getValue());

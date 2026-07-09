@@ -14,6 +14,17 @@
  */
 package org.sakaiproject.evaluation.dao;
 
+import org.sakaiproject.evaluation.dao.EvaluationAdminSupportDao;
+import org.sakaiproject.evaluation.dao.EvaluationAssignmentDao;
+import org.sakaiproject.evaluation.dao.EvaluationAuthoringDao;
+import org.sakaiproject.evaluation.dao.EvaluationConsolidatedEmailDao;
+import org.sakaiproject.evaluation.dao.EvaluationDaoBase;
+import org.sakaiproject.evaluation.dao.EvaluationEmailTemplateDao;
+import org.sakaiproject.evaluation.dao.EvaluationLockDao;
+import org.sakaiproject.evaluation.dao.EvaluationQueryDao;
+import org.sakaiproject.evaluation.dao.EvaluationResponseDao;
+import org.sakaiproject.evaluation.dao.EvaluationSettingsDao;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,7 +76,16 @@ import lombok.extern.slf4j.Slf4j;
 		"classpath:org/sakaiproject/evaluation/spring-hibernate.xml"})
 public abstract class AbstractEvaluationDaoTest extends AbstractTransactionalJUnit4SpringContextTests {
 
-    protected EvaluationDao evaluationDao;
+    protected EvaluationDaoBase persistence;
+    protected EvaluationSettingsDao settingsDao;
+    protected EvaluationEmailTemplateDao emailTemplateDao;
+    protected EvaluationAuthoringDao authoringDao;
+    protected EvaluationAdminSupportDao adminSupportDao;
+    protected EvaluationResponseDao responseDao;
+    protected EvaluationAssignmentDao assignmentDao;
+    protected EvaluationQueryDao queryDao;
+    protected EvaluationLockDao lockDao;
+    protected EvaluationConsolidatedEmailDao consolidatedEmailDao;
 
     protected EvalTestDataLoad etdl;
 
@@ -80,16 +100,13 @@ public abstract class AbstractEvaluationDaoTest extends AbstractTransactionalJUn
     @Before
     public void onSetUpBeforeTransaction() throws Exception {
         // load the spring created dao class bean from the Spring Application Context
-        evaluationDao = (EvaluationDao) applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationDao");
-        if (evaluationDao == null) {
-            throw new NullPointerException("DAO could not be retrieved from spring context");
-        }
+        loadDaoPorts();
 
         // check the preloaded data
-        Assert.assertTrue("Error preloading data", evaluationDao.countAll(EvalScale.class) > 0);
+        Assert.assertTrue("Error preloading data", persistence.countAll(EvalScale.class) > 0);
 
         // check the preloaded test data
-        Assert.assertTrue("Error preloading test data", evaluationDao.countAll(EvalEvaluation.class) > 0);
+        Assert.assertTrue("Error preloading test data", persistence.countAll(EvalEvaluation.class) > 0);
 
         PreloadTestDataImpl ptd = (PreloadTestDataImpl) applicationContext.getBean("org.sakaiproject.evaluation.test.PreloadTestData");
         if (ptd == null) {
@@ -104,12 +121,12 @@ public abstract class AbstractEvaluationDaoTest extends AbstractTransactionalJUn
         scaleLocked = new EvalScale(EvalTestDataLoad.ADMIN_USER_ID, "Scale Alpha", EvalConstants.SCALE_MODE_SCALE, 
                 EvalConstants.SHARING_PRIVATE, EvalTestDataLoad.NOT_EXPERT, "description", 
                 EvalConstants.SCALE_IDEAL_NONE, optionsA, EvalTestDataLoad.LOCKED);
-        evaluationDao.save( scaleLocked );
+        persistence.save( scaleLocked );
 
         itemLocked = new EvalItem(EvalTestDataLoad.MAINT_USER_ID, "Header type locked", EvalConstants.SHARING_PRIVATE, 
                 EvalConstants.ITEM_TYPE_HEADER, EvalTestDataLoad.NOT_EXPERT);
         itemLocked.setLocked(EvalTestDataLoad.LOCKED);
-        evaluationDao.save( itemLocked );
+        persistence.save( itemLocked );
 
         itemUnlocked = new EvalItem(EvalTestDataLoad.MAINT_USER_ID, "Header type locked", EvalConstants.SHARING_PRIVATE, 
                 EvalConstants.ITEM_TYPE_HEADER, EvalTestDataLoad.NOT_EXPERT);
@@ -117,7 +134,7 @@ public abstract class AbstractEvaluationDaoTest extends AbstractTransactionalJUn
         itemUnlocked.setScaleDisplaySetting( EvalConstants.ITEM_SCALE_DISPLAY_VERTICAL );
         itemUnlocked.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
         itemUnlocked.setLocked(EvalTestDataLoad.UNLOCKED);
-        evaluationDao.save( itemUnlocked );
+        persistence.save( itemUnlocked );
 
         evalUnLocked = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, EvalTestDataLoad.MAINT_USER_ID, "Eval active not taken", null, 
                 etdl.yesterday, etdl.tomorrow, etdl.tomorrow, etdl.threeDaysFuture, false, null,
@@ -126,8 +143,24 @@ public abstract class AbstractEvaluationDaoTest extends AbstractTransactionalJUn
                 etdl.templatePublicUnused, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                 EvalTestDataLoad.UNLOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null);
 
-        evaluationDao.save( evalUnLocked );
+        persistence.save( evalUnLocked );
 
+    }
+
+    protected void loadDaoPorts() {
+        persistence = applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationDaoBase", EvaluationDaoBase.class);
+        settingsDao = applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationSettingsDao", EvaluationSettingsDao.class);
+        emailTemplateDao = applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationEmailTemplateDao", EvaluationEmailTemplateDao.class);
+        authoringDao = applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationAuthoringDao", EvaluationAuthoringDao.class);
+        adminSupportDao = applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationAdminSupportDao", EvaluationAdminSupportDao.class);
+        responseDao = applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationResponseDao", EvaluationResponseDao.class);
+        assignmentDao = applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationAssignmentDao", EvaluationAssignmentDao.class);
+        queryDao = applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationQueryDao", EvaluationQueryDao.class);
+        lockDao = applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationLockDao", EvaluationLockDao.class);
+        consolidatedEmailDao = applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationConsolidatedEmailDao", EvaluationConsolidatedEmailDao.class);
+        if (persistence == null) {
+            throw new NullPointerException("DAO could not be retrieved from spring context");
+        }
     }
 
     protected Session currentSession() {

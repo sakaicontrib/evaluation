@@ -29,6 +29,8 @@ import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
+import org.sakaiproject.evaluation.tool.utils.EvalItemViewData;
+import org.sakaiproject.evaluation.tool.utils.EvalItemViewDataBuilder;
 import org.sakaiproject.evaluation.tool.utils.ScaleOptionsBuilder;
 import org.sakaiproject.evaluation.tool.utils.ScaleOptionsBuilder.OptionData;
 import org.sakaiproject.evaluation.tool.utils.ScaleOptionsBuilder.SteppedRow;
@@ -62,28 +64,7 @@ public class PreviewEvalController extends EvalControllerSupport {
 
     // ---- DTOs ----------------------------------------------------------------
 
-    @Data
-    public static class ItemData implements ScaleOptionsBuilder.ItemScaleOptionsTarget {
-        String itemType;
-        String itemText;
-        int displayNumber;
-        int displayRows;
-        boolean usesNA;
-        boolean usesComment;
-        boolean compulsory;
-        String scaleDisplaySetting;
-        List<OptionData> options;
-        String startLabel;
-        String endLabel;
-        String startClass;
-        String endClass;
-        String idealImageUrl;
-        String matrixLabelStart;
-        String matrixLabelEnd;
-        String matrixLabelMiddle;
-        List<SteppedRow> steppedRows;
-        List<ItemData> childItems;
-        boolean odd;
+    public static class ItemData extends EvalItemViewData {
     }
 
     @Data
@@ -304,28 +285,29 @@ public class PreviewEvalController extends EvalControllerSupport {
     // ---- Item building -------------------------------------------------------
 
     private ItemData buildItemData(EvalTemplateItem ti, int displayNumber, Locale locale) {
+        EvalItemViewData base = EvalItemViewDataBuilder.build(ti, displayNumber);
         ItemData d = new ItemData();
-        String type = TemplateItemUtils.getTemplateItemType(ti);
-        d.setItemType(type);
-        d.setItemText(ti.getItem().getItemText());
-        d.setDisplayNumber(displayNumber);
-        d.setUsesNA(Boolean.TRUE.equals(ti.getUsesNA()));
-        d.setUsesComment(Boolean.TRUE.equals(ti.getUsesComment()));
-        d.setCompulsory(Boolean.TRUE.equals(ti.isCompulsory()));
+        d.setItemType(base.getItemType());
+        d.setItemText(base.getItemText());
+        d.setDisplayNumber(base.getDisplayNumber());
+        d.setDisplayRows(base.getDisplayRows());
+        d.setUsesNA(base.isUsesNA());
+        d.setUsesComment(base.isUsesComment());
+        d.setCompulsory(base.isCompulsory());
+        d.setScaleDisplaySetting(base.getScaleDisplaySetting());
+        d.setOptions(base.getOptions());
+        d.setStartLabel(base.getStartLabel());
+        d.setEndLabel(base.getEndLabel());
+        d.setStartClass(base.getStartClass());
+        d.setEndClass(base.getEndClass());
+        d.setIdealImageUrl(base.getIdealImageUrl());
+        d.setMatrixLabelStart(base.getMatrixLabelStart());
+        d.setMatrixLabelEnd(base.getMatrixLabelEnd());
+        d.setMatrixLabelMiddle(base.getMatrixLabelMiddle());
+        d.setSteppedRows(base.getSteppedRows());
 
-        if (EvalConstants.ITEM_TYPE_TEXT.equals(type)) {
-            d.setDisplayRows(ti.getDisplayRows() != null ? ti.getDisplayRows() : 3);
-
-        } else if (EvalConstants.ITEM_TYPE_SCALED.equals(type)) {
-            populateScaleData(d, ti);
-
-        } else if (EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(type)
-                || EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(type)) {
-            populateChoiceData(d, ti);
-
-        } else if (EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(type)) {
-            populateScaleData(d, ti);
-            List<ItemData> children = new ArrayList<>();
+        if (EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(d.getItemType())) {
+            List<EvalItemViewData> children = new ArrayList<>();
             if (ti.childTemplateItems != null) {
                 int childNum = displayNumber;
                 for (EvalTemplateItem child : ti.childTemplateItems) {
@@ -335,14 +317,5 @@ public class PreviewEvalController extends EvalControllerSupport {
             d.setChildItems(children);
         }
         return d;
-    }
-
-    private void populateScaleData(ItemData d, EvalTemplateItem ti) {
-        ScaleOptionsBuilder.applyTo(d, ScaleOptionsBuilder.forTemplateItem(ti));
-    }
-
-    private void populateChoiceData(ItemData d, EvalTemplateItem ti) {
-        ScaleOptionsBuilder.applyTo(d, ScaleOptionsBuilder.forChoiceTemplateItem(ti, null));
-        d.setUsesNA(Boolean.TRUE.equals(ti.getUsesNA()));
     }
 }

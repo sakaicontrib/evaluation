@@ -14,6 +14,8 @@
  */
 package org.sakaiproject.evaluation.logic;
 
+import org.sakaiproject.evaluation.test.DaoTestWiring;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogicImpl;
@@ -40,7 +42,7 @@ public class ExternalHierarchyLogicImplTest extends BaseTestEvalLogic {
 
       // create and setup the object to be tested
       hierarchyLogicImpl = new ExternalHierarchyLogicImpl();
-      hierarchyLogicImpl.setDao(evaluationDao);
+      DaoTestWiring.wireExternalHierarchyLogic(hierarchyLogicImpl, daoPorts);
       //hierarchyLogicImpl.setHierarchyService(hierarchyService);
 
    }

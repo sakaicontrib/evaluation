@@ -14,6 +14,8 @@
  */
 package org.sakaiproject.evaluation.logic;
 
+import org.sakaiproject.evaluation.test.DaoTestWiring;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -70,7 +72,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 
         // create and setup the object to be tested
         evaluationService = new EvalEvaluationServiceImpl();
-        evaluationService.setDao(evaluationDao);
+        DaoTestWiring.wireEvalEvaluationService(evaluationService, daoPorts);
         evaluationService.setCommonLogic(commonLogic);
         evaluationService.setSecurityChecks(securityChecks);
         evaluationService.setSettings(settings);
@@ -423,8 +425,8 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
         EvalAssignUser removed = participants.get(1);
         unlinked.setStatus(EvalAssignUser.STATUS_UNLINKED);
         removed.setStatus(EvalAssignUser.STATUS_REMOVED);
-        evaluationDao.update(unlinked);
-        evaluationDao.update(removed);
+        persistence.update(unlinked);
+        persistence.update(removed);
 
         participants = evaluationService.getParticipantsForEval(etdl.evaluationActive.getId(), null, null,
                 null, null, null, null);
@@ -1526,7 +1528,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 	@Test
 	public void testCountEvaluations()
 	{
-		int totalEvaluations = evaluationDao.countAll(EvalEvaluation.class);
+		int totalEvaluations = persistence.countAll(EvalEvaluation.class);
 
 		Assert.assertEquals(totalEvaluations, this.evaluationService.countEvaluations(null));
 		Assert.assertEquals(totalEvaluations, this.evaluationService.countEvaluations(""));
@@ -1566,7 +1568,7 @@ public class EvalEvaluationServiceImplTest extends BaseTestEvalLogic {
 		String searchString = "Eval";
 		String order = "title";
 
-		int totalEvaluations = evaluationDao.countAll(EvalEvaluation.class);
+		int totalEvaluations = persistence.countAll(EvalEvaluation.class);
 		List<EvalEvaluation> allEvaluations = this.evaluationService.getEvaluations(null, order, 0, 0);
 		Assert.assertEquals(totalEvaluations, allEvaluations.size());
 		allEvaluations = this.evaluationService.getEvaluations("", order, 0, 0);

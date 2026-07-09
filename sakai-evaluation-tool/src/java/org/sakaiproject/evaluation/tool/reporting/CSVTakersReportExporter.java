@@ -71,11 +71,11 @@ public class CSVTakersReportExporter implements ReportExporter {
         this.messages = messageSource;
     }
 
-    public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream, boolean newReportStyle) {
-        buildReport(evaluation, groupIds, null, outputStream, newReportStyle);
+    public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream, String exportType) {
+        buildReport(evaluation, groupIds, null, outputStream, exportType);
     }
 
-    public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream, boolean newReportStyle) {
+    public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream, String exportType) {
         if (EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(evaluation.getAuthControl())) {
             try (OutputStreamWriter osw = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8)) {
                 osw.write(messages.getMessage("reporting.respondents.nologin"));

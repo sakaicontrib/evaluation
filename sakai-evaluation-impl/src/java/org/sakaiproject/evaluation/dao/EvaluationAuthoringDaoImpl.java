@@ -37,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
  * Hibernate-backed implementation methods for the matching evaluation DAO port.
  */
 @Slf4j
-abstract class EvaluationDaoAuthoringMethods extends EvaluationDaoEmailTemplateMethods {
+public class EvaluationAuthoringDaoImpl extends EvaluationDaoHibernateSupport implements EvaluationAuthoringDao {
 
     public int countEvalScales() {
         Long count = currentSession().createQuery(
@@ -195,6 +195,18 @@ abstract class EvaluationDaoAuthoringMethods extends EvaluationDaoEmailTemplateM
 
     public EvalTemplate getTemplateByEid(String eid) {
         return findOneByEid(EvalTemplate.class, eid, "template");
+    }
+
+    public int countTemplateById(Long templateId) {
+        if (templateId == null) {
+            throw new IllegalArgumentException("templateId cannot be null");
+        }
+        Long count = currentSession().createQuery(
+                "select count(template.id) from EvalTemplate template where template.id = :templateId",
+                Long.class)
+                .setParameter("templateId", templateId)
+                .uniqueResult();
+        return count == null ? 0 : count.intValue();
     }
 
     public List<EvalScale> getScalesForUser(String userId, String[] sharingConstants) {

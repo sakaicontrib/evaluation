@@ -15,13 +15,7 @@
 package org.sakaiproject.evaluation.dao;
 
 /**
- * Compatibility facade for evaluation persistence.
- * <p>
- * New code should depend on the smallest domain-specific DAO port it needs
- * instead of adding methods directly here.
+ * Hibernate-backed base persistence operations for evaluation entities.
  */
-public interface EvaluationDao extends EvaluationDaoBase, EvaluationSettingsDao,
-        EvaluationEmailTemplateDao, EvaluationAuthoringDao, EvaluationAssignmentDao,
-        EvaluationQueryDao, EvaluationResponseDao, EvaluationAdminSupportDao,
-        EvaluationLockDao, EvaluationConsolidatedEmailDao {
+public class EvaluationDaoBaseImpl extends EvaluationDaoHibernateSupport implements EvaluationDaoBase {
 }

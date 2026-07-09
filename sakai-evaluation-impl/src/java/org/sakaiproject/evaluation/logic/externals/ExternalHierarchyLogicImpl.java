@@ -14,6 +14,12 @@
  */
 package org.sakaiproject.evaluation.logic.externals;
 
+import org.sakaiproject.evaluation.dao.EvaluationAssignmentDao;
+import org.sakaiproject.evaluation.dao.EvaluationAuthoringDao;
+import org.sakaiproject.evaluation.dao.EvaluationConsolidatedEmailDao;
+import org.sakaiproject.evaluation.dao.EvaluationDaoBase;
+import org.sakaiproject.evaluation.dao.EvaluationQueryDao;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,7 +36,6 @@ import org.sakaiproject.coursemanagement.api.CourseManagementService;
 import org.sakaiproject.coursemanagement.api.Section;
 import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.logic.model.HierarchyNodeRule;
 import org.sakaiproject.evaluation.model.EvalGroupNodes;
@@ -62,9 +67,29 @@ import lombok.extern.slf4j.Slf4j;
 public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
 
 
-    private EvaluationDao dao;
-    public void setDao(EvaluationDao evaluationDao) {
-        this.dao = evaluationDao;
+    private EvaluationDaoBase persistence;
+    public void setPersistence(EvaluationDaoBase persistence) {
+        this.persistence = persistence;
+    }
+
+    private EvaluationAuthoringDao authoringDao;
+    public void setAuthoringDao(EvaluationAuthoringDao authoringDao) {
+        this.authoringDao = authoringDao;
+    }
+
+    private EvaluationConsolidatedEmailDao consolidatedEmailDao;
+    public void setConsolidatedEmailDao(EvaluationConsolidatedEmailDao consolidatedEmailDao) {
+        this.consolidatedEmailDao = consolidatedEmailDao;
+    }
+
+    private EvaluationQueryDao queryDao;
+    public void setQueryDao(EvaluationQueryDao queryDao) {
+        this.queryDao = queryDao;
+    }
+
+    private EvaluationAssignmentDao assignmentDao;
+    public void setAssignmentDao(EvaluationAssignmentDao assignmentDao) {
+        this.assignmentDao = assignmentDao;
     }
 
     private HierarchyService hierarchyService;
@@ -435,12 +460,12 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
         externalLogic.removeAllRulesForNode( Long.parseLong( nodeId ) );
 
         // cleanup related data
-        List<EvalTemplateItem> l = dao.getTemplateItemsByHierarchyNodeId(nodeId);
+        List<EvalTemplateItem> l = authoringDao.getTemplateItemsByHierarchyNodeId(nodeId);
         for (EvalTemplateItem templateItem : l) {
             templateItem.setHierarchyLevel(EvalConstants.HIERARCHY_LEVEL_TOP);
             templateItem.setHierarchyNodeId(EvalConstants.HIERARCHY_NODE_ID_NONE);
         }
-        dao.saveTemplateItems(new HashSet<>(l));
+        authoringDao.saveTemplateItems(new HashSet<>(l));
         // return the parent node
         return makeEvalNode(node);
     }
@@ -517,14 +542,14 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
         if (evalGroupIds == null || evalGroupIds.isEmpty()) {
             if (egn != null) {
                 // clean up the object if we are removing all the attached eval groups
-                dao.delete(egn);
+                persistence.delete(egn);
             }
         } else {
             if (egn == null) {
                 egn = new EvalGroupNodes(new Date(), nodeId);
             }
             egn.setEvalGroups(new ArrayList<String>(evalGroupIds));
-            dao.save(egn);         
+            persistence.save(egn);         
         }
     }
 
@@ -588,11 +613,11 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
             {
                 if( EvalConstants.HIERARCHY_RULE_SECTION.equals( rule.getOption() ) )
                 {
-                    groups.addAll( dao.getAllSiteIDsMatchingSectionTitle( rule.getRule() ) );
+                    groups.addAll( consolidatedEmailDao.getAllSiteIDsMatchingSectionTitle( rule.getRule() ) );
                 }
                 else
                 {
-                    groups.addAll( dao.getAllSiteIDsMatchingSiteTitle( rule.getRule() ) );
+                    groups.addAll( consolidatedEmailDao.getAllSiteIDsMatchingSiteTitle( rule.getRule() ) );
                 }
             }
         }
@@ -898,7 +923,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
      * @return a list of egn or empty list if none found
      */
     private List<EvalGroupNodes> getEvalGroupNodesByNodeId(String[] nodeIds) {
-        return dao.getEvalGroupNodesByNodeIds(nodeIds);
+        return authoringDao.getEvalGroupNodesByNodeIds(nodeIds);
     }
 
 }

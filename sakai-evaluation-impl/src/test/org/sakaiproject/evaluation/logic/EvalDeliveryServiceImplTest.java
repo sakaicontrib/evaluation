@@ -14,6 +14,8 @@
  */
 package org.sakaiproject.evaluation.logic;
 
+import org.sakaiproject.evaluation.test.DaoTestWiring;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -78,7 +80,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
 
         // create the other needed logic impls
         EvalAuthoringServiceImpl authoringServiceImpl = new EvalAuthoringServiceImpl();
-        authoringServiceImpl.setDao(evaluationDao);
+        DaoTestWiring.wireEvalAuthoringService(authoringServiceImpl, daoPorts);
         authoringServiceImpl.setCommonLogic(commonLogic);
         authoringServiceImpl.setSettings(settings);
         authoringServiceImpl.setSecurityChecks(securityChecks);
@@ -91,7 +93,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
         evaluationSetupService = new EvalEvaluationSetupServiceImpl();
         evaluationSetupService.setAuthoringService(authoringServiceImpl);
         evaluationSetupService.setCommonLogic(commonLogic);
-        evaluationSetupService.setDao(evaluationDao);
+        DaoTestWiring.wireEvalEvaluationSetupService(evaluationSetupService, daoPorts);
         evaluationSetupService.setEmails(emailsLogic);
         evaluationSetupService.setEvalJobLogic( new MockEvalJobLogic() );
         evaluationSetupService.setEvaluationService(evaluationService);
@@ -101,7 +103,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
 
         // create and setup the object to be tested
         deliveryService = new EvalDeliveryServiceImpl();
-        deliveryService.setDao(evaluationDao);
+        DaoTestWiring.wireEvalDeliveryService(deliveryService, daoPorts);
         deliveryService.setCommonLogic(commonLogic);
         deliveryService.setHierarchyLogic( hierarchyLogic );
         deliveryService.setEvaluationService(evaluationService);
@@ -117,7 +119,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
                 EvalConstants.EVALUATION_STATE_CLOSED, EvalConstants.SHARING_VISIBLE, EvalConstants.INSTRUCTOR_OPT_IN, 2, null, null, null, null,
                 etdl.templateAdmin, null, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE,
                 EvalTestDataLoad.LOCKED, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null);
-        evaluationDao.save(evaluationClosedTwo);
+        persistence.save(evaluationClosedTwo);
 
         // Evaluation Active Two (ends today), viewable tomorrow, all requireable items are required
         evaluationActiveTwo = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, 
@@ -127,7 +129,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
                 EvalConstants.INSTRUCTOR_OPT_IN, 0, null, null, null, null,
                 etdl.templateUnused, null, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE,
                 Boolean.FALSE, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null);
-        evaluationDao.save(evaluationActiveTwo);
+        persistence.save(evaluationActiveTwo);
 
         EvalAssignGroup assign2 = new EvalAssignGroup( EvalTestDataLoad.MAINT_USER_ID, 
                 EvalTestDataLoad.SITE1_REF, EvalConstants.GROUP_TYPE_SITE, 
@@ -142,7 +144,7 @@ public class EvalDeliveryServiceImplTest extends BaseTestEvalLogic {
                 EvalConstants.INSTRUCTOR_OPT_IN, 0, null, null, null, null,
                 etdl.templateUnused, null, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE,
                 Boolean.FALSE, EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ, null, null);
-        evaluationDao.save(evaluationActiveThree);
+        persistence.save(evaluationActiveThree);
 
         EvalAssignGroup assign3 = new EvalAssignGroup( EvalTestDataLoad.MAINT_USER_ID, 
                 EvalTestDataLoad.SITE1_REF, EvalConstants.GROUP_TYPE_SITE, 

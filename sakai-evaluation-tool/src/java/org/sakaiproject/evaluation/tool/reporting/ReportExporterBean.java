@@ -65,18 +65,11 @@ public class ReportExporterBean implements ToolApi {
       evaluationAccessAPI = s;
     }
 
-    //Export report with no evaluateeId (for single export)
-    public void exportReport(EvalEvaluation evaluation, String groupIds,OutputStream outputStream, String exportType) {
-    	exportReport(evaluation,groupIds,null,outputStream,exportType);
-    }
-    
-    //Special convenience method to allow passing of groupIds as a CSV
-    public void exportReport(EvalEvaluation evaluation, String groupIds, String evaluateeId, OutputStream outputStream, String exportType) {
-        exportReport(evaluation, groupIds, evaluateeId, outputStream, exportType, false);
+    public void exportReport(EvalEvaluation evaluation, String groupIds, OutputStream outputStream, String exportType) {
+    	exportReport(evaluation, groupIds, null, outputStream, exportType);
     }
 
-    public void exportReport(EvalEvaluation evaluation, String groupIds, String evaluateeId, OutputStream outputStream,
-                             String exportType, boolean newReportStyle) {
+    public void exportReport(EvalEvaluation evaluation, String groupIds, String evaluateeId, OutputStream outputStream, String exportType) {
     	String[] groupIdsArray = new String [] {};
     	CSVParser parser= new CSVParser();
     	if (groupIds != null) {
@@ -86,16 +79,10 @@ public class ReportExporterBean implements ToolApi {
     			//Is fine if this happens, empty array still
     		}
     	}
-        exportReport(evaluation, groupIdsArray, evaluateeId, outputStream, exportType, newReportStyle);
+        exportReport(evaluation, groupIdsArray, evaluateeId, outputStream, exportType);
     }
 
-    //Allows for general report exporting
     public void exportReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream, String exportType) {
-        exportReport(evaluation, groupIds, evaluateeId, outputStream, exportType, false);
-    }
-
-    public void exportReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream,
-                             String exportType, boolean newReportStyle) {
       ReportExporter exporter = exportersMap.get(exportType);
       if (exporter == null) {
         throw new IllegalArgumentException("No exporter found for export type: " + exportType);
@@ -104,12 +91,10 @@ public class ReportExporterBean implements ToolApi {
         log.debug("Found exporter: " + exporter.getClass() + " for export type " + exportType);
       }
       if (groupIds == null || groupIds.length==0) {
-        //Get the default groupIds
     	String[] groupIdsArray = new String [] {};
         groupIds = reportingPermissions.getResultsViewableEvalGroupIdsForCurrentUser(evaluation).toArray(groupIdsArray);
       }
 
-      // do a permission check
       if (!reportingPermissions.canViewEvaluationResponses(evaluation, groupIds)) {
         String currentUserId = commonLogic.getCurrentUserId();
         throw new SecurityException("Invalid user attempting to access report downloads: "
@@ -118,9 +103,9 @@ public class ReportExporterBean implements ToolApi {
 
       exporter.setMessageSource(reportMessageSource);
       if (EvalEvaluationService.PDF_RESULTS_REPORT_INDIVIDUAL.equals(exportType)) {
-        exporter.buildReport(evaluation, groupIds, evaluateeId, outputStream, newReportStyle);
+        exporter.buildReport(evaluation, groupIds, evaluateeId, outputStream, exportType);
       } else {
-        exporter.buildReport(evaluation, groupIds, outputStream, newReportStyle);
+        exporter.buildReport(evaluation, groupIds, outputStream, exportType);
       }
 
     }

@@ -118,7 +118,7 @@ Downloads are served by `ReportViewController` at `GET /report_view/download` wi
 - `_sakai25-compat.scss` contains classes removed in the upstream style overhaul that are still needed for Sakai 25 deployment.
 
 ### Shared JavaScript
-`sakai-evaluation-tool/src/webapp/content/js/utils.js` provides `evalsys.positionModalInViewport()` and other shared helpers. Each template loads its own JS; there is no global loader.
+`sakai-evaluation-tool/src/webapp/content/js/utils.js` is a thin loader for `evalsys-core.js`, `evalsys-items.js`, and `evalsys-pages.js`. Templates still include only `utils.js`; do not add a global loader beyond that entry point.
 
 ## Database
 - Hibernate ORM with mapping files in `sakai-evaluation-api/src/java/org/sakaiproject/evaluation/dao/hbm/`
@@ -127,11 +127,16 @@ Downloads are served by `ReportViewController` at `GET /report_view/download` wi
 
 ### DAO persistence conventions
 - GenericDAO has been removed from this project. Do not add `org.sakaiproject.genericdao` dependencies, `Search`/`Restriction`/`Order` query objects, GenericDAO batch helpers, or local GenericDAO-style query helpers.
-- Add new persistence behavior to the narrow domain port first (`EvaluationSettingsDao`, `EvaluationAuthoringDao`, `EvaluationAssignmentDao`, `EvaluationResponseDao`, `EvaluationQueryDao`, etc.), then implement it in the matching `EvaluationDao*Methods` slice.
+- Port interfaces live in `sakai-evaluation-api/src/java/org/sakaiproject/evaluation/dao/`. There is no `EvaluationDao` facade.
+- Each port has one Spring bean and one `*DaoImpl` class extending `EvaluationDaoHibernateSupport` directly (no inheritance chain between ports).
+- Add new persistence behavior to the narrow domain port first (`EvaluationSettingsDao`, `EvaluationAuthoringDao`, `EvaluationAssignmentDao`, `EvaluationResponseDao`, `EvaluationQueryDao`, etc.), then implement it in the matching `*DaoImpl`.
+- Services inject only the ports they use; wire them in Spring XML (`spring-hibernate.xml`, `logic-support.xml`, `components.xml`).
+- Cross-port calls inside the DAO layer use explicit collaborator injection (for example `EvaluationAssignmentDaoImpl` delegates to `EvaluationResponseDao`), not inheritance.
 - Keep query semantics readable at the call site: prefer domain method names like `getEvaluationsUsingEmailTemplate` or `deleteAssignmentsForEvaluation` over local generic query abstractions.
-- Keep HQL construction and parameter binding explicit in the owning slice.
-- `EvaluationDaoImpl` is only the Spring bean shell. Do not add behavior there.
-- `EvaluationDaoHibernateSupport` owns the small base persistence surface still used by services and fixtures: `findById`, `findAll`, `countAll`, `create`, `save`, `update`, and `delete`.
+- Use `EvaluationGroupQuery` for `getEvaluationsByEvalGroups`; do not reintroduce nullable-boolean overloads or sentinel IDs.
+- Keep HQL construction and parameter binding explicit in the owning `*DaoImpl`.
+- `EvaluationDaoBase` / `EvaluationDaoBaseImpl` owns the small shared persistence surface: `findById`, `findAll`, `countAll`, `create`, `save`, `update`, and `delete`.
+- `EvaluationDaoHibernateSupport` is the Hibernate helper superclass for all `*DaoImpl` beans.
 - `SakaiComponentBeanNameAutoProxyCreator` is allowed as narrow Spring/Sakai classloader infrastructure for transactional proxies; do not expand it into DAO/query helper behavior.
 - If a new transitive dependency disappears while removing persistence libraries, declare the directly used dependency explicitly rather than relying on unrelated libraries to provide it.
 

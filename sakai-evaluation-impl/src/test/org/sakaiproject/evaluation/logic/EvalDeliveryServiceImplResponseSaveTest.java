@@ -14,6 +14,8 @@
  */
 package org.sakaiproject.evaluation.logic;
 
+import org.sakaiproject.evaluation.test.DaoTestWiring;
+
 import java.util.Date;
 import java.util.HashSet;
 
@@ -57,7 +59,7 @@ public class EvalDeliveryServiceImplResponseSaveTest extends BaseTestEvalLogic {
                 "org.sakaiproject.evaluation.logic.externals.EvalSecurityChecks");
 
         EvalAuthoringServiceImpl authoringService = new EvalAuthoringServiceImpl();
-        authoringService.setDao(evaluationDao);
+        DaoTestWiring.wireEvalAuthoringService(authoringService, daoPorts);
         authoringService.setCommonLogic(commonLogic);
         authoringService.setSettings(settings);
         authoringService.setSecurityChecks(securityChecks);
@@ -67,7 +69,7 @@ public class EvalDeliveryServiceImplResponseSaveTest extends BaseTestEvalLogic {
         emailsLogic = new RecordingEmailsLogic();
 
         deliveryService = new EvalDeliveryServiceImpl();
-        deliveryService.setDao(evaluationDao);
+        DaoTestWiring.wireEvalDeliveryService(deliveryService, daoPorts);
         deliveryService.setCommonLogic(commonLogic);
         deliveryService.setEvaluationService(evaluationService);
         deliveryService.setSettings(settings);
@@ -98,8 +100,8 @@ public class EvalDeliveryServiceImplResponseSaveTest extends BaseTestEvalLogic {
         deliveryService.saveResponse(response, EvalTestDataLoad.STUDENT_USER_ID);
 
         Assert.assertNotNull(answer.getId());
-        Assert.assertNotNull(evaluationDao.findById(EvalResponse.class, response.getId()));
-        Assert.assertNotNull(evaluationDao.findById(EvalAnswer.class, answer.getId()));
+        Assert.assertNotNull(persistence.findById(EvalResponse.class, response.getId()));
+        Assert.assertNotNull(persistence.findById(EvalAnswer.class, answer.getId()));
     }
 
     @Test
@@ -199,8 +201,8 @@ public class EvalDeliveryServiceImplResponseSaveTest extends BaseTestEvalLogic {
         Assert.assertEquals(1, emailsLogic.submissionConfirmationCount);
         Assert.assertNotNull(partialResponse.getId());
         Assert.assertNotNull(answer.getId());
-        Assert.assertNotNull(evaluationDao.findById(EvalResponse.class, partialResponse.getId()));
-        Assert.assertNotNull(evaluationDao.findById(EvalAnswer.class, answer.getId()));
+        Assert.assertNotNull(persistence.findById(EvalResponse.class, partialResponse.getId()));
+        Assert.assertNotNull(persistence.findById(EvalAnswer.class, answer.getId()));
     }
 
     @Test
@@ -237,7 +239,7 @@ public class EvalDeliveryServiceImplResponseSaveTest extends BaseTestEvalLogic {
         deliveryService.saveResponse(response, EvalTestDataLoad.USER_ID);
 
         Assert.assertTrue(response.getAnswers().isEmpty());
-        Assert.assertNull(evaluationDao.findById(EvalAnswer.class, answer.getId()));
+        Assert.assertNull(persistence.findById(EvalAnswer.class, answer.getId()));
 
         EvalAnswer notApplicableAnswer = new EvalAnswer(response, multipleAnswerTemplateItem, multipleAnswerTemplateItem.getItem());
         notApplicableAnswer.multipleAnswers = new Integer[] {1, 2};
@@ -282,7 +284,7 @@ public class EvalDeliveryServiceImplResponseSaveTest extends BaseTestEvalLogic {
                 EvalConstants.EVALUATION_AUTHCONTROL_AUTH_REQ,
                 null,
                 null);
-        evaluationDao.save(evaluation);
+        persistence.save(evaluation);
 
         EvalAssignGroup assignGroup = new EvalAssignGroup(
                 EvalTestDataLoad.MAINT_USER_ID,
@@ -292,7 +294,7 @@ public class EvalDeliveryServiceImplResponseSaveTest extends BaseTestEvalLogic {
                 Boolean.TRUE,
                 Boolean.TRUE,
                 Boolean.FALSE);
-        evaluationDao.save(assignGroup);
+        persistence.save(assignGroup);
 
         EvalAssignUser assignUser = new EvalAssignUser(
                 EvalTestDataLoad.USER_ID,
@@ -302,7 +304,7 @@ public class EvalDeliveryServiceImplResponseSaveTest extends BaseTestEvalLogic {
                 EvalAssignUser.STATUS_LINKED,
                 evaluation,
                 assignGroup.getId());
-        evaluationDao.save(assignUser);
+        persistence.save(assignUser);
         EvalAssignUser evaluateeUser = new EvalAssignUser(
                 EvalTestDataLoad.MAINT_USER_ID,
                 EvalTestDataLoad.SITE1_REF,
@@ -311,7 +313,7 @@ public class EvalDeliveryServiceImplResponseSaveTest extends BaseTestEvalLogic {
                 EvalAssignUser.STATUS_LINKED,
                 evaluation,
                 assignGroup.getId());
-        evaluationDao.save(evaluateeUser);
+        persistence.save(evaluateeUser);
         return evaluation;
     }
 
@@ -326,7 +328,7 @@ public class EvalDeliveryServiceImplResponseSaveTest extends BaseTestEvalLogic {
         multipleAnswerItem.setCategory(EvalConstants.ITEM_CATEGORY_COURSE);
         multipleAnswerItem.setUsesNA(Boolean.TRUE);
         multipleAnswerItem.setLocked(Boolean.FALSE);
-        evaluationDao.save(multipleAnswerItem);
+        persistence.save(multipleAnswerItem);
 
         EvalTemplateItem templateItem = new EvalTemplateItem(
                 EvalTestDataLoad.MAINT_USER_ID,
@@ -344,13 +346,13 @@ public class EvalDeliveryServiceImplResponseSaveTest extends BaseTestEvalLogic {
                 Boolean.FALSE,
                 null,
                 null);
-        evaluationDao.save(templateItem);
+        persistence.save(templateItem);
         etdl.templateUnused.getTemplateItems().add(templateItem);
         return templateItem;
     }
 
     private EvalAnswer findPersistedAnswer(EvalAnswer answer) {
-        EvalAnswer persistedAnswer = (EvalAnswer) evaluationDao.findById(EvalAnswer.class, answer.getId());
+        EvalAnswer persistedAnswer = (EvalAnswer) persistence.findById(EvalAnswer.class, answer.getId());
         Assert.assertNotNull(persistedAnswer);
         return persistedAnswer;
     }

@@ -14,6 +14,8 @@
  */
 package org.sakaiproject.evaluation.logic;
 
+import org.sakaiproject.evaluation.dao.EvaluationAssignmentDao;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,7 +25,6 @@ import java.util.Set;
 
 import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -58,9 +59,9 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
  */
 public class ReportingPermissionsImpl implements ReportingPermissions {
 
-    private EvaluationDao dao;
-    public void setDao(EvaluationDao dao) {
-        this.dao = dao;
+    private EvaluationAssignmentDao assignmentDao;
+    public void setAssignmentDao(EvaluationAssignmentDao assignmentDao) {
+        this.assignmentDao = assignmentDao;
     }
 
     private EvalCommonLogic commonLogic;
@@ -343,7 +344,7 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
             type = EvalAssignUser.TYPE_EVALUATEE;
         }
         if (groupIds == null || groupIds.length > 0) {
-            Set<String> gids = dao.getViewableEvalGroupIds(evaluationId, type, groupIds);
+            Set<String> gids = assignmentDao.getViewableEvalGroupIds(evaluationId, type, groupIds);
             viewableGroupIds.addAll( gids );
         }
         return viewableGroupIds;

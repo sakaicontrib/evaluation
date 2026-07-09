@@ -39,7 +39,9 @@
     <bean id="org.sakaiproject.evaluation.logic.EvalAuthoringService"
         class="org.sakaiproject.evaluation.logic.EvalAuthoringServiceImpl"
         init-method="init">
-        <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+        <property name="persistence" ref="org.sakaiproject.evaluation.dao.EvaluationDaoBase" />
+        <property name="authoringDao" ref="org.sakaiproject.evaluation.dao.EvaluationAuthoringDao" />
+        <property name="lockDao" ref="org.sakaiproject.evaluation.dao.EvaluationLockDao" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
@@ -52,7 +54,12 @@
         init-method="init">
         <property name="externalLogic"
                   ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
-        <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+        <property name="persistence" ref="org.sakaiproject.evaluation.dao.EvaluationDaoBase" />
+        <property name="queryDao" ref="org.sakaiproject.evaluation.dao.EvaluationQueryDao" />
+        <property name="assignmentDao" ref="org.sakaiproject.evaluation.dao.EvaluationAssignmentDao" />
+        <property name="responseDao" ref="org.sakaiproject.evaluation.dao.EvaluationResponseDao" />
+        <property name="emailTemplateDao" ref="org.sakaiproject.evaluation.dao.EvaluationEmailTemplateDao" />
+        <property name="lockDao" ref="org.sakaiproject.evaluation.dao.EvaluationLockDao" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="hierarchyLogic"
@@ -74,7 +81,10 @@
     <bean id="org.sakaiproject.evaluation.logic.EvalDeliveryService"
         class="org.sakaiproject.evaluation.logic.EvalDeliveryServiceImpl"
         init-method="init">
-        <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+        <property name="persistence" ref="org.sakaiproject.evaluation.dao.EvaluationDaoBase" />
+        <property name="queryDao" ref="org.sakaiproject.evaluation.dao.EvaluationQueryDao" />
+        <property name="responseDao" ref="org.sakaiproject.evaluation.dao.EvaluationResponseDao" />
+        <property name="lockDao" ref="org.sakaiproject.evaluation.dao.EvaluationLockDao" />
         <property name="commonLogic"
             ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
         <property name="hierarchyLogic"
@@ -95,7 +105,8 @@
         and the tests already have a test data preloader and tests do not need to be cluster safe -->
     <bean class="org.sakaiproject.evaluation.dao.EvalDataPreloaderImpl"
         init-method="init">
-        <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+        <property name="persistence" ref="org.sakaiproject.evaluation.dao.EvaluationDaoBase" />
+        <property name="lockDao" ref="org.sakaiproject.evaluation.dao.EvaluationLockDao" />
         <property name="externalLogic"
             ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
         <property name="preloadData" ref="org.sakaiproject.evaluation.dao.PreloadData" />

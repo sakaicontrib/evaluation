@@ -14,6 +14,9 @@
  */
 package org.sakaiproject.evaluation.dao;
 
+import org.sakaiproject.evaluation.dao.EvaluationLockDao;
+import org.sakaiproject.evaluation.dao.EvaluationDaoBase;
+
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 
 import lombok.extern.slf4j.Slf4j;
@@ -31,9 +34,14 @@ public class EvalDataPreloaderImpl {
    public static String EVAL_PRELOAD_LOCK = "data.preload.lock";
    public static String EVAL_FIXUP_LOCK = "data.fixup.lock";
 
-   private EvaluationDao dao;
-   public void setDao(EvaluationDao evaluationDao) {
-      this.dao = evaluationDao;
+   private EvaluationDaoBase persistence;
+   public void setPersistence(EvaluationDaoBase persistence) {
+      this.persistence = persistence;
+   }
+
+   private EvaluationLockDao lockDao;
+   public void setLockDao(EvaluationLockDao lockDao) {
+      this.lockDao = lockDao;
    }
 
    private EvalExternalLogic externalLogic;
@@ -54,7 +62,7 @@ public class EvalDataPreloaderImpl {
          log.info("Auto DDL enabled: Checking preload data exists...");
          if (! preloadData.checkCriticalDataPreloaded() ) {
             log.info("Preload data missing, preparing to preload critical evaluation system data");
-            Boolean gotLock = dao.obtainLock(EVAL_PRELOAD_LOCK, serverId, 10000);
+            Boolean gotLock = lockDao.obtainLock(EVAL_PRELOAD_LOCK, serverId, 10000);
             if (gotLock == null) {
             	if(killSakaiOnError) {
             		throw new IllegalStateException("Failure attempting to obtain lock ("+EVAL_PRELOAD_LOCK+") and preload evaluation system data, " 
@@ -64,7 +72,7 @@ public class EvalDataPreloaderImpl {
             	}
             } else if (gotLock) {
                preloadData.preload();
-               dao.releaseLock(EVAL_PRELOAD_LOCK, serverId);
+               lockDao.releaseLock(EVAL_PRELOAD_LOCK, serverId);
             }
          }
       } else {
@@ -84,10 +92,10 @@ public class EvalDataPreloaderImpl {
          }
       }
 
-      Boolean gotLock = dao.obtainLock(EVAL_FIXUP_LOCK, serverId, 3000);
+      Boolean gotLock = lockDao.obtainLock(EVAL_FIXUP_LOCK, serverId, 3000);
       if (gotLock != null && gotLock) {
-         dao.fixupDatabase();
-         dao.releaseLock(EVAL_FIXUP_LOCK, serverId);
+         persistence.fixupDatabase();
+         lockDao.releaseLock(EVAL_FIXUP_LOCK, serverId);
       }
    }
 

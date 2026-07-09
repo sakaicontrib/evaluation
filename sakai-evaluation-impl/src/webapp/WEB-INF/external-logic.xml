@@ -52,7 +52,11 @@
    <bean id="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic"
 	      class="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogicImpl"
 	      init-method="init">
-      <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+      <property name="persistence" ref="org.sakaiproject.evaluation.dao.EvaluationDaoBase" />
+      <property name="authoringDao" ref="org.sakaiproject.evaluation.dao.EvaluationAuthoringDao" />
+      <property name="consolidatedEmailDao" ref="org.sakaiproject.evaluation.dao.EvaluationConsolidatedEmailDao" />
+      <property name="assignmentDao" ref="org.sakaiproject.evaluation.dao.EvaluationAssignmentDao" />
+      <property name="queryDao" ref="org.sakaiproject.evaluation.dao.EvaluationQueryDao" />
       <property name="hierarchyService" ref="org.sakaiproject.hierarchy.HierarchyService" />
       <property name="transactionManager" ref="org.sakaiproject.springframework.orm.hibernate.GlobalTransactionManager" />
       <property name="externalLogic" ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />

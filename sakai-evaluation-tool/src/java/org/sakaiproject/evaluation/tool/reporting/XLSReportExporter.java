@@ -494,8 +494,8 @@ public class XLSReportExporter implements ReportExporter {
      * org.sakaiproject.evaluation.tool.reporting.ReportExporter#buildReport(org.sakaiproject.evaluation
      * .model.EvalEvaluation, java.lang.String[], java.io.OutputStream)
      */
-    public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream, boolean newReportStyle) {
-        buildReport(evaluation, groupIds, null, outputStream, newReportStyle);
+    public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream, String exportType) {
+        buildReport(evaluation, groupIds, null, outputStream, exportType);
     }
 
     /*
@@ -505,7 +505,7 @@ public class XLSReportExporter implements ReportExporter {
      * org.sakaiproject.evaluation.tool.reporting.ReportExporter#buildReport(org.sakaiproject.evaluation
      * .model.EvalEvaluation, java.lang.String[], java.lang.String, java.io.OutputStream)
      */
-    public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream, boolean newReportStyle) {
+    public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream, String exportType) {
 
         /*
          * Logic for creating this view 1) make tidl 2) get DTIs for this eval from tidl 3) use DTIs
@@ -519,7 +519,7 @@ public class XLSReportExporter implements ReportExporter {
         responseAggregator.setMessageSource(messages);
 
         // Determine which report style to use; normal or section based
-        if( newReportStyle )
+        if (EvalEvaluationService.isSectionedResultsExport(exportType))
         {
             buildReportSectionAware( evaluation, groupIds, outputStream );
         }

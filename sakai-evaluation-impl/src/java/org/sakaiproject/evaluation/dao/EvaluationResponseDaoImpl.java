@@ -33,7 +33,7 @@ import lombok.extern.slf4j.Slf4j;
  * Hibernate-backed implementation methods for the matching evaluation DAO port.
  */
 @Slf4j
-abstract class EvaluationDaoResponseMethods extends EvaluationDaoAdminSupportMethods {
+public class EvaluationResponseDaoImpl extends EvaluationDaoHibernateSupport implements EvaluationResponseDao {
 
     public List<EvalResponse> getEvaluationResponsesForUserAndGroup(Long evaluationId, String userId, String evalGroupId) {
         if (evaluationId == null) {

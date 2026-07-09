@@ -30,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
  * Hibernate-backed implementation methods for the matching evaluation DAO port.
  */
 @Slf4j
-abstract class EvaluationDaoLockMethods extends EvaluationDaoQueryMethods {
+public class EvaluationLockDaoImpl extends EvaluationDaoHibernateSupport implements EvaluationLockDao {
 
     // LOCKING METHODS
 

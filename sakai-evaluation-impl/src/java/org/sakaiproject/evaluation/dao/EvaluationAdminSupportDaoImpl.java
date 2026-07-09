@@ -28,7 +28,7 @@ import org.sakaiproject.evaluation.model.EvalHierarchyRule;
 /**
  * Hibernate-backed implementation methods for the matching evaluation DAO port.
  */
-abstract class EvaluationDaoAdminSupportMethods extends EvaluationDaoAuthoringMethods {
+public class EvaluationAdminSupportDaoImpl extends EvaluationDaoHibernateSupport implements EvaluationAdminSupportDao {
 
     public List<EvalAdmin> getAllEvalAdmins() {
         return currentSession().createQuery(

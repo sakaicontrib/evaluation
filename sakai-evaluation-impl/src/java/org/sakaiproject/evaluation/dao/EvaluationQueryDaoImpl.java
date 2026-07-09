@@ -35,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
  * Hibernate-backed implementation methods for the matching evaluation DAO port.
  */
 @Slf4j
-abstract class EvaluationDaoQueryMethods extends EvaluationDaoAssignmentMethods {
+public class EvaluationQueryDaoImpl extends EvaluationDaoHibernateSupport implements EvaluationQueryDao {
 
     private static final String[] INCLUDED_ACTIVE_STATES = {
             EvalConstants.EVALUATION_STATE_ACTIVE
@@ -91,18 +91,6 @@ abstract class EvaluationDaoQueryMethods extends EvaluationDaoAssignmentMethods 
 
     public EvalEvaluation getEvaluationByEid(String eid) {
         return findOneByEid(EvalEvaluation.class, eid, "evaluation");
-    }
-
-    public int countTemplateById(Long templateId) {
-        if (templateId == null) {
-            throw new IllegalArgumentException("templateId cannot be null");
-        }
-        Long count = currentSession().createQuery(
-                "select count(template.id) from EvalTemplate template where template.id = :templateId",
-                Long.class)
-                .setParameter("templateId", templateId)
-                .uniqueResult();
-        return count == null ? 0 : count.intValue();
     }
 
     public int countEvaluationsByTemplateId(Long templateId) {
@@ -193,110 +181,94 @@ abstract class EvaluationDaoQueryMethods extends EvaluationDaoAssignmentMethods 
     }
 
 
-    public List<EvalEvaluation> getEvaluationsByEvalGroups(String[] evalGroupIds, Boolean activeOnly,
-            Boolean approvedOnly, Boolean includeAnonymous, int startResult, int maxResults) {
+    public List<EvalEvaluation> getEvaluationsByEvalGroups(EvaluationGroupQuery query, int startResult, int maxResults) {
+        if (query == null) {
+            throw new IllegalArgumentException("query cannot be null");
+        }
 
-        HashMap<Long, List<EvalAssignGroup>> evalToAGList = new HashMap<>();
+        String[] evalGroupIds = query.getEvalGroupIds();
+        EvaluationGroupQuery.ActiveFilter activeFilter = query.getActiveFilter();
+        EvaluationGroupQuery.ApprovalFilter approvalFilter = query.getApprovalFilter();
+        EvaluationGroupQuery.AnonymousFilter anonymousFilter = query.getAnonymousFilter();
 
-        boolean emptyReturn = false;
+        if ((evalGroupIds == null || evalGroupIds.length == 0)
+                && anonymousFilter != EvaluationGroupQuery.AnonymousFilter.ANONYMOUS_ONLY) {
+            return new ArrayList<>();
+        }
 
-        String groupsHQL = "";
+        Map<Long, List<EvalAssignGroup>> evalToAssignGroups = new HashMap<>();
         if (evalGroupIds != null && evalGroupIds.length > 0) {
-
             StringBuilder assignGroupHql = new StringBuilder(
                     "select assignGroup from EvalAssignGroup assignGroup where assignGroup.evalGroupId in (:evalGroupIds)");
-            if (approvedOnly != null) {
-                assignGroupHql.append(" and assignGroup.instructorApproval = :instructorApproval");
+            if (approvalFilter == EvaluationGroupQuery.ApprovalFilter.APPROVED_ONLY) {
+                assignGroupHql.append(" and assignGroup.instructorApproval = true");
+            } else if (approvalFilter == EvaluationGroupQuery.ApprovalFilter.UNAPPROVED_ONLY) {
+                assignGroupHql.append(" and assignGroup.instructorApproval = false");
             }
-            Query<EvalAssignGroup> assignGroupQuery = currentSession().createQuery(assignGroupHql.toString(), EvalAssignGroup.class)
-                    .setParameterList("evalGroupIds", evalGroupIds);
-            if (approvedOnly != null) {
-                assignGroupQuery.setParameter("instructorApproval", approvedOnly);
+            List<EvalAssignGroup> assignGroups = currentSession()
+                    .createQuery(assignGroupHql.toString(), EvalAssignGroup.class)
+                    .setParameterList("evalGroupIds", evalGroupIds)
+                    .list();
+            if (assignGroups.isEmpty()
+                    && anonymousFilter != EvaluationGroupQuery.AnonymousFilter.ANONYMOUS_ONLY) {
+                return new ArrayList<>();
             }
-            List<EvalAssignGroup> eags = assignGroupQuery.list();
-            for (EvalAssignGroup evalAssignGroup : eags) {
-                Long evalId = evalAssignGroup.getEvaluation().getId();
-                if (! evalToAGList.containsKey(evalId)) {
-                    List<EvalAssignGroup> l = new ArrayList<>();
-                    evalToAGList.put(evalId, l);
-                }
-                evalToAGList.get(evalId).add(evalAssignGroup);
-            }
-
-            if (eags.isEmpty()) {
-                groupsHQL = " and (eval.id = -1) "; // this will never match, that's the point
-            } else {
-                String anonymousHQL = "";
-                if (includeAnonymous != null) {
-                    if (includeAnonymous) {
-                        anonymousHQL += "or eval.authControl = :authControl";
-                    } else {
-                        anonymousHQL += "and eval.authControl <> :authControl";            
-                    }
-                }
-    
-                groupsHQL = " and (eval.id in (:evalIds)" + anonymousHQL + ")";
-            }
-        } else {
-            // no groups but we want to get anonymous evals
-            if (includeAnonymous != null
-                    && includeAnonymous) {
-                groupsHQL = " and eval.authControl = :authControl ";
-            } else {
-                // no groups and no anonymous evals means nothing to return
-                emptyReturn = true;
+            for (EvalAssignGroup assignGroup : assignGroups) {
+                Long evalId = assignGroup.getEvaluation().getId();
+                evalToAssignGroups.computeIfAbsent(evalId, ignored -> new ArrayList<>()).add(assignGroup);
             }
         }
 
-        List<EvalEvaluation> evals;
-        if (emptyReturn) {
-            evals = new ArrayList<>();
+        StringBuilder stateHql = new StringBuilder();
+        Map<String, Object> params = new HashMap<>();
+        if (activeFilter == EvaluationGroupQuery.ActiveFilter.ACTIVE_ONLY) {
+            appendEvaluationStateFilter(stateHql, "eval",
+                    INCLUDED_ACTIVE_AND_GRACE_PERIOD_STATES, null, params);
+        } else if (activeFilter == EvaluationGroupQuery.ActiveFilter.INACTIVE_ONLY) {
+            appendEvaluationStateFilter(stateHql, "eval",
+                    INCLUDED_INQUEUE_GRACE_CLOSED_AND_VIEWABLE_STATES, null, params);
         } else {
-            StringBuilder stateHQL = new StringBuilder();
-            Map<String, Object> params = new HashMap<>();
-            if (activeOnly != null) {
-                if (activeOnly) {
-                    appendEvaluationStateFilter(stateHQL, "eval",
-                            INCLUDED_ACTIVE_AND_GRACE_PERIOD_STATES, null, params);
-                } else {
-                    appendEvaluationStateFilter(stateHQL, "eval",
-                            INCLUDED_INQUEUE_GRACE_CLOSED_AND_VIEWABLE_STATES, null, params);
-                }
-            } else {
-                // need to filter out the partial and deleted state evals
-                appendEvaluationStateFilter(stateHQL, "eval", null,
-                        EXCLUDED_PARTIAL_AND_DELETED_STATES, params);
-            }
+            appendEvaluationStateFilter(stateHql, "eval", null,
+                    EXCLUDED_PARTIAL_AND_DELETED_STATES, params);
+        }
 
-            String hql = "select eval from EvalEvaluation as eval "
-                + " where 1=1 " + stateHQL + groupsHQL
-                + " order by eval.dueDate, eval.title, eval.id";
-            Query<EvalEvaluation> query = currentSession().createQuery(hql, EvalEvaluation.class);
-            if (evalGroupIds != null && evalGroupIds.length > 0 && !evalToAGList.isEmpty()) {
-                params.put("evalIds", evalToAGList.keySet());
-            }
-            if (includeAnonymous != null) {
+        StringBuilder groupsHql = new StringBuilder();
+        if (!evalToAssignGroups.isEmpty()) {
+            groupsHql.append(" and (eval.id in (:evalIds)");
+            params.put("evalIds", evalToAssignGroups.keySet());
+            if (anonymousFilter == EvaluationGroupQuery.AnonymousFilter.ANONYMOUS_ONLY) {
+                groupsHql.append(" or eval.authControl = :authControl");
+                params.put("authControl", EvalConstants.EVALUATION_AUTHCONTROL_NONE);
+            } else if (anonymousFilter == EvaluationGroupQuery.AnonymousFilter.NON_ANONYMOUS_ONLY) {
+                groupsHql.append(" and eval.authControl <> :authControl");
                 params.put("authControl", EvalConstants.EVALUATION_AUTHCONTROL_NONE);
             }
-            bindQueryParameters(query, params);
-            query.setFirstResult(startResult);
-            if (maxResults > 0) {
-                query.setMaxResults(maxResults);
-            }
-            evals = query.list();
-            Collections.sort(evals, new ComparatorsUtils.EvaluationDateTitleIdComparator());
+            groupsHql.append(")");
+        } else if (anonymousFilter == EvaluationGroupQuery.AnonymousFilter.ANONYMOUS_ONLY) {
+            groupsHql.append(" and eval.authControl = :authControl");
+            params.put("authControl", EvalConstants.EVALUATION_AUTHCONTROL_NONE);
+        } else if (anonymousFilter == EvaluationGroupQuery.AnonymousFilter.NON_ANONYMOUS_ONLY) {
+            groupsHql.append(" and eval.authControl <> :authControl");
+            params.put("authControl", EvalConstants.EVALUATION_AUTHCONTROL_NONE);
         }
-        // add in the filtered assign groups which we retrieved earlier
-        for (EvalEvaluation eval : evals) {
-            Long evalId = eval.getId();
-            List<EvalAssignGroup> l = evalToAGList.get(evalId);
-            if (l == null) {
-                l = new ArrayList<>(0);
-            }
-            eval.setEvalAssignGroups(l);
-        }
-        return evals;
 
+        String hql = "select eval from EvalEvaluation eval where 1=1 "
+                + stateHql + groupsHql
+                + " order by eval.dueDate, eval.title, eval.id";
+        Query<EvalEvaluation> evalQuery = currentSession().createQuery(hql, EvalEvaluation.class);
+        bindQueryParameters(evalQuery, params);
+        evalQuery.setFirstResult(startResult);
+        if (maxResults > 0) {
+            evalQuery.setMaxResults(maxResults);
+        }
+        List<EvalEvaluation> evaluations = evalQuery.list();
+        Collections.sort(evaluations, new ComparatorsUtils.EvaluationDateTitleIdComparator());
+
+        for (EvalEvaluation evaluation : evaluations) {
+            List<EvalAssignGroup> groups = evalToAssignGroups.get(evaluation.getId());
+            evaluation.setEvalAssignGroups(groups == null ? new ArrayList<>(0) : groups);
+        }
+        return evaluations;
     }
 
 

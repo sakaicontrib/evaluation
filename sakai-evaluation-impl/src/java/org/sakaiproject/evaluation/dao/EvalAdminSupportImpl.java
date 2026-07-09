@@ -14,6 +14,9 @@
  */
 package org.sakaiproject.evaluation.dao;
 
+import org.sakaiproject.evaluation.dao.EvaluationAdminSupportDao;
+import org.sakaiproject.evaluation.dao.EvaluationDaoBase;
+
 import java.util.Calendar;
 import java.util.List;
 
@@ -23,18 +26,26 @@ import lombok.Setter;
 
 public class EvalAdminSupportImpl implements EvalAdminSupport {
 
-	@Setter
-	private EvaluationDao dao;
+    private EvaluationAdminSupportDao adminSupportDao;
+    public void setAdminSupportDao(EvaluationAdminSupportDao adminSupportDao) {
+        this.adminSupportDao = adminSupportDao;
+    }
+
+    private EvaluationDaoBase persistence;
+    public void setPersistence(EvaluationDaoBase persistence) {
+        this.persistence = persistence;
+    }
+
 
 	public List<EvalAdmin> getEvalAdmins() {
-		return dao.getAllEvalAdmins();
+		return adminSupportDao.getAllEvalAdmins();
 	}
 
 	public EvalAdmin getEvalAdmin(String userId) {
 		if (userId == null) {
 			return null;
 		}
-		return dao.getEvalAdminByUserId(userId);
+		return adminSupportDao.getEvalAdminByUserId(userId);
 	}
 	
 	public void assignEvalAdmin(String userId, String assignorUserId) {
@@ -44,7 +55,7 @@ public class EvalAdminSupportImpl implements EvalAdminSupport {
 			throw new IllegalArgumentException("User with userId (" + userId + ") is already assigned as an eval admin");
 		
 		EvalAdmin evalAdminObj = new EvalAdmin(userId, Calendar.getInstance().getTime(), assignorUserId);
-		dao.save(evalAdminObj);
+		persistence.save(evalAdminObj);
 		
 	}
 
@@ -56,7 +67,7 @@ public class EvalAdminSupportImpl implements EvalAdminSupport {
 		if (evalAdminObj == null)
 			throw new IllegalArgumentException("Cannot find eval admin with this userId: " + userId);
 		
-		dao.delete(evalAdminObj);
+		persistence.delete(evalAdminObj);
 		
 	}
 	

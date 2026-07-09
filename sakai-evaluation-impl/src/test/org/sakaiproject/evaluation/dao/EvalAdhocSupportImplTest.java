@@ -14,6 +14,8 @@
  */
 package org.sakaiproject.evaluation.dao;
 
+import org.sakaiproject.evaluation.test.DaoTestWiring;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -56,7 +58,7 @@ public class EvalAdhocSupportImplTest extends BaseTestEvalLogic {
 
       // create and setup the object to be tested
       adhocSupportLogic = new EvalAdhocSupportImpl();
-      adhocSupportLogic.setDao(evaluationDao);
+      DaoTestWiring.wireEvalAdhocSupport(adhocSupportLogic, daoPorts);
       adhocSupportLogic.setSettings(settings);
 
       // enable these for the tests

@@ -69,7 +69,7 @@
     <!-- create a test data preloading bean -->
     <bean id="org.sakaiproject.evaluation.test.PreloadTestData"
         class="org.sakaiproject.evaluation.test.PreloadTestDataImpl" init-method="init">
-        <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+        <property name="persistence" ref="org.sakaiproject.evaluation.dao.EvaluationDaoBase" />
         <property name="preloadData" ref="org.sakaiproject.evaluation.dao.PreloadData" />
     </bean>
 

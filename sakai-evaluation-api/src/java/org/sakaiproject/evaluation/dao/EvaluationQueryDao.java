@@ -42,8 +42,7 @@ public interface EvaluationQueryDao {
     public List<EvalEvaluation> getEvalsUserCanTake(String userId, Boolean activeOnly, Boolean approvedOnly,
             Boolean includeAnonymous, int startResult, int maxResults);
 
-    public List<EvalEvaluation> getEvaluationsByEvalGroups(String[] evalGroupIds, Boolean activeOnly,
-            Boolean approvedOnly, Boolean includeAnonymous, int startResult, int maxResults);
+    public List<EvalEvaluation> getEvaluationsByEvalGroups(EvaluationGroupQuery query, int startResult, int maxResults);
 
     public List<EvalEvaluation> getEvaluationsForOwnerAndGroups(String userId, String[] evalGroupIds,
             Date recentClosedDate, int startResult, int maxResults, boolean includePartial);

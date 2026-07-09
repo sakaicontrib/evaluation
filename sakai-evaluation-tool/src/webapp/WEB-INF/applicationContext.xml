@@ -61,7 +61,9 @@
         <property name="exportersMap">
             <map>
                 <entry key="csvResultsReport" value-ref="CSVReportExporter"/>
+                <entry key="csvResultsReportSectioned" value-ref="CSVReportExporter"/>
                 <entry key="xlsResultsReport" value-ref="XLSReportExporter"/>
+                <entry key="xlsResultsReportSectioned" value-ref="XLSReportExporter"/>
                 <entry key="pdfResultsReport" value-ref="PDFReportExporter"/>
                 <entry key="pdfResultsReportIndividual" value-ref="PDFReportExporterIndividual"/>
                 <entry key="csvTakersReport" value-ref="CSVTakersExporter"/>

@@ -14,6 +14,8 @@
  */
 package org.sakaiproject.evaluation.logic;
 
+import org.sakaiproject.evaluation.test.DaoTestWiring;
+
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -56,7 +58,7 @@ public class EvalSettingsImplTest extends BaseTestEvalLogic {
 
 		// create and setup the object to be tested
 		evalSettings = new EvalSettingsImpl();
-		evalSettings.setDao(evaluationDao);
+		DaoTestWiring.wireEvalSettings(evalSettings, daoPorts);
 		evalSettings.setExternalLogic(externalLogic);
 
 		// create test objects
@@ -64,8 +66,8 @@ public class EvalSettingsImplTest extends BaseTestEvalLogic {
 		config3 = new EvalConfig(TEST_NAME3, TEST_VALUE3);
 
 		// preload additional data if desired
-		evaluationDao.save(config1);
-		evaluationDao.save(config3);
+		persistence.save(config1);
+		persistence.save(config3);
 		
 	}
 

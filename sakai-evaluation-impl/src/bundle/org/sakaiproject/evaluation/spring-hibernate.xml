@@ -50,17 +50,66 @@
         </constructor-arg>
     </bean>
 
-    <!-- create a DAO bean, use the hibernate implementation -->
-    <bean id="org.sakaiproject.evaluation.dao.EvaluationDao"
-        class="org.sakaiproject.evaluation.dao.EvaluationDaoImpl">
-        <property name="sessionFactory" 
+    <!-- Hibernate-backed evaluation DAO ports -->
+    <bean id="org.sakaiproject.evaluation.dao.EvaluationDaoBase"
+        class="org.sakaiproject.evaluation.dao.EvaluationDaoBaseImpl">
+        <property name="sessionFactory"
+            ref="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
+    </bean>
+    <bean id="org.sakaiproject.evaluation.dao.EvaluationSettingsDao"
+        class="org.sakaiproject.evaluation.dao.EvaluationSettingsDaoImpl">
+        <property name="sessionFactory"
+            ref="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
+    </bean>
+    <bean id="org.sakaiproject.evaluation.dao.EvaluationEmailTemplateDao"
+        class="org.sakaiproject.evaluation.dao.EvaluationEmailTemplateDaoImpl">
+        <property name="sessionFactory"
+            ref="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
+    </bean>
+    <bean id="org.sakaiproject.evaluation.dao.EvaluationAuthoringDao"
+        class="org.sakaiproject.evaluation.dao.EvaluationAuthoringDaoImpl">
+        <property name="sessionFactory"
+            ref="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
+    </bean>
+    <bean id="org.sakaiproject.evaluation.dao.EvaluationAdminSupportDao"
+        class="org.sakaiproject.evaluation.dao.EvaluationAdminSupportDaoImpl">
+        <property name="sessionFactory"
+            ref="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
+    </bean>
+    <bean id="org.sakaiproject.evaluation.dao.EvaluationResponseDao"
+        class="org.sakaiproject.evaluation.dao.EvaluationResponseDaoImpl">
+        <property name="sessionFactory"
+            ref="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
+    </bean>
+    <bean id="org.sakaiproject.evaluation.dao.EvaluationAssignmentDao"
+        class="org.sakaiproject.evaluation.dao.EvaluationAssignmentDaoImpl">
+        <property name="sessionFactory"
+            ref="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
+        <property name="responseDao" ref="org.sakaiproject.evaluation.dao.EvaluationResponseDao" />
+    </bean>
+    <bean id="org.sakaiproject.evaluation.dao.EvaluationQueryDao"
+        class="org.sakaiproject.evaluation.dao.EvaluationQueryDaoImpl">
+        <property name="sessionFactory"
+            ref="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
+    </bean>
+    <bean id="org.sakaiproject.evaluation.dao.EvaluationLockDao"
+        class="org.sakaiproject.evaluation.dao.EvaluationLockDaoImpl">
+        <property name="sessionFactory"
+            ref="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
+    </bean>
+    <bean id="org.sakaiproject.evaluation.dao.EvaluationConsolidatedEmailDao"
+        class="org.sakaiproject.evaluation.dao.EvaluationConsolidatedEmailDaoImpl">
+        <property name="sessionFactory"
             ref="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
     </bean>
 
     <!-- create a data preloading bean which will be used by the data preloader -->
     <bean id="org.sakaiproject.evaluation.dao.PreloadData"
         class="org.sakaiproject.evaluation.dao.PreloadDataImpl">
-        <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+        <property name="persistence" ref="org.sakaiproject.evaluation.dao.EvaluationDaoBase" />
+        <property name="settingsDao" ref="org.sakaiproject.evaluation.dao.EvaluationSettingsDao" />
+        <property name="emailTemplateDao" ref="org.sakaiproject.evaluation.dao.EvaluationEmailTemplateDao" />
+        <property name="authoringDao" ref="org.sakaiproject.evaluation.dao.EvaluationAuthoringDao" />
         <property name="externalLogic"
             ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
     </bean>
@@ -68,25 +117,29 @@
     <!-- handles the adhoc user/group data saving/retrieval -->
     <bean id="org.sakaiproject.evaluation.dao.EvalAdhocSupport"
         class="org.sakaiproject.evaluation.dao.EvalAdhocSupportImpl">
-        <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+        <property name="persistence" ref="org.sakaiproject.evaluation.dao.EvaluationDaoBase" />
+        <property name="adminSupportDao" ref="org.sakaiproject.evaluation.dao.EvaluationAdminSupportDao" />
         <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
     </bean>
 	
 	<bean id="org.sakaiproject.evaluation.dao.EvalAdminSupport"
 		class="org.sakaiproject.evaluation.dao.EvalAdminSupportImpl">
-		<property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+		<property name="persistence" ref="org.sakaiproject.evaluation.dao.EvaluationDaoBase" />
+		<property name="adminSupportDao" ref="org.sakaiproject.evaluation.dao.EvaluationAdminSupportDao" />
 	</bean>
 
     <bean id="org.sakaiproject.evaluation.dao.EvalHierarchyRuleSupport"
         class="org.sakaiproject.evaluation.dao.EvalHierarchyRuleSupportImpl">
-        <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+        <property name="persistence" ref="org.sakaiproject.evaluation.dao.EvaluationDaoBase" />
+        <property name="adminSupportDao" ref="org.sakaiproject.evaluation.dao.EvaluationAdminSupportDao" />
     </bean>
 
     <!-- handles api based retrieval of application settings,
         this is in here because adhoc-dao-support needs it -->
     <bean id="org.sakaiproject.evaluation.logic.EvalSettings"
         class="org.sakaiproject.evaluation.logic.EvalSettingsImpl" init-method="init">
-        <property name="dao" ref="org.sakaiproject.evaluation.dao.EvaluationDao" />
+        <property name="persistence" ref="org.sakaiproject.evaluation.dao.EvaluationDaoBase" />
+        <property name="settingsDao" ref="org.sakaiproject.evaluation.dao.EvaluationSettingsDao" />
         <property name="externalLogic"
             ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
     </bean>
@@ -131,7 +184,16 @@
         </property>
         <property name="beanNames">
             <list>
-                <value>org.sakaiproject.evaluation.dao.EvaluationDao</value>
+                <value>org.sakaiproject.evaluation.dao.EvaluationDaoBase</value>
+                <value>org.sakaiproject.evaluation.dao.EvaluationSettingsDao</value>
+                <value>org.sakaiproject.evaluation.dao.EvaluationEmailTemplateDao</value>
+                <value>org.sakaiproject.evaluation.dao.EvaluationAuthoringDao</value>
+                <value>org.sakaiproject.evaluation.dao.EvaluationAdminSupportDao</value>
+                <value>org.sakaiproject.evaluation.dao.EvaluationResponseDao</value>
+                <value>org.sakaiproject.evaluation.dao.EvaluationAssignmentDao</value>
+                <value>org.sakaiproject.evaluation.dao.EvaluationQueryDao</value>
+                <value>org.sakaiproject.evaluation.dao.EvaluationLockDao</value>
+                <value>org.sakaiproject.evaluation.dao.EvaluationConsolidatedEmailDao</value>
                 <value>org.sakaiproject.evaluation.dao.EvalAdhocSupport</value>
                 <value>org.sakaiproject.evaluation.dao.EvalAdminSupport</value>
                 <value>org.sakaiproject.evaluation.dao.EvalHierarchyRuleSupport</value>

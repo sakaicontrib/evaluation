@@ -36,7 +36,12 @@ import lombok.extern.slf4j.Slf4j;
  * Hibernate-backed implementation methods for the matching evaluation DAO port.
  */
 @Slf4j
-abstract class EvaluationDaoAssignmentMethods extends EvaluationDaoResponseMethods {
+public class EvaluationAssignmentDaoImpl extends EvaluationDaoHibernateSupport implements EvaluationAssignmentDao {
+
+    private EvaluationResponseDao responseDao;
+    public void setResponseDao(EvaluationResponseDao responseDao) {
+        this.responseDao = responseDao;
+    }
 
     public EvalAssignUser getAssignUserByEid(String eid) {
         return findOneByEid(EvalAssignUser.class, eid, "assignUser");
@@ -386,15 +391,15 @@ abstract class EvaluationDaoAssignmentMethods extends EvaluationDaoResponseMetho
             // now set up the filter
             if (EvalConstants.EVAL_INCLUDE_NONTAKERS.equals(includeConstant)) {
                 // get all users who have responded either way
-                userFilter = getResponseUserIds(evaluationId, groupIds, null); // exclude
+                userFilter = responseDao.getResponseUserIds(evaluationId, groupIds, null); // exclude
                 includeFilterUsers = false; // INVERT the search
             } else if (EvalConstants.EVAL_INCLUDE_RESPONDENTS.equals(includeConstant)) {
                 // get all users who have responded
-                userFilter = getResponseUserIds(evaluationId, groupIds, true);
+                userFilter = responseDao.getResponseUserIds(evaluationId, groupIds, true);
                 includeFilterUsers = true;
             } else if (EvalConstants.EVAL_INCLUDE_IN_PROGRESS.equals(includeConstant)) {
                 // get all users who have saved
-                userFilter = getResponseUserIds(evaluationId, groupIds, false);
+                userFilter = responseDao.getResponseUserIds(evaluationId, groupIds, false);
                 includeFilterUsers = true;
             } else if (EvalConstants.EVAL_INCLUDE_ALL.equals(includeConstant)) {
                 // do nothing

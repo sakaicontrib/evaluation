@@ -14,6 +14,9 @@
  */
 package org.sakaiproject.evaluation.dao;
 
+import org.sakaiproject.evaluation.dao.EvaluationAdminSupportDao;
+import org.sakaiproject.evaluation.dao.EvaluationDaoBase;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,9 +46,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class EvalAdhocSupportImpl implements EvalAdhocSupport {
 
+    private EvaluationAdminSupportDao adminSupportDao;
+    public void setAdminSupportDao(EvaluationAdminSupportDao adminSupportDao) {
+        this.adminSupportDao = adminSupportDao;
+    }
 
-   @Setter
-   private EvaluationDao dao;
+    private EvaluationDaoBase persistence;
+    public void setPersistence(EvaluationDaoBase persistence) {
+        this.persistence = persistence;
+    }
+
+
 
    @Setter
    private EvalSettings settings;
@@ -63,7 +74,7 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
       EvalAdhocUser user = null;
       if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_USERS) ) {
          if (adhocUserId != null) {
-            user = (EvalAdhocUser) dao.findById(EvalAdhocUser.class, adhocUserId);
+            user = (EvalAdhocUser) persistence.findById(EvalAdhocUser.class, adhocUserId);
          }
       }
       return user;
@@ -79,7 +90,7 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
       EvalAdhocUser user = null;
       if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_USERS) ) {
          if (username != null) {
-            user = dao.getAdhocUserByUsername(username);
+            user = adminSupportDao.getAdhocUserByUsername(username);
          }
       }
       return user;      
@@ -95,7 +106,7 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
       EvalAdhocUser user = null;
       if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_USERS) ) {
          if (email != null) {
-            user = dao.getAdhocUserByEmail(email);
+            user = adminSupportDao.getAdhocUserByEmail(email);
          }
       }
       return user;      
@@ -142,10 +153,10 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
       List<EvalAdhocUser> users = new ArrayList<>();
       if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_USERS) ) {
          if (ids == null) {
-            users = dao.getAllAdhocUsers();
+            users = adminSupportDao.getAllAdhocUsers();
          } else {
             if (ids.length > 0) {
-               users = dao.getAdhocUsersByIds(ids);
+               users = adminSupportDao.getAdhocUsersByIds(ids);
             }
          }
       }
@@ -193,7 +204,7 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
                 * the existing user was changed to have an email address that matches an existing one 
                 * so we remove this user and defer to the existing one
                 */
-               dao.delete(user);
+               persistence.delete(user);
    
                // now we update the existing user if nulls are there (treat this like an update without loading the persistent user)
                boolean updated = false;
@@ -208,7 +219,7 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
                   updated = true;
                }
                if (updated) {
-                  dao.save(existing);
+                  persistence.save(existing);
                }
             }
          }
@@ -218,7 +229,7 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
          // copy over the field values
          copyAdhocUser(existing, user);
       } else {
-         dao.save(user);
+         persistence.save(user);
          log.info("Saved adhoc user: " + user.getEmail());
       }
    }
@@ -252,7 +263,7 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
       EvalAdhocGroup group = null;
       if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_GROUPS) ) {
          if (adhocGroupId != null) {
-            group = (EvalAdhocGroup) dao.findById(EvalAdhocGroup.class, adhocGroupId);
+            group = (EvalAdhocGroup) persistence.findById(EvalAdhocGroup.class, adhocGroupId);
          }
       }
       return group;
@@ -260,7 +271,7 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
 
    public void deleteAdhocGroup(Long adhocGroupId) {
        if (adhocGroupId != null) {
-           dao.delete(EvalAdhocGroup.class, adhocGroupId);
+           persistence.delete(EvalAdhocGroup.class, adhocGroupId);
        }
     }
 
@@ -281,7 +292,7 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
          throw new IllegalStateException(EvalSettings.ENABLE_ADHOC_GROUPS + " is currently disabled, you cannot save any adhoc groups");
       }
 
-      dao.save(group);
+      persistence.save(group);
       log.info("Saved adhoc group: " + group.getEvalGroupId());
    }
 
@@ -296,7 +307,7 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
       List<EvalAdhocGroup> groups = new ArrayList<>(0);
       if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_GROUPS) ) {
          if (userId != null) {
-            groups = dao.getAdhocGroupsForOwner(userId);
+            groups = adminSupportDao.getAdhocGroupsForOwner(userId);
          }
       }
       return groups;
@@ -317,7 +328,7 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
       List<EvalAdhocGroup> groups = new ArrayList<>(0);
       if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_GROUPS) ) {
          // passthrough to the dao method
-         groups = dao.getEvalAdhocGroupsByUserAndPerm(userId, permissionConstant);
+         groups = adminSupportDao.getEvalAdhocGroupsByUserAndPerm(userId, permissionConstant);
       }
       return groups;
    }
@@ -335,7 +346,7 @@ public class EvalAdhocSupportImpl implements EvalAdhocSupport {
       boolean allowed = false;
       if ( (Boolean) settings.get(EvalSettings.ENABLE_ADHOC_GROUPS) ) {
          // passthrough to the dao method
-         allowed = dao.isUserAllowedInAdhocGroup(userId, permissionConstant, evalGroupId);
+         allowed = adminSupportDao.isUserAllowedInAdhocGroup(userId, permissionConstant, evalGroupId);
       }
       return allowed;
    }

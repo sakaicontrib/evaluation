@@ -25,7 +25,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 /**
  * Hibernate-backed implementation methods for the matching evaluation DAO port.
  */
-abstract class EvaluationDaoEmailTemplateMethods extends EvaluationDaoSettingsMethods {
+public class EvaluationEmailTemplateDaoImpl extends EvaluationDaoHibernateSupport implements EvaluationEmailTemplateDao {
 
     public int countDefaultEmailTemplates() {
         Long count = currentSession().createQuery(

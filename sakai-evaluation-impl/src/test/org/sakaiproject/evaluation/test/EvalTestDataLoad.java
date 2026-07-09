@@ -14,6 +14,8 @@
  */
 package org.sakaiproject.evaluation.test;
 
+import org.sakaiproject.evaluation.dao.EvaluationDaoBase;
+
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -31,7 +33,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
 import org.sakaiproject.evaluation.model.EvalAnswer;
@@ -58,6 +59,12 @@ import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
 public class EvalTestDataLoad {
+
+    private EvaluationDaoBase persistence;
+    public void setPersistence(EvaluationDaoBase persistence) {
+        this.persistence = persistence;
+    }
+
 
     // constants
     public final static String USER_NAME = "aaronz";
@@ -664,16 +671,17 @@ public class EvalTestDataLoad {
      * @param dao a real dao which can insert data in the database,
      * if null then a fake one will be created (the data will not be truly accessible)
      */
-    public EvalTestDataLoad(EvaluationDao dao) {
+    public EvalTestDataLoad(EvaluationDaoBase persistence) {
+        this.persistence = persistence;
         AUTHZGROUPSET1.add(AUTHZGROUP1A_ID);
         AUTHZGROUPSET1.add(AUTHZGROUP1B_ID);
         AUTHZGROUPSET2.add(AUTHZGROUP2A_ID);
 
         TestDataDao testDataDao;
-        if (dao == null) {
+        if (persistence == null) {
             testDataDao = new FakeTestDataDao();
         } else {
-            testDataDao = new EvaluationTestDataDao(dao);
+            testDataDao = new EvaluationTestDataDao(persistence);
         }
         initializeAndSave(testDataDao);
     }
@@ -1708,18 +1716,18 @@ public class EvalTestDataLoad {
     }
 
     private static class EvaluationTestDataDao implements TestDataDao {
-        private final EvaluationDao dao;
+        private final EvaluationDaoBase persistence;
 
-        EvaluationTestDataDao(EvaluationDao dao) {
-            this.dao = dao;
+        EvaluationTestDataDao(EvaluationDaoBase persistence) {
+            this.persistence = persistence;
         }
 
         public void save(Object object) {
-            dao.save(object);
+            persistence.save(object);
         }
 
         public void update(Object object) {
-            dao.update(object);
+            persistence.update(object);
         }
     }
 

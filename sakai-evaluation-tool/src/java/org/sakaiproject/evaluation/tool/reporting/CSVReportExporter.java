@@ -14,6 +14,8 @@
  */
 package org.sakaiproject.evaluation.tool.reporting;
 
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -380,8 +382,8 @@ public class CSVReportExporter implements ReportExporter {
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.tool.reporting.ReportExporter#buildReport(org.sakaiproject.evaluation.model.EvalEvaluation, java.lang.String[], java.io.OutputStream)
      */
-    public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream, boolean newReportStyle) {
-        buildReport(evaluation, groupIds, null, outputStream, newReportStyle);
+    public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream, String exportType) {
+        buildReport(evaluation, groupIds, null, outputStream, exportType);
     }
 
     /*
@@ -391,11 +393,11 @@ public class CSVReportExporter implements ReportExporter {
      * org.sakaiproject.evaluation.tool.reporting.ReportExporter#buildReport(org.sakaiproject.evaluation
      * .model.EvalEvaluation, java.lang.String[], java.lang.String, java.io.OutputStream)
      */
-    public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream, boolean newReportStyle) {
+    public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream, String exportType) {
         //Make sure responseAggregator is using this message source
         responseAggregator.setMessageSource(messages);
 
-        if( newReportStyle )
+        if (EvalEvaluationService.isSectionedResultsExport(exportType))
         {
             buildReportSectionAware( evaluation, groupIds, outputStream );
         }

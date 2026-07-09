@@ -14,6 +14,8 @@
  */
 package org.sakaiproject.evaluation.logic;
 
+import org.sakaiproject.evaluation.test.DaoTestWiring;
+
 import java.util.Set;
 
 import org.junit.After;
@@ -69,7 +71,7 @@ public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
       
       //create and setup the object to be tested
       reportingPermissions = new ReportingPermissionsImpl();
-      reportingPermissions.setDao(evaluationDao);
+      DaoTestWiring.wireReportingPermissions(reportingPermissions, daoPorts);
       reportingPermissions.setEvalBeanUtils(evalBeanUtils);
       reportingPermissions.setEvalSettings(settings);
       reportingPermissions.setEvaluationService(evaluationService);
