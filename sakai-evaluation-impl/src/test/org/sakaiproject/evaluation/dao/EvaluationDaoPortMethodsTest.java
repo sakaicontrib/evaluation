@@ -121,6 +121,28 @@ public class EvaluationDaoPortMethodsTest extends AbstractEvaluationDaoTest {
     }
 
     @Test
+    public void testCountDistinctGroupsInConsolidatedEmailMapping() {
+        evaluationDao.resetConsolidatedEmailRecipients();
+        Long assignUserId = evaluationDao.findAll(EvalAssignUser.class).get(0).getId();
+        evaluationDao.save(emailProcessingData(assignUserId, "dao-email-processing-user-1", "dao-email-processing-group-1"));
+        evaluationDao.save(emailProcessingData(assignUserId, "dao-email-processing-user-2", "dao-email-processing-group-1"));
+        evaluationDao.save(emailProcessingData(assignUserId, "dao-email-processing-user-3", "dao-email-processing-group-2"));
+
+        Assert.assertEquals(2, evaluationDao.countDistinctGroupsInConsolidatedEmailMapping());
+    }
+
+    private EvalEmailProcessingData emailProcessingData(Long assignUserId, String userId, String groupId) {
+        EvalEmailProcessingData data = new EvalEmailProcessingData();
+        data.setEauId(assignUserId);
+        data.setUserId(userId);
+        data.setGroupId(groupId);
+        data.setEmailTemplateId(etdl.emailTemplate1.getId());
+        data.setEvalId(etdl.evaluationActive.getId());
+        data.setEvalDueDate(etdl.evaluationActive.getDueDate());
+        return data;
+    }
+
+    @Test
     public void testEvalConfigLookups() {
         String configName = "dao.config.lookup.test";
         EvalConfig config = new EvalConfig(configName, "test value");

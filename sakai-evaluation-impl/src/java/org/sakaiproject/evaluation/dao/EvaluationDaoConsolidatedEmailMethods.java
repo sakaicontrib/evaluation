@@ -43,21 +43,12 @@ abstract class EvaluationDaoConsolidatedEmailMethods extends EvaluationDaoLockMe
      * (non-Javadoc)
      * @see org.sakaiproject.evaluation.dao.EvaluationDao#countDistinctGroupsInConsolidatedEmailMapping()
      */
-    @SuppressWarnings("rawtypes")
-	public int countDistinctGroupsInConsolidatedEmailMapping() {
-    	String hql = "select count(distinct groupId) from EvalEmailProcessingData";
-    	Session session = currentSession();
-    	
-        Query query = session.createQuery(hql);
-    	
-        List results = query.list();
-        int count = 0;
-        if(results == null || results.isEmpty()) {
-        	// log error
-        } else {
-        	count = ((Integer) results.get(0));
-        }
-        return count;
+    public int countDistinctGroupsInConsolidatedEmailMapping() {
+        Long count = currentSession().createQuery(
+                "select count(distinct groupId) from EvalEmailProcessingData",
+                Long.class)
+                .uniqueResult();
+        return count == null ? 0 : count.intValue();
     }
 
 
