@@ -32,6 +32,7 @@ sakai-evaluation-tool/src/webapp/content/css/node_modules
 sakai-evaluation-tool/src/target
 sakai-evaluation-tool/target
 sakai-evaluation-tool/overlays
+e2e-tests/target
 .directory
  
 # Created by https://www.gitignore.io/api/intellij+iml
