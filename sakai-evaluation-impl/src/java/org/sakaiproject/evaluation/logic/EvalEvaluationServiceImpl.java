@@ -596,6 +596,9 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
 
 
     public EvalAssignHierarchy getAssignHierarchyById(Long assignHierarchyId) {
+        if (assignHierarchyId == null) {
+            throw new IllegalArgumentException("assignHierarchyId cannot be null");
+        }
         List<EvalAssignHierarchy> assignHierarchies = assignmentDao.getAssignHierarchiesByIds(new Long[] { assignHierarchyId });
         return assignHierarchies.isEmpty() ? null : assignHierarchies.get(0);
     }
