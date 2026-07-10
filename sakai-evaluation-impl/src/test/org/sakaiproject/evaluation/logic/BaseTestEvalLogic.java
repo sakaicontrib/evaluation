@@ -22,6 +22,7 @@ import org.sakaiproject.evaluation.dao.EvaluationAuthoringDao;
 import org.sakaiproject.evaluation.dao.EvaluationConsolidatedEmailDao;
 import org.sakaiproject.evaluation.dao.EvaluationDaoBase;
 import org.sakaiproject.evaluation.dao.EvaluationEmailTemplateDao;
+import org.sakaiproject.evaluation.dao.EvaluationGroupNodeDao;
 import org.sakaiproject.evaluation.dao.EvaluationLockDao;
 import org.sakaiproject.evaluation.dao.EvaluationQueryDao;
 import org.sakaiproject.evaluation.dao.EvaluationResponseDao;
@@ -59,6 +60,7 @@ public abstract class BaseTestEvalLogic extends AbstractTransactionalJUnit4Sprin
    protected EvaluationSettingsDao settingsDao;
    protected EvaluationEmailTemplateDao emailTemplateDao;
    protected EvaluationAuthoringDao authoringDao;
+   protected EvaluationGroupNodeDao groupNodeDao;
    protected EvaluationAdminSupportDao adminSupportDao;
    protected EvaluationResponseDao responseDao;
    protected EvaluationAssignmentDao assignmentDao;
@@ -97,6 +99,7 @@ public abstract class BaseTestEvalLogic extends AbstractTransactionalJUnit4Sprin
       settingsDao = fixture.settingsDao;
       emailTemplateDao = fixture.emailTemplateDao;
       authoringDao = fixture.authoringDao;
+      groupNodeDao = fixture.groupNodeDao;
       adminSupportDao = fixture.adminSupportDao;
       responseDao = fixture.responseDao;
       assignmentDao = fixture.assignmentDao;

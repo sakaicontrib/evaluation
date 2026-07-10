@@ -20,6 +20,7 @@ import org.sakaiproject.evaluation.dao.EvaluationAuthoringDao;
 import org.sakaiproject.evaluation.dao.EvaluationConsolidatedEmailDao;
 import org.sakaiproject.evaluation.dao.EvaluationDaoBase;
 import org.sakaiproject.evaluation.dao.EvaluationEmailTemplateDao;
+import org.sakaiproject.evaluation.dao.EvaluationGroupNodeDao;
 import org.sakaiproject.evaluation.dao.EvaluationLockDao;
 import org.sakaiproject.evaluation.dao.EvaluationQueryDao;
 import org.sakaiproject.evaluation.dao.EvaluationResponseDao;
@@ -46,6 +47,9 @@ public class EvalTestDaoFixture {
     @Autowired
     @Qualifier("org.sakaiproject.evaluation.dao.EvaluationAuthoringDao")
     public EvaluationAuthoringDao authoringDao;
+    @Autowired
+    @Qualifier("org.sakaiproject.evaluation.dao.EvaluationGroupNodeDao")
+    public EvaluationGroupNodeDao groupNodeDao;
     @Autowired
     @Qualifier("org.sakaiproject.evaluation.dao.EvaluationAdminSupportDao")
     public EvaluationAdminSupportDao adminSupportDao;

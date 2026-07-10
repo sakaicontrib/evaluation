@@ -273,9 +273,10 @@ public class EvaluationDaoPortMethodsAssignmentTest extends AbstractEvaluationDa
         assignmentDao.deleteAssignUsersByIds(new Long[] {savedUser.getId()});
         Assert.assertNull(persistence.findById(EvalAssignUser.class, savedUser.getId()));
 
-        int removedByGroup = assignmentDao.deleteAssignUsersByAssignGroupIdExcludingStatus(
-                directAssignGroup.getId(), EvalAssignUser.STATUS_UNLINKED);
+        int removedByGroup = assignmentDao.deleteAssignGroupAndLinkedUsers(
+                directAssignGroup, EvalAssignUser.STATUS_UNLINKED);
         Assert.assertEquals(1, removedByGroup);
+        Assert.assertNull(persistence.findById(EvalAssignGroup.class, directAssignGroup.getId()));
         Assert.assertNull(persistence.findById(EvalAssignUser.class, groupLinkedUser.getId()));
         Assert.assertNotNull(persistence.findById(EvalAssignUser.class, groupUnlinkedUser.getId()));
 
@@ -320,8 +321,11 @@ public class EvaluationDaoPortMethodsAssignmentTest extends AbstractEvaluationDa
         EvalAssignUser cleanupUser = new EvalAssignUser(
                 "dao-cleanup-user",
                 evalUnLocked,
-                "dao-direct-group",
+                "dao-cleanup-group",
                 EvalTestDataLoad.MAINT_USER_ID);
+        EvalAssignGroup cleanupGroup = new EvalAssignGroup(
+                EvalTestDataLoad.MAINT_USER_ID, "dao-cleanup-group", EvalConstants.GROUP_TYPE_SITE,
+                evalUnLocked, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, null, null);
         EvalAssignHierarchy cleanupHierarchy = new EvalAssignHierarchy(
                 EvalTestDataLoad.MAINT_USER_ID,
                 "dao-cleanup-node",
@@ -331,12 +335,13 @@ public class EvaluationDaoPortMethodsAssignmentTest extends AbstractEvaluationDa
                 Boolean.FALSE,
                 null,
                 null);
+        persistence.save(cleanupGroup);
         persistence.save(cleanupUser);
         persistence.save(cleanupHierarchy);
 
-        Assert.assertEquals(1, assignmentDao.countAssignGroupsByEvalAndGroupId(evalUnLocked.getId(), "dao-direct-group"));
+        Assert.assertEquals(1, assignmentDao.countAssignGroupsByEvalAndGroupId(evalUnLocked.getId(), "dao-cleanup-group"));
         assignmentDao.deleteAssignmentsForEvaluation(evalUnLocked.getId());
-        Assert.assertEquals(0, assignmentDao.countAssignGroupsByEvalAndGroupId(evalUnLocked.getId(), "dao-direct-group"));
+        Assert.assertEquals(0, assignmentDao.countAssignGroupsByEvalAndGroupId(evalUnLocked.getId(), "dao-cleanup-group"));
         Assert.assertTrue(assignmentDao.getParticipantsForEval(evalUnLocked.getId(), null, null, null, null, null, null).isEmpty());
         Assert.assertTrue(assignmentDao.getAssignHierarchyByEval(evalUnLocked.getId()).isEmpty());
     }
@@ -353,13 +358,18 @@ public class EvaluationDaoPortMethodsAssignmentTest extends AbstractEvaluationDa
         answers.add(answer);
         response.setAnswers(answers);
 
-        responseDao.saveResponseAndAnswers(response, answers);
+        responseDao.saveResponseAndAnswers(response, answers, null);
 
         Assert.assertNotNull(response.getId());
         Assert.assertNotNull(answer.getId());
 
         Assert.assertNotNull(persistence.findById(EvalResponse.class, response.getId()));
         Assert.assertNotNull(persistence.findById(EvalAnswer.class, answer.getId()));
+
+        Set<EvalAnswer> answersToDelete = new HashSet<>();
+        answersToDelete.add(answer);
+        responseDao.saveResponseAndAnswers(response, new HashSet<>(), answersToDelete);
+        Assert.assertNull(persistence.findById(EvalAnswer.class, answer.getId()));
 
         EvalResponse completedResponse = new EvalResponse(
                 "dao-completed-response-owner",
@@ -375,8 +385,8 @@ public class EvaluationDaoPortMethodsAssignmentTest extends AbstractEvaluationDa
                 new Date(),
                 null,
                 null);
-        responseDao.saveResponseAndAnswers(completedResponse, null);
-        responseDao.saveResponseAndAnswers(partialResponse, null);
+        responseDao.saveResponseAndAnswers(completedResponse, null, null);
+        responseDao.saveResponseAndAnswers(partialResponse, null, null);
 
         List<EvalResponse> responses = responseDao.getEvaluationResponses(evalUnLocked.getId(), null, null);
         Assert.assertEquals(2, responses.size());
@@ -437,14 +447,14 @@ public class EvaluationDaoPortMethodsAssignmentTest extends AbstractEvaluationDa
         persistence.save(first);
         persistence.save(second);
 
-        List<EvalGroupNodes> groupNodes = authoringDao.getEvalGroupNodesByNodeIds(new String[] {"dao-node-b", "dao-node-a"});
+        List<EvalGroupNodes> groupNodes = groupNodeDao.getEvalGroupNodesByNodeIds(new String[] {"dao-node-b", "dao-node-a"});
         Assert.assertNotNull(groupNodes);
         Assert.assertEquals(2, groupNodes.size());
         Assert.assertEquals(first.getId(), groupNodes.get(0).getId());
         Assert.assertEquals(second.getId(), groupNodes.get(1).getId());
 
-        Assert.assertTrue(authoringDao.getEvalGroupNodesByNodeIds(new String[] {"dao-node-missing"}).isEmpty());
-        Assert.assertTrue(authoringDao.getEvalGroupNodesByNodeIds(new String[] {}).isEmpty());
+        Assert.assertTrue(groupNodeDao.getEvalGroupNodesByNodeIds(new String[] {"dao-node-missing"}).isEmpty());
+        Assert.assertTrue(groupNodeDao.getEvalGroupNodesByNodeIds(new String[] {}).isEmpty());
     }
 
     @Test
