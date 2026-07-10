@@ -103,6 +103,12 @@
                 <module>impl/src/ddl</module>
             </modules>
         </profile>
+        <profile>
+            <id>e2e</id>
+            <modules>
+                <module>e2e-tests</module>
+            </modules>
+        </profile>
     </profiles>
 
     <!-- handles the management of all related dependencies -->
