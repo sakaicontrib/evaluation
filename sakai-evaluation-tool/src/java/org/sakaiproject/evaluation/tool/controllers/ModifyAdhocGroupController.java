@@ -26,6 +26,7 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
+import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,6 +43,13 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequestMapping("/modify_adhoc_group")
 public class ModifyAdhocGroupController extends EvalControllerSupport {
+
+    private static class InvalidMembersException extends RuntimeException {
+    }
+
+    private static class LockedGroupException extends RuntimeException {
+    }
+
     @Data
     public static class MemberRow {
         private final String userId;
@@ -58,17 +66,25 @@ public class ModifyAdhocGroupController extends EvalControllerSupport {
         if (commonLogic.isUserAnonymous(currentUserId))
             throw new SecurityException("Anonymous users cannot access adhoc groups");
 
+        // Flash attributes set by POST on validation error to pre-fill the form
+        String prefillTitle = (String) model.asMap().get("prefillTitle");
+        String prefillMembers = (String) model.asMap().getOrDefault("prefillMembers", "");
+
         model.addAttribute("adhocGroupId", adhocGroupId);
         model.addAttribute("returnUrl", returnUrl);
         model.addAttribute("isNew", adhocGroupId == null);
-        model.addAttribute("groupTitle", "");
+        model.addAttribute("prefillMembers", prefillMembers);
 
         if (adhocGroupId != null) {
             EvalAdhocGroup group = commonLogic.getAdhocGroupById(adhocGroupId);
             if (group == null) throw new IllegalArgumentException("Adhoc group not found: " + adhocGroupId);
             if (!currentUserId.equals(group.getOwner()))
                 throw new SecurityException("Only owners can modify adhocgroups: " + currentUserId);
-            model.addAttribute("groupTitle", group.getTitle());
+            if (isGroupLocked(group)) {
+                model.addAttribute("errorMessage", "controladhocgroups.group.locked.tooltip");
+                model.addAttribute("readOnly", true);
+            }
+            model.addAttribute("groupTitle", prefillTitle != null ? prefillTitle : group.getTitle());
 
             List<String> participantIds = group.getParticipantIds();
             List<MemberRow> members = new ArrayList<>();
@@ -82,6 +98,8 @@ public class ModifyAdhocGroupController extends EvalControllerSupport {
                 }
             }
             model.addAttribute("members", members);
+        } else {
+            model.addAttribute("groupTitle", prefillTitle != null ? prefillTitle : "");
         }
         return "modify_adhoc_group";
     }
@@ -96,59 +114,87 @@ public class ModifyAdhocGroupController extends EvalControllerSupport {
         if (commonLogic.isUserAnonymous(currentUserId))
             throw new SecurityException("Anonymous users cannot create EvalAdhocGroups");
 
-        if (groupTitle.trim().isEmpty()) {
+        String trimmedTitle = groupTitle.trim();
+        if (trimmedTitle.isEmpty()) {
             ra.addFlashAttribute("errorMessage", "modifyadhocgroup.message.notitle");
+            ra.addFlashAttribute("prefillMembers", newMembers);
             return redirectToForm(adhocGroupId, returnUrl);
+        }
+
+        // Duplicate title check (case-insensitive, excluding the group being edited)
+        for (EvalAdhocGroup existing : commonLogic.getAdhocGroupsForOwner(currentUserId)) {
+            if (existing.getTitle().equalsIgnoreCase(trimmedTitle)
+                    && !existing.getId().equals(adhocGroupId)) {
+                ra.addFlashAttribute("errorMessage", "modifyadhocgroup.message.duplicatetitle");
+                ra.addFlashAttribute("prefillTitle", groupTitle);
+                ra.addFlashAttribute("prefillMembers", newMembers);
+                return redirectToForm(adhocGroupId, returnUrl);
+            }
         }
 
         List<String> rejected = new ArrayList<>();
         List<String> alreadyIn = new ArrayList<>();
         Long[] savedId = new Long[1];
         String[] savedTitle = new String[1];
-        String trimmedTitle = groupTitle.trim();
 
-        daoInvoker.invokeTransactionalAccess(() -> {
-            EvalAdhocGroup group;
-            if (adhocGroupId == null) {
-                group = new EvalAdhocGroup(currentUserId, trimmedTitle);
-            } else {
-                group = commonLogic.getAdhocGroupById(adhocGroupId);
-                if (group == null) throw new IllegalArgumentException("Adhoc group not found: " + adhocGroupId);
-                if (!currentUserId.equals(group.getOwner()))
-                    throw new SecurityException("Only owners can modify adhocgroups: " + currentUserId);
-                group.setTitle(trimmedTitle);
-            }
+        try {
+            daoInvoker.invokeTransactionalAccess(() -> {
+                EvalAdhocGroup group;
+                if (adhocGroupId == null) {
+                    group = new EvalAdhocGroup(currentUserId, trimmedTitle);
+                } else {
+                    group = commonLogic.getAdhocGroupById(adhocGroupId);
+                    if (group == null) throw new IllegalArgumentException("Adhoc group not found: " + adhocGroupId);
+                    if (!currentUserId.equals(group.getOwner()))
+                        throw new SecurityException("Only owners can modify adhocgroups: " + currentUserId);
+                    if (isGroupLocked(group)) {
+                        throw new LockedGroupException();
+                    }
+                    group.setTitle(trimmedTitle);
+                }
 
-            // Process the list of new members
-            List<String> toAdd = addMembersFromText(newMembers, group, rejected, alreadyIn);
+                // Process members before saving so invalid users abort the whole transaction.
+                List<String> toAdd = addMembersFromText(newMembers, group, rejected, alreadyIn);
+                if (!rejected.isEmpty()) {
+                    throw new InvalidMembersException();
+                }
 
-            Set<String> all = new HashSet<>();
-            if (group.getParticipantIds() != null) all.addAll(group.getParticipantIds());
-            all.addAll(toAdd);
-            group.setParticipantIds(new ArrayList<>(all));
+                Set<String> all = new HashSet<>();
+                if (group.getParticipantIds() != null) all.addAll(group.getParticipantIds());
+                all.addAll(toAdd);
+                group.setParticipantIds(new ArrayList<>(all));
 
-            commonLogic.saveAdhocGroup(group);
-            savedId[0] = group.getId();
-            savedTitle[0] = group.getTitle();
-        });
-
-        ra.addFlashAttribute("successMessage", "modifyadhocgroup.message.savednewgroup");
-        ra.addFlashAttribute("successArgs", new Object[]{ savedTitle[0] });
-
-        boolean useAdhocUsers = Boolean.TRUE.equals(settings.get(EvalSettings.ENABLE_ADHOC_USERS));
-        if (!rejected.isEmpty()) {
+                commonLogic.saveAdhocGroup(group);
+                savedId[0] = group.getId();
+                savedTitle[0] = group.getTitle();
+            });
+        } catch (InvalidMembersException e) {
+            boolean useAdhocUsers = Boolean.TRUE.equals(settings.get(EvalSettings.ENABLE_ADHOC_USERS));
             ra.addFlashAttribute("errorMessage",
                     useAdhocUsers ? "modifyadhocgroup.message.badusers" : "modifyadhocgroup.message.badusers.noadhocusers");
             ra.addFlashAttribute("errorArgs", new Object[]{ String.join(", ", rejected) });
+            ra.addFlashAttribute("prefillTitle", groupTitle);
+            ra.addFlashAttribute("prefillMembers", newMembers);
+            return redirectToForm(adhocGroupId, returnUrl);
+        } catch (LockedGroupException e) {
+            ra.addFlashAttribute("errorMessage", "controladhocgroups.group.locked.tooltip");
+            return redirectToForm(adhocGroupId, returnUrl);
         }
+
         if (!alreadyIn.isEmpty()) {
             ra.addFlashAttribute("infoMessage", "modifyadhocgroup.message.existingusers");
             ra.addFlashAttribute("infoArgs", new Object[]{ String.join(", ", alreadyIn) });
         }
 
         log.info("User ({}) saved adhoc group ({})", currentUserId, savedId[0]);
-        return "redirect:/modify_adhoc_group?adhocGroupId=" + savedId[0]
-                + (returnUrl.isEmpty() ? "" : "&returnUrl=" + URLEncoder.encode(returnUrl, StandardCharsets.UTF_8));
+        if (returnUrl.isEmpty()) {
+            ra.addFlashAttribute("successMessage", "controladhocgroups.group.saved");
+            ra.addFlashAttribute("successArgs", new Object[]{ savedTitle[0] });
+            return "redirect:/control_adhoc_groups";
+        }
+        ra.addFlashAttribute("successMessage", "modifyadhocgroup.message.savednewgroup");
+        ra.addFlashAttribute("successArgs", new Object[]{ savedTitle[0] });
+        return "redirect:" + returnUrl;
     }
 
     @PostMapping("/remove")
@@ -158,16 +204,23 @@ public class ModifyAdhocGroupController extends EvalControllerSupport {
                                RedirectAttributes ra) {
         String currentUserId = currentUserId();
         String[] removedDisplayName = new String[1];
+        boolean[] locked = new boolean[1];
 
         daoInvoker.invokeTransactionalAccess(() -> {
             EvalAdhocGroup group = commonLogic.getAdhocGroupById(adhocGroupId);
             if (group == null) throw new IllegalArgumentException("Adhoc group not found: " + adhocGroupId);
             if (!currentUserId.equals(group.getOwner()))
                 throw new SecurityException("Only owners can modify adhocgroups: " + currentUserId);
+            if (isGroupLocked(group)) {
+                locked[0] = true;
+                return;
+            }
 
             List<String> participants = new ArrayList<>();
-            for (String id : group.getParticipantIds()) {
-                if (!id.equals(adhocUserId)) participants.add(id);
+            if (group.getParticipantIds() != null) {
+                for (String id : group.getParticipantIds()) {
+                    if (!id.equals(adhocUserId)) participants.add(id);
+                }
             }
             group.setParticipantIds(participants);
             commonLogic.saveAdhocGroup(group);
@@ -175,6 +228,12 @@ public class ModifyAdhocGroupController extends EvalControllerSupport {
             EvalUser removed = commonLogic.getEvalUserById(adhocUserId);
             removedDisplayName[0] = removed.displayName;
         });
+
+        if (locked[0]) {
+            ra.addFlashAttribute("errorMessage", "controladhocgroups.group.locked.tooltip");
+            return "redirect:/modify_adhoc_group?adhocGroupId=" + adhocGroupId
+                    + (returnUrl.isEmpty() ? "" : "&returnUrl=" + URLEncoder.encode(returnUrl, StandardCharsets.UTF_8));
+        }
 
         ra.addFlashAttribute("successMessage", "modifyadhocgroup.message.removeduser");
         ra.addFlashAttribute("successArgs", new Object[]{ removedDisplayName[0] });
@@ -236,5 +295,15 @@ public class ModifyAdhocGroupController extends EvalControllerSupport {
             }
         }
         return toAdd;
+    }
+
+    private boolean isGroupLocked(EvalAdhocGroup group) {
+        List<EvalEvaluation> evals = evaluationService.getEvaluationsForEvalGroups(
+                new String[]{group.getEvalGroupId()}, 0, 0);
+        for (EvalEvaluation eval : evals) {
+            if (ControlAdhocGroupsController.isLockedState(evaluationService.updateEvaluationState(eval.getId())))
+                return true;
+        }
+        return false;
     }
 }
