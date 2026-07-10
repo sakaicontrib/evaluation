@@ -120,7 +120,7 @@ public class CSVReportExporter implements ReportExporter {
             String evalTitle = evaluation.getTitle().replaceAll( " ", "_" );
 
             // Get permission to view, current user and eval owner
-            Boolean instructorViewAllResults = evaluation.getInstructorViewAllResults();
+            boolean instructorViewAllResults = Boolean.TRUE.equals(evaluation.getInstructorViewAllResults());
             String currentUserID = commonLogic.getCurrentUserId();
             String evalOwner = evaluation.getOwner();
 
@@ -406,7 +406,7 @@ public class CSVReportExporter implements ReportExporter {
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
             CSVWriter writer = new CSVWriter(outputStreamWriter, COMMA, CSVWriter.DEFAULT_QUOTE_CHARACTER, CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
 
-            Boolean instructorViewAllResults = (boolean) evaluation.getInstructorViewAllResults();
+            boolean instructorViewAllResults = Boolean.TRUE.equals(evaluation.getInstructorViewAllResults());
             String currentUserId = commonLogic.getCurrentUserId();
             String evalOwner = evaluation.getOwner();
 

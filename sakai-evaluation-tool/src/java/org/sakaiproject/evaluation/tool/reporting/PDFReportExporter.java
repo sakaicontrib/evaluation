@@ -112,7 +112,7 @@ public class PDFReportExporter implements ReportExporter {
         //Make sure responseAggregator is using this message source
         responseAggregator.setMessageSource(messages);
         EvalPDFReportBuilder evalPDFReportBuilder = new EvalPDFReportBuilder(outputStream);
-        Boolean instructorViewAllResults = (boolean) evaluation.getInstructorViewAllResults();
+        boolean instructorViewAllResults = Boolean.TRUE.equals(evaluation.getInstructorViewAllResults());
         String currentUserId = commonLogic.getCurrentUserId();
         String evalOwner = evaluation.getOwner();
 

@@ -108,7 +108,7 @@ public class XLSReportExporter implements ReportExporter {
     private void buildReportSectionAware( EvalEvaluation evaluation, String[] groupIDs, OutputStream outputStream )
     {
         // Get permission to view, current user and eval owner
-        Boolean instructorViewAllResults = evaluation.getInstructorViewAllResults();
+        boolean instructorViewAllResults = Boolean.TRUE.equals(evaluation.getInstructorViewAllResults());
         String currentUserId = commonLogic.getCurrentUserId();
         String evalOwner = evaluation.getOwner();
 
@@ -525,7 +525,7 @@ public class XLSReportExporter implements ReportExporter {
         }
         else
         {
-            Boolean instructorViewAllResults = (boolean) evaluation.getInstructorViewAllResults();
+            boolean instructorViewAllResults = Boolean.TRUE.equals(evaluation.getInstructorViewAllResults());
             String currentUserId = commonLogic.getCurrentUserId();
             String evalOwner = evaluation.getOwner();
 
