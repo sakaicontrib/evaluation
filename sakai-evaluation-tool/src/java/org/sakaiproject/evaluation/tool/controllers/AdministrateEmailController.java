@@ -24,9 +24,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import javax.annotation.Resource;
-
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
 import org.springframework.stereotype.Controller;
@@ -41,13 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/administrate_email")
-public class AdministrateEmailController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalSettings")
-    private EvalSettings evalSettings;
+public class AdministrateEmailController extends EvalControllerSupport {
 
     private static final String DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm";
     private static final String RSF_DATE_FORMAT = "EEE MMM dd kk:mm:ss zzz yyyy";
@@ -56,35 +47,35 @@ public class AdministrateEmailController {
     public String show(Model model) {
         checkAdmin();
 
-        model.addAttribute("useConsolidated", Boolean.TRUE.equals(evalSettings.get(EvalSettings.ENABLE_SINGLE_EMAIL_PER_STUDENT)));
+        model.addAttribute("useConsolidated", Boolean.TRUE.equals(settings.get(EvalSettings.ENABLE_SINGLE_EMAIL_PER_STUDENT)));
 
-        model.addAttribute("defaultReminderFrequency", toStr(evalSettings.get(EvalSettings.DEFAULT_EMAIL_REMINDER_FREQUENCY)));
-        model.addAttribute("enableJobCompletionEmail", Boolean.TRUE.equals(evalSettings.get(EvalSettings.ENABLE_JOB_COMPLETION_EMAIL)));
-        model.addAttribute("enableReminderStatus", Boolean.TRUE.equals(evalSettings.get(EvalSettings.ENABLE_REMINDER_STATUS)));
-        model.addAttribute("evalTimeToWaitSecs", toStr(evalSettings.get(EvalSettings.EVALUATION_TIME_TO_WAIT_SECS)));
-        model.addAttribute("allowEvalBeginEmail", Boolean.TRUE.equals(evalSettings.get(EvalSettings.ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION)));
+        model.addAttribute("defaultReminderFrequency", toStr(settings.get(EvalSettings.DEFAULT_EMAIL_REMINDER_FREQUENCY)));
+        model.addAttribute("enableJobCompletionEmail", Boolean.TRUE.equals(settings.get(EvalSettings.ENABLE_JOB_COMPLETION_EMAIL)));
+        model.addAttribute("enableReminderStatus", Boolean.TRUE.equals(settings.get(EvalSettings.ENABLE_REMINDER_STATUS)));
+        model.addAttribute("evalTimeToWaitSecs", toStr(settings.get(EvalSettings.EVALUATION_TIME_TO_WAIT_SECS)));
+        model.addAttribute("allowEvalBeginEmail", Boolean.TRUE.equals(settings.get(EvalSettings.ALLOW_EVALSPECIFIC_TOGGLE_EMAIL_NOTIFICATION)));
 
-        model.addAttribute("consolidatedSendAvailable", Boolean.TRUE.equals(evalSettings.get(EvalSettings.CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE)));
-        model.addAttribute("forceSendAvailable", Boolean.TRUE.equals(evalSettings.get(EvalSettings.CONSOLIDATED_FORCE_SEND_AVAILABLE_NOTIFICATION)));
-        model.addAttribute("forceSendCreatedEmail", Boolean.TRUE.equals(evalSettings.get(EvalSettings.CONSOLIDATED_FORCE_SEND_CREATED_EMAIL)));
-        model.addAttribute("singleEmailReminderDays", toStr(evalSettings.get(EvalSettings.SINGLE_EMAIL_REMINDER_DAYS)));
-        model.addAttribute("consolidatedJobStartTime", toStr(evalSettings.get(EvalSettings.CONSOLIDATED_EMAIL_DAILY_START_TIME)));
-        model.addAttribute("consolidatedJobStartMinutes", toStr(evalSettings.get(EvalSettings.CONSOLIDATED_EMAIL_DAILY_START_MINUTES)));
-        model.addAttribute("logProgressEvery", toStr(evalSettings.get(EvalSettings.LOG_PROGRESS_EVERY)));
-        model.addAttribute("emailBatchSize", toStr(evalSettings.get(EvalSettings.EMAIL_BATCH_SIZE)));
-        model.addAttribute("emailWaitInterval", toStr(evalSettings.get(EvalSettings.EMAIL_WAIT_INTERVAL)));
+        model.addAttribute("consolidatedSendAvailable", Boolean.TRUE.equals(settings.get(EvalSettings.CONSOLIDATED_EMAIL_NOTIFY_AVAILABLE)));
+        model.addAttribute("forceSendAvailable", Boolean.TRUE.equals(settings.get(EvalSettings.CONSOLIDATED_FORCE_SEND_AVAILABLE_NOTIFICATION)));
+        model.addAttribute("forceSendCreatedEmail", Boolean.TRUE.equals(settings.get(EvalSettings.CONSOLIDATED_FORCE_SEND_CREATED_EMAIL)));
+        model.addAttribute("singleEmailReminderDays", toStr(settings.get(EvalSettings.SINGLE_EMAIL_REMINDER_DAYS)));
+        model.addAttribute("consolidatedJobStartTime", toStr(settings.get(EvalSettings.CONSOLIDATED_EMAIL_DAILY_START_TIME)));
+        model.addAttribute("consolidatedJobStartMinutes", toStr(settings.get(EvalSettings.CONSOLIDATED_EMAIL_DAILY_START_MINUTES)));
+        model.addAttribute("logProgressEvery", toStr(settings.get(EvalSettings.LOG_PROGRESS_EVERY)));
+        model.addAttribute("emailBatchSize", toStr(settings.get(EvalSettings.EMAIL_BATCH_SIZE)));
+        model.addAttribute("emailWaitInterval", toStr(settings.get(EvalSettings.EMAIL_WAIT_INTERVAL)));
 
-        model.addAttribute("sendSubmitted", Boolean.TRUE.equals(evalSettings.get(EvalSettings.ENABLE_SUBMISSION_CONFIRMATION_EMAIL)));
-        model.addAttribute("sendEvaluatee", Boolean.TRUE.equals(evalSettings.get(EvalSettings.ENABLE_SUBMISSION_EVALUATEE_EMAIL)));
-        model.addAttribute("useAdminFromEmail", Boolean.TRUE.equals(evalSettings.get(EvalSettings.USE_ADMIN_AS_FROM_EMAIL)));
+        model.addAttribute("sendSubmitted", Boolean.TRUE.equals(settings.get(EvalSettings.ENABLE_SUBMISSION_CONFIRMATION_EMAIL)));
+        model.addAttribute("sendEvaluatee", Boolean.TRUE.equals(settings.get(EvalSettings.ENABLE_SUBMISSION_EVALUATEE_EMAIL)));
+        model.addAttribute("useAdminFromEmail", Boolean.TRUE.equals(settings.get(EvalSettings.USE_ADMIN_AS_FROM_EMAIL)));
 
-        Object fromEmail = evalSettings.get(EvalSettings.FROM_EMAIL_ADDRESS);
+        Object fromEmail = settings.get(EvalSettings.FROM_EMAIL_ADDRESS);
         model.addAttribute("helpdeskEmail", fromEmail != null ? fromEmail.toString() : "");
 
-        model.addAttribute("deliveryOption", toStr(evalSettings.get(EvalSettings.EMAIL_DELIVERY_OPTION)));
+        model.addAttribute("deliveryOption", toStr(settings.get(EvalSettings.EMAIL_DELIVERY_OPTION)));
 
         // Next reminder date: stored as Date or legacy String
-        Object dateObj = evalSettings.get(EvalSettings.NEXT_REMINDER_DATE);
+        Object dateObj = settings.get(EvalSettings.NEXT_REMINDER_DATE);
         Date nextReminder;
         if (dateObj instanceof Date) {
             nextReminder = (Date) dateObj;
@@ -114,7 +105,7 @@ public class AdministrateEmailController {
     public String save(@RequestParam Map<String, String> params) {
         checkAdmin();
 
-        evalSettings.set(EvalSettings.ENABLE_SINGLE_EMAIL_PER_STUDENT, "true".equals(params.get("useConsolidated")));
+        settings.set(EvalSettings.ENABLE_SINGLE_EMAIL_PER_STUDENT, "true".equals(params.get("useConsolidated")));
 
         saveBool(EvalSettings.ENABLE_JOB_COMPLETION_EMAIL, params, "enableJobCompletionEmail");
         saveBool(EvalSettings.ENABLE_REMINDER_STATUS, params, "enableReminderStatus");
@@ -136,37 +127,37 @@ public class AdministrateEmailController {
         saveInt(EvalSettings.EMAIL_WAIT_INTERVAL, params, "emailWaitInterval");
 
         String fromEmail = params.getOrDefault("helpdeskEmail", "").trim();
-        evalSettings.set(EvalSettings.FROM_EMAIL_ADDRESS, fromEmail.isEmpty() ? null : fromEmail);
+        settings.set(EvalSettings.FROM_EMAIL_ADDRESS, fromEmail.isEmpty() ? null : fromEmail);
 
         String delivery = params.get("deliveryOption");
-        if (delivery != null) evalSettings.set(EvalSettings.EMAIL_DELIVERY_OPTION, delivery);
+        if (delivery != null) settings.set(EvalSettings.EMAIL_DELIVERY_OPTION, delivery);
 
         String dateStr = params.get("nextReminderDate");
         if (dateStr != null && !dateStr.isEmpty()) {
             try {
-                evalSettings.set(EvalSettings.NEXT_REMINDER_DATE, new SimpleDateFormat(DATETIME_FORMAT).parse(dateStr));
+                settings.set(EvalSettings.NEXT_REMINDER_DATE, new SimpleDateFormat(DATETIME_FORMAT).parse(dateStr));
             } catch (ParseException e) {
                 log.warn("Could not parse nextReminderDate: {}", dateStr);
             }
         }
 
-        log.info("Admin ({}) saved email settings", commonLogic.getCurrentUserId());
+        log.info("Admin ({}) saved email settings", currentUserId());
         return "redirect:/administrate_email";
     }
 
     private void checkAdmin() {
-        if (!commonLogic.isUserAdmin(commonLogic.getCurrentUserId()))
+        if (!isCurrentUserAdmin())
             throw new SecurityException("Non-admin users may not access this page");
     }
 
     private void saveBool(String key, Map<String, String> params, String param) {
-        evalSettings.set(key, params.containsKey(param));
+        settings.set(key, params.containsKey(param));
     }
 
     private void saveInt(String key, Map<String, String> params, String param) {
         String val = params.get(param);
         if (val != null && !val.isEmpty()) {
-            try { evalSettings.set(key, Integer.parseInt(val)); }
+            try { settings.set(key, Integer.parseInt(val)); }
             catch (NumberFormatException ignored) {}
         }
     }

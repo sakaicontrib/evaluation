@@ -19,11 +19,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
-import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.springframework.stereotype.Controller;
@@ -41,13 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/show_eval_category")
-public class ShowEvalCategoryController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationService")
-    private EvalEvaluationService evaluationService;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationSetupService")
-    private EvalEvaluationSetupService evaluationSetupService;
+public class ShowEvalCategoryController extends EvalControllerSupport {
 
     @GetMapping
     public String show(@RequestParam String evalCategory,

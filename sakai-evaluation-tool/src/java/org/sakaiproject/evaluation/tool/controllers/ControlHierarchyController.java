@@ -23,10 +23,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -41,13 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/control_hierarchy")
-public class ControlHierarchyController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic")
-    private ExternalHierarchyLogic hierLogic;
+public class ControlHierarchyController extends EvalControllerSupport {
 
     @Data
     public static class NodeRow {
@@ -71,8 +61,8 @@ public class ControlHierarchyController {
 
         Set<String> expandedSet = expanded != null ? new HashSet<>(expanded) : new HashSet<>();
 
-        EvalHierarchyNode root = hierLogic.getRootLevelNode();
-        Set<EvalHierarchyNode> allDescendants = hierLogic.getChildNodes(root.id, false);
+        EvalHierarchyNode root = hierarchyLogic.getRootLevelNode();
+        Set<EvalHierarchyNode> allDescendants = hierarchyLogic.getChildNodes(root.id, false);
 
         // Build nodeId -> node map for fast lookup
         Map<String, EvalHierarchyNode> nodeMap = new HashMap<>();
@@ -81,8 +71,8 @@ public class ControlHierarchyController {
 
         // Batch-fetch groups and users for all nodes
         String[] allIds = nodeMap.keySet().toArray(new String[0]);
-        Map<String, Set<String>> groupsMap = hierLogic.getEvalGroupsForNodes(allIds);
-        Map<String, Map<String, Set<String>>> usersMap = hierLogic.getUsersAndPermsForNodes(allIds);
+        Map<String, Set<String>> groupsMap = hierarchyLogic.getEvalGroupsForNodes(allIds);
+        Map<String, Map<String, Set<String>>> usersMap = hierarchyLogic.getUsersAndPermsForNodes(allIds);
 
         // Build flat list via depth-first traversal
         List<NodeRow> rows = new ArrayList<>();
@@ -95,8 +85,8 @@ public class ControlHierarchyController {
     public String remove(@RequestParam String nodeId,
                          @RequestParam(value = "expanded", required = false) List<String> expanded) {
         checkAdmin();
-        hierLogic.removeNode(nodeId);
-        log.info("Admin ({}) removed hierarchy node {}", commonLogic.getCurrentUserId(), nodeId);
+        hierarchyLogic.removeNode(nodeId);
+        log.info("Admin ({}) removed hierarchy node {}", currentUserId(), nodeId);
         if (expanded != null && !expanded.isEmpty()) {
             return "redirect:/control_hierarchy?expanded=" + String.join("&expanded=", expanded);
         }
@@ -114,7 +104,7 @@ public class ControlHierarchyController {
         int childCount = (int) node.directChildNodeIds.stream().filter(nodeMap::containsKey).count();
 
         int ruleCount = 0;
-        try { ruleCount = hierLogic.getRulesByNodeID(Long.parseLong(node.id)).size(); }
+        try { ruleCount = hierarchyLogic.getRulesByNodeID(Long.parseLong(node.id)).size(); }
         catch (Exception ignored) {}
 
         boolean isExpanded = expandedSet.contains(node.id);
@@ -154,7 +144,7 @@ public class ControlHierarchyController {
     }
 
     private void checkAdmin() {
-        if (!commonLogic.isUserAdmin(commonLogic.getCurrentUserId()))
+        if (!isCurrentUserAdmin())
             throw new SecurityException("Non-admin users may not access this page");
     }
 }

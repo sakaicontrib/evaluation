@@ -70,4 +70,25 @@ public interface ReportingPermissions {
     */
    public boolean canViewEvaluationResponses(EvalEvaluation evaluation, String[] groupIds);
 
+   /**
+    * Returns the evalGroupIds the user can view for reporting, filtered by role and date rules.
+    *
+    * @param eval the evaluation
+    * @param userId internal user id
+    * @param groupIds optional group ids to limit the check
+    * @return viewable evalGroupIds for this user
+    */
+   public Set<String> getViewableGroupsForEvalAndUserByRole(EvalEvaluation eval, String userId, String[] groupIds);
+
+   /**
+    * Returns evalGroupIds viewable for a user in a specific instructor/student role.
+    *
+    * @param evaluationId evaluation id
+    * @param userId internal user id
+    * @param groupIds optional group ids to limit the check
+    * @param isUserInstructor true for instructor/evaluatee role, false for student/evaluator role
+    * @return viewable evalGroupIds for this role
+    */
+   public Set<String> getEvalGroupIdsForUserRole(Long evaluationId, String userId, String[] groupIds, boolean isUserInstructor);
+
 }

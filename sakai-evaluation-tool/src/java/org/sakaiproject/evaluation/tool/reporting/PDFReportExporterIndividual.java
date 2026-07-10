@@ -45,7 +45,7 @@ import lombok.extern.slf4j.Slf4j;
 
 
 /**
- * 
+ *
  * @author Steven Githens
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
@@ -82,33 +82,33 @@ public class PDFReportExporterIndividual implements ReportExporter {
         this.responseAggregator = bean;
     }
 
-    private EvalMessageLocator messageLocator;
-    public void setEvalMessageLocator(EvalMessageLocator locator) {
-        this.messageLocator = locator;
+    private ReportMessageSource messages;
+    public void setMessageSource(ReportMessageSource messageSource) {
+        this.messages = messageSource;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.sakaiproject.evaluation.tool.reporting.ReportExporter#buildReport(org.sakaiproject.evaluation
      * .model.EvalEvaluation, java.lang.String[], java.io.OutputStream)
      */
-	public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream, boolean useNewReportStyle) {
-		buildReport(evaluation, groupIds, null, outputStream, useNewReportStyle);
+	public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream, String exportType) {
+		buildReport(evaluation, groupIds, null, outputStream, exportType);
 	}
-	
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.sakaiproject.evaluation.tool.reporting.ReportExporter#buildReport(org.sakaiproject.evaluation
      * .model.EvalEvaluation, java.lang.String[], java.lang.String, java.io.OutputStream)
      */
-    public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream, boolean useNewReportStyle) {
-		
-    	//Make sure responseAggregator is using this messageLocator
-        responseAggregator.setMessageLocator(messageLocator);
+    public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream, String exportType) {
+
+        //Make sure responseAggregator is using this message source
+        responseAggregator.setMessageSource(messages);
 		EvalPDFReportBuilder evalPDFReportBuilder = new EvalPDFReportBuilder(outputStream);
         Boolean instructorViewAllResults = (boolean) evaluation.getInstructorViewAllResults();
         String currentUserId = commonLogic.getCurrentUserId();
@@ -137,26 +137,26 @@ public class PDFReportExporterIndividual implements ReportExporter {
 
         // TODO this is so hard to read it makes me cry, it should not be written as a giant single line like this -AZ
         evalPDFReportBuilder.addTitlePage(
-                evaluation.getTitle(), 
-                groupNames, 
-                messageLocator.getMessage("reporting.pdf.startdatetime", df.format(evaluation.getStartDate())),
-                messageLocator.getMessage("reporting.pdf.enddatetime", df.format(evaluation.getDueDate())), 
-                messageLocator.getMessage("reporting.pdf.replyrate", new String[] { 
-                        EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount) 
-                }), 
-                bannerImageBytes, 
-                messageLocator.getMessage("reporting.pdf.defaultsystemname"),
-                messageLocator.getMessage("reporting.pdf.informationTitle")
+                evaluation.getTitle(),
+                groupNames,
+                messages.getMessage("reporting.pdf.startdatetime", df.format(evaluation.getStartDate())),
+                messages.getMessage("reporting.pdf.enddatetime", df.format(evaluation.getDueDate())),
+                messages.getMessage("reporting.pdf.replyrate", new String[] {
+                        EvalUtils.makeResponseRateStringFromCounts(responsesCount, enrollmentsCount)
+                }),
+                bannerImageBytes,
+                messages.getMessage("reporting.pdf.defaultsystemname"),
+                messages.getMessage("reporting.pdf.informationTitle")
                 );
-        
+
         /**
          * set title and instructions
-         * 
+         *
          * Note this doesn't go far enough
          * commonLogic.makePlainTextFromHTML removes html tags
          * but it also leaves the text
          */
-        evalPDFReportBuilder.addIntroduction(evaluation.getTitle(), 
+        evalPDFReportBuilder.addIntroduction(evaluation.getTitle(),
                 htmlContentParser(
                         commonLogic.makePlainTextFromHTML(
                                 evaluation.getInstructions())));
@@ -169,37 +169,37 @@ public class PDFReportExporterIndividual implements ReportExporter {
 
         // Loop through the major group types: Course Questions, Instructor Questions, etc.
         for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {
-            
+
             if (!instructorViewAllResults   // If the eval is so configured,
               && !commonLogic.isUserAdmin(currentUserId) // and currentUser is not an admin
               && !currentUserId.equals(evalOwner) // and currentUser is not the eval creator
-              && !EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType) 
+              && !EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType)
               && !currentUserId.equals(commonLogic.getEvalUserById(tig.associateId).userId) ) {
                 // skip items that aren't for the current user
                 continue;
             }
-			
-			if (!EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType) 
+
+			if (!EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType)
 			  && !evaluateeId.equals(commonLogic.getEvalUserById(tig.associateId).userId) ) {
 				continue;
 			}
-            
+
             // Print the type of the next group we're doing
             if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType)) {
-                evalPDFReportBuilder.addSectionHeader(messageLocator
+                evalPDFReportBuilder.addSectionHeader(messages
                         .getMessage("viewreport.itemlist.course"), false);
             } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
                 EvalUser user = commonLogic.getEvalUserById( tig.associateId );
-                String instructorMsg = messageLocator.getMessage("reporting.spreadsheet.instructor", 
+                String instructorMsg = messages.getMessage("reporting.spreadsheet.instructor",
                         new Object[] {user.displayName});
                 evalPDFReportBuilder.addSectionHeader( instructorMsg, false);
             } else if (EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(tig.associateType)) {
                 EvalUser user = commonLogic.getEvalUserById( tig.associateId );
-                String assistantMsg = messageLocator.getMessage("reporting.spreadsheet.ta", 
+                String assistantMsg = messages.getMessage("reporting.spreadsheet.ta",
                         new Object[] {user.displayName});
                 evalPDFReportBuilder.addSectionHeader( assistantMsg, false);
             } else {
-                evalPDFReportBuilder.addSectionHeader(messageLocator.getMessage("unknown.caps"), false);
+                evalPDFReportBuilder.addSectionHeader(messages.getMessage("unknown.caps"), false);
             }
 
             for (HierarchyNodeGroup hng : tig.hierarchyNodeGroups) {
@@ -219,21 +219,21 @@ public class PDFReportExporterIndividual implements ReportExporter {
                 for (int i = 0; i < dtis.size(); i++) {
                     DataTemplateItem dti = dtis.get(i);
                     log.debug("Item text: "+dti.templateItem.getItem().getItemText());
-                    
+
                     if (!instructorViewAllResults // If the eval is so configured,
                       && !commonLogic.isUserAdmin(currentUserId)  // and currentUser is not an admin
                       && !currentUserId.equals(evalOwner) // and currentUser is not the eval creator
-                      && !EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType) 
+                      && !EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType)
                       && !currentUserId.equals(commonLogic.getEvalUserById(dti.associateId).userId) ) {
                         //skip instructor items that aren't for the current user
                         continue;
                     }
-					
-					if (!EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType) 
+
+					if (!EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType)
 					   && !evaluateeId.equals(commonLogic.getEvalUserById(dti.associateId).userId) ) {
 						continue;
 					}
-                    
+
                     renderDataTemplateItem(evalPDFReportBuilder, dti);
                 }
                 blockNumber=0;
@@ -243,24 +243,24 @@ public class PDFReportExporterIndividual implements ReportExporter {
 
         evalPDFReportBuilder.close();
     }
-    
+
     /**
      * Remove tags & inclusive content
-     * 
+     *
      * @param html String to parse
      */
     private String htmlContentParser(String html) {
     	Pattern style = Pattern.compile("<style((.|\n|\r)*)?>((.|\n|\r)*)?</style>");
     	Matcher mstyle = style.matcher(html);
-    	while (mstyle.find()) { 
-    		html = mstyle.replaceAll("");
-    	}
-		return html;
+        while (mstyle.find()) {
+            html = mstyle.replaceAll("");
+        }
+        return html;
     }
 
     /**
      * Renders a single question given the DataTemplateItem.
-     * 
+     *
      * @param evalPDFReportBuilder
      * @param dti
      *            the data template item
@@ -289,7 +289,7 @@ public class PDFReportExporterIndividual implements ReportExporter {
 
             if (weightedMeansBlocks.get(blockNumber)!=-1.0)
             {
-                evalPDFReportBuilder.addBoldText(messageLocator.getMessage("viewreport.blockWeightedMean")+": "+new DecimalFormat("#.##").format(weightedMeansBlocks.get(blockNumber)));
+                evalPDFReportBuilder.addBoldText(messages.getMessage("viewreport.blockWeightedMean")+": "+new DecimalFormat("#.##").format(weightedMeansBlocks.get(blockNumber)));
             }
             blockNumber++;
         }
@@ -300,7 +300,7 @@ public class PDFReportExporterIndividual implements ReportExporter {
             for (EvalAnswer answer : itemAnswers) {
                 essays.add(answer.getText());
             }
-            evalPDFReportBuilder.addTextItemsList(displayNumber + ". " + questionText, essays, false, messageLocator.getMessage("viewreport.numberanswers"));
+            evalPDFReportBuilder.addTextItemsList(displayNumber + ". " + questionText, essays, false, messages.getMessage("viewreport.numberanswers"));
         }
         else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(templateItemType)
                 || EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(templateItemType)
@@ -324,7 +324,7 @@ public class PDFReportExporterIndividual implements ReportExporter {
             if (templateItem.getUsesNA()) {
                 // add in the N/A label to the end
                 //optionLabels = Arrays.copyOf(optionLabels, optionLabels.length+1);
-                optionLabels.add(optionLabels.size()-1, messageLocator.getMessage("reporting.notapplicable.longlabel"));
+                optionLabels.add(optionLabels.size()-1, messages.getMessage("reporting.notapplicable.longlabel"));
             }
 
             // http://www.caret.cam.ac.uk/jira/browse/CTL-1504
@@ -332,7 +332,7 @@ public class PDFReportExporterIndividual implements ReportExporter {
             AnswersMean answersMean = RenderingUtils.calculateMean(responseArray);
             Object[] params = new Object[] { answersMean.getAnswersCount() + "",
                     answersMean.getMeanText() };
-            String answersAndMean = messageLocator.getMessage("viewreport.answers.mean", params);
+            String answersAndMean = messages.getMessage("viewreport.answers.mean", params);
 
             evalPDFReportBuilder.addLikertResponse(displayNumber + ". " + questionText,
                     optionLabels, responseArray, responseNo, showPercentages, answersAndMean);
@@ -340,11 +340,11 @@ public class PDFReportExporterIndividual implements ReportExporter {
 
              //20140226 - daniel.merino@unavarra.es - https://jira.sakaiproject.org/browse/EVALSYS-1100
              double myWeightedMean = weightedMean(optionLabels, responseArray, templateItem.getUsesNA());
-             String answersAndMean = messageLocator.getMessage("viewreport.numberanswers")+": "+this.numberAnswersInQuestion(responseArray, templateItem.getUsesNA());
+             String answersAndMean = messages.getMessage("viewreport.numberanswers")+": "+this.numberAnswersInQuestion(responseArray, templateItem.getUsesNA());
 
              if (myWeightedMean!=-1.0)
              {
-                 answersAndMean = answersAndMean + System.getProperty("line.separator") + messageLocator.getMessage("viewreport.weightedmean")+": "+new DecimalFormat("#.##").format(myWeightedMean);
+                 answersAndMean = answersAndMean + System.getProperty("line.separator") + messages.getMessage("viewreport.weightedmean")+": "+new DecimalFormat("#.##").format(myWeightedMean);
              }
              else answersAndMean = answersAndMean + " ";
 
@@ -355,10 +355,10 @@ public class PDFReportExporterIndividual implements ReportExporter {
             if (dti.usesComments()) {
                 List<String> comments = dti.getComments();
                 evalPDFReportBuilder.addCommentList(
-                        messageLocator.getMessage("viewreport.comments.header"), 
-                        comments, 
-                        messageLocator.getMessage("viewreport.no.comments"),
-                        messageLocator.getMessage("viewreport.numbercomments")
+                        messages.getMessage("viewreport.comments.header"),
+                        comments,
+                        messages.getMessage("viewreport.no.comments"),
+                        messages.getMessage("viewreport.numbercomments")
                         );
             }
 
@@ -451,7 +451,7 @@ public class PDFReportExporterIndividual implements ReportExporter {
         return ((double)totalNumbers / (double)totalValues);
     }
 
-    public double calculateBlockWeightedMean(ArrayList<Integer> collectedValues, List<String> answers)
+    private double calculateBlockWeightedMean(ArrayList<Integer> collectedValues, List<String> answers)
     {
         //20140226 - daniel.merino@unavarra.es - https://jira.sakaiproject.org/browse/EVALSYS-1100
         int accumulator=0, numeroValores=0, answer;

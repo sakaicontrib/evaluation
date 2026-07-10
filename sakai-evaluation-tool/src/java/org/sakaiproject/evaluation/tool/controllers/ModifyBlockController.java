@@ -18,14 +18,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
-import org.sakaiproject.evaluation.tool.LocalTemplateLogic;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.springframework.stereotype.Controller;
@@ -51,8 +49,6 @@ import lombok.Data;
 @RequestMapping("/modify_block")
 public class ModifyBlockController extends EvalControllerSupport {
 
-    @Resource(name = "localTemplateLogic")
-    private LocalTemplateLogic localTemplateLogic;
 
     @Data
     public static class ChildItemRow {
@@ -76,63 +72,91 @@ public class ModifyBlockController extends EvalControllerSupport {
         boolean isAjax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
 
         String[] ids = templateItemIds.split(",");
-        List<EvalTemplateItem> templateItemList = new ArrayList<>();
-        List<EvalTemplateItem> blockItemList = new ArrayList<>();
-
-        for (String id : ids) {
-            EvalTemplateItem item = authoringService.getTemplateItemById(Long.valueOf(id.trim()));
-            templateItemList.add(item);
-            if (EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(TemplateItemUtils.getTemplateItemType(item))) {
-                blockItemList.add(item);
-            }
-        }
-
+        List<EvalTemplateItem> templateItemList = loadTemplateItems(ids);
+        List<EvalTemplateItem> blockItemList = getBlockItems(templateItemList);
         EvalTemplateItem firstItem = templateItemList.get(0);
         boolean modify = (ids.length == 1);
         int originalDisplayOrder = firstItem.getDisplayOrder();
 
-        // Validate child count for new block creation
-        boolean validChildsNo = true;
-        if (!modify) {
-            int maxChildsNo = (Integer) settings.get(EvalSettings.ITEMS_ALLOWED_IN_QUESTION_BLOCK);
-            int actualChildsNo = 0;
-            for (EvalTemplateItem item : templateItemList) {
-                if (EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(TemplateItemUtils.getTemplateItemType(item))) {
-                    actualChildsNo += authoringService.getBlockChildTemplateItemsForBlockParent(item.getId(), false).size();
-                } else {
-                    actualChildsNo++;
-                }
-            }
-            if (actualChildsNo > maxChildsNo) {
-                validChildsNo = false;
-            }
-        }
-
-        model.addAttribute("validChildsNo", validChildsNo);
-        model.addAttribute("templateId", templateId);
-        model.addAttribute("templateItemIds", templateItemIds);
-        model.addAttribute("modify", modify);
-        model.addAttribute("originalDisplayOrder", originalDisplayOrder);
+        boolean validChildsNo = isValidChildCount(modify, templateItemList);
+        addBaseBlockModel(model, templateId, templateItemIds, modify, originalDisplayOrder, validChildsNo);
 
         if (!validChildsNo) {
             return isAjax ? "modify_block :: blockContent" : "modify_block";
         }
 
-        // blockId: existing parent ID or "new1"
         String blockId = modify ? firstItem.getId().toString() : "new1";
         model.addAttribute("blockId", blockId);
-
-        // Owner display name
         model.addAttribute("ownerDisplayName", firstItem.getOwner());
+        model.addAttribute("scaleTitle", getScaleTitle(firstItem));
+        addCurrentBlockModel(model, modify, firstItem, blockItemList);
+        model.addAttribute("inModal", isAjax);
 
-        // Scale title from first item
-        String scaleTitle = "";
-        if (firstItem.getItem() != null && firstItem.getItem().getScale() != null) {
-            scaleTitle = firstItem.getItem().getScale().getTitle();
+        model.addAttribute("scaleDisplayValues", EvalToolConstants.SCALE_DISPLAY_GROUP_SETTING_VALUES);
+        model.addAttribute("scaleDisplayLabels", EvalToolConstants.SCALE_DISPLAY_GROUP_SETTING_LABELS_PROPS);
+        addCategoryModel(model);
+
+        boolean enableNA = Boolean.TRUE.equals(settings.get(EvalSettings.ENABLE_NOT_AVAILABLE));
+        model.addAttribute("enableNA", enableNA);
+        model.addAttribute("blockTextChoices", buildBlockTextChoices(modify, blockItemList));
+        model.addAttribute("childRows", buildChildRows(templateId, templateItemList));
+        model.addAttribute("showSplitLink", modify);
+
+        return isAjax ? "modify_block :: blockContent" : "modify_block";
+    }
+
+    private List<EvalTemplateItem> loadTemplateItems(String[] ids) {
+        List<EvalTemplateItem> templateItemList = new ArrayList<>();
+        for (String id : ids) {
+            templateItemList.add(authoringService.getTemplateItemById(Long.valueOf(id.trim())));
         }
-        model.addAttribute("scaleTitle", scaleTitle);
+        return templateItemList;
+    }
 
-        // Current values (for edit mode) or defaults (for create mode)
+    private List<EvalTemplateItem> getBlockItems(List<EvalTemplateItem> templateItemList) {
+        List<EvalTemplateItem> blockItemList = new ArrayList<>();
+        for (EvalTemplateItem item : templateItemList) {
+            if (EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(TemplateItemUtils.getTemplateItemType(item))) {
+                blockItemList.add(item);
+            }
+        }
+        return blockItemList;
+    }
+
+    private boolean isValidChildCount(boolean modify, List<EvalTemplateItem> templateItemList) {
+        if (modify) {
+            return true;
+        }
+        int maxChildsNo = (Integer) settings.get(EvalSettings.ITEMS_ALLOWED_IN_QUESTION_BLOCK);
+        int actualChildsNo = 0;
+        for (EvalTemplateItem item : templateItemList) {
+            if (EvalConstants.ITEM_TYPE_BLOCK_PARENT.equals(TemplateItemUtils.getTemplateItemType(item))) {
+                actualChildsNo += authoringService.getBlockChildTemplateItemsForBlockParent(item.getId(), false).size();
+            } else {
+                actualChildsNo++;
+            }
+        }
+        return actualChildsNo <= maxChildsNo;
+    }
+
+    private void addBaseBlockModel(Model model, Long templateId, String templateItemIds,
+            boolean modify, int originalDisplayOrder, boolean validChildsNo) {
+        model.addAttribute("validChildsNo", validChildsNo);
+        model.addAttribute("templateId", templateId);
+        model.addAttribute("templateItemIds", templateItemIds);
+        model.addAttribute("modify", modify);
+        model.addAttribute("originalDisplayOrder", originalDisplayOrder);
+    }
+
+    private String getScaleTitle(EvalTemplateItem firstItem) {
+        if (firstItem.getItem() != null && firstItem.getItem().getScale() != null) {
+            return firstItem.getItem().getScale().getTitle();
+        }
+        return "";
+    }
+
+    private void addCurrentBlockModel(Model model, boolean modify,
+            EvalTemplateItem firstItem, List<EvalTemplateItem> blockItemList) {
         String currentScaleDisplay = EvalConstants.ITEM_SCALE_DISPLAY_MATRIX;
         boolean currentUsesNA = false;
         String currentCategory = EvalConstants.ITEM_CATEGORY_COURSE;
@@ -145,23 +169,17 @@ public class ModifyBlockController extends EvalControllerSupport {
             currentCategory = parent.getCategory() != null ? parent.getCategory() : EvalConstants.ITEM_CATEGORY_COURSE;
         }
 
-        model.addAttribute("currentScaleDisplay", currentScaleDisplay);
-        model.addAttribute("currentUsesNA", currentUsesNA);
-        model.addAttribute("currentCategory", currentCategory);
-
-        // Current item text (for edit mode)
         String currentItemText = "";
         if (modify && firstItem.getItem() != null) {
             currentItemText = firstItem.getItem().getItemText() != null ? firstItem.getItem().getItemText() : "";
         }
+        model.addAttribute("currentScaleDisplay", currentScaleDisplay);
+        model.addAttribute("currentUsesNA", currentUsesNA);
+        model.addAttribute("currentCategory", currentCategory);
         model.addAttribute("currentItemText", currentItemText);
-        model.addAttribute("inModal", isAjax);
+    }
 
-        // Scale display options
-        model.addAttribute("scaleDisplayValues", EvalToolConstants.SCALE_DISPLAY_GROUP_SETTING_VALUES);
-        model.addAttribute("scaleDisplayLabels", EvalToolConstants.SCALE_DISPLAY_GROUP_SETTING_LABELS_PROPS);
-
-        // Category settings
+    private void addCategoryModel(Model model) {
         Boolean useCourseCategoryOnly = (Boolean) settings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY);
         boolean showCategorySelector = !Boolean.TRUE.equals(useCourseCategoryOnly);
         model.addAttribute("showCategorySelector", showCategorySelector);
@@ -176,17 +194,13 @@ public class ModifyBlockController extends EvalControllerSupport {
             model.addAttribute("categoryValues", catValues);
             model.addAttribute("categoryLabels", catLabels);
         } else {
-            // Fixed category
             String fixedCategory = Boolean.TRUE.equals(useCourseCategoryOnly)
                     ? EvalConstants.ITEM_CATEGORY_COURSE : EvalConstants.ITEM_CATEGORY_INSTRUCTOR;
             model.addAttribute("fixedCategory", fixedCategory);
         }
+    }
 
-        // NA setting
-        boolean enableNA = Boolean.TRUE.equals(settings.get(EvalSettings.ENABLE_NOT_AVAILABLE));
-        model.addAttribute("enableNA", enableNA);
-
-        // Block text choices (only when creating and there are existing blocks in selection)
+    private List<BlockTextChoice> buildBlockTextChoices(boolean modify, List<EvalTemplateItem> blockItemList) {
         List<BlockTextChoice> blockTextChoices = new ArrayList<>();
         if (!modify && !blockItemList.isEmpty()) {
             for (EvalTemplateItem blockItem : blockItemList) {
@@ -195,9 +209,10 @@ public class ModifyBlockController extends EvalControllerSupport {
                         blockItem.getItem() != null ? blockItem.getItem().getItemText() : ""));
             }
         }
-        model.addAttribute("blockTextChoices", blockTextChoices);
+        return blockTextChoices;
+    }
 
-        // Child items list (flattened)
+    private List<ChildItemRow> buildChildRows(Long templateId, List<EvalTemplateItem> templateItemList) {
         List<ChildItemRow> childRows = new ArrayList<>();
         List<EvalTemplateItem> allTemplateItems = authoringService.getTemplateItemsForTemplate(
                 templateId, new String[]{}, new String[]{}, new String[]{});
@@ -216,12 +231,7 @@ public class ModifyBlockController extends EvalControllerSupport {
                         item.getItem() != null ? item.getItem().getItemText() : "", orderNum));
             }
         }
-        model.addAttribute("childRows", childRows);
-
-        // Show split-block link only in modify mode
-        model.addAttribute("showSplitLink", modify);
-
-        return isAjax ? "modify_block :: blockContent" : "modify_block";
+        return childRows;
     }
 
     @PostMapping
@@ -241,17 +251,26 @@ public class ModifyBlockController extends EvalControllerSupport {
         boolean isAjax = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
         boolean isNewBlock = "new1".equals(blockId);
 
-        // When creating a new block with no existing block text to reuse, the item header
-        // text comes from the itemText param. Reject it here instead of letting the blank
-        // text reach EvalAuthoringServiceImpl.saveItem(), which throws BlankRequiredFieldException.
-        boolean reusingExistingText = blockTextChoice != null && !"new1".equals(blockTextChoice);
-        if (isNewBlock && !reusingExistingText && EvalUtils.isBlank(itemText)) {
+        if (isMissingNewBlockText(isNewBlock, blockTextChoice, itemText)) {
             model.addAttribute("blankTextError", true);
             return show(templateId, templateItemIds, model, request);
         }
 
-        Long[] parentIdHolder = {null};
+        Long parentId = saveBlock(templateId, templateItemIds, blockId, originalDisplayOrder, orderedChildIds,
+                itemText, scaleDisplaySetting, usesNA, category, blockTextChoice, isNewBlock);
 
+        return blockSaveRedirect(templateId, parentId, isAjax, isNewBlock);
+    }
+
+    private boolean isMissingNewBlockText(boolean isNewBlock, String blockTextChoice, String itemText) {
+        boolean reusingExistingText = blockTextChoice != null && !"new1".equals(blockTextChoice);
+        return isNewBlock && !reusingExistingText && EvalUtils.isBlank(itemText);
+    }
+
+    private Long saveBlock(Long templateId, String templateItemIds, String blockId, Integer originalDisplayOrder,
+            String orderedChildIds, String itemText, String scaleDisplaySetting, Boolean usesNA, String category,
+            String blockTextChoice, boolean isNewBlock) {
+        Long[] parentIdHolder = {null};
         daoInvoker.invokeTransactionalAccess(() -> {
             if (!isNewBlock) {
                 parentIdHolder[0] = doModifyBlock(blockId, orderedChildIds, itemText, scaleDisplaySetting, usesNA, category);
@@ -260,8 +279,10 @@ public class ModifyBlockController extends EvalControllerSupport {
                         scaleDisplaySetting, usesNA, category, blockTextChoice, originalDisplayOrder);
             }
         });
-        Long parentId = parentIdHolder[0];
+        return parentIdHolder[0];
+    }
 
+    private String blockSaveRedirect(Long templateId, Long parentId, boolean isAjax, boolean isNewBlock) {
         if (isAjax) {
             return "item_saved";
         }

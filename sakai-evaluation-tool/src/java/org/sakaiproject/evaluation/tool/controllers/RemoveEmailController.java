@@ -14,10 +14,6 @@
  */
 package org.sakaiproject.evaluation.tool.controllers;
 
-import javax.annotation.Resource;
-
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,17 +27,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/remove_email")
-public class RemoveEmailController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationSetupService")
-    private EvalEvaluationSetupService evaluationSetupService;
+public class RemoveEmailController extends EvalControllerSupport {
 
     @PostMapping
     public String remove(@RequestParam Long emailTemplateId) {
-        evaluationSetupService.removeEmailTemplate(emailTemplateId, commonLogic.getCurrentUserId());
+        evaluationSetupService.removeEmailTemplate(emailTemplateId, currentUserId());
         return "redirect:/control_email_templates";
     }
 }

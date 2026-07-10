@@ -28,13 +28,9 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalDeliveryService;
-import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.entity.EvaluationEntityProvider;
-import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -112,16 +108,34 @@ public class ControlEvaluationsController extends EvalControllerSupport {
         String     reportText;  // text to display based on reportMode
     }
 
+    private static class ControlDisplaySettings {
+        boolean userReadonlyAdmin;
+        boolean isUserAdmin;
+        boolean earlyCloseAllowed;
+        boolean reopeningAllowed;
+        boolean viewResultsIgnoreDates;
+        int responsesRequired;
+        boolean checkUnpublished;
+    }
+
+    private static class EvaluationBuckets {
+        List<EvalEvaluation> partialEvals = new ArrayList<>();
+        List<EvalEvaluation> inqueueEvals = new ArrayList<>();
+        List<EvalEvaluation> activeEvals  = new ArrayList<>();
+        List<EvalEvaluation> closedEvals  = new ArrayList<>();
+        List<Long> takableEvaluationIds = new ArrayList<>();
+    }
+
+    private static class EvaluationRows {
+        List<EvalRow> partialRows = new ArrayList<>();
+        List<EvalRow> inqueueRows = new ArrayList<>();
+        List<EvalRow> activeRows  = new ArrayList<>();
+        List<EvalRow> closedRows  = new ArrayList<>();
+        int countUnpublishedGroups;
+    }
+
     // Services ------------------------------------------------------------------------------
 
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationSetupService")
-    private EvalEvaluationSetupService evaluationSetupService;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalDeliveryService")
-    private EvalDeliveryService deliveryService;
-
-    @Resource(name = "org.sakaiproject.evaluation.beans.EvalBeanUtils")
-    private EvalBeanUtils evalBeanUtils;
 
     @Resource(name = "messageSource")
     private MessageSource messageSource;
@@ -135,127 +149,18 @@ public class ControlEvaluationsController extends EvalControllerSupport {
                        HttpServletRequest request) {
 
         String contextPath = request.getContextPath();
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, locale);
 
-        boolean userReadonlyAdmin = commonLogic.isUserReadonlyAdmin(currentUserId);
-        boolean isUserAdmin       = commonLogic.isUserAdmin(currentUserId);
-        boolean earlyCloseAllowed = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_EARLY_CLOSE);
-        boolean reopeningAllowed  = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_REOPEN);
-        boolean viewResultsIgnoreDates = (Boolean) settings.get(EvalSettings.VIEW_SURVEY_RESULTS_IGNORE_DATES);
-        int responsesRequired = (Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS);
-        boolean checkUnpublished = (Boolean) settings.get(EvalSettings.ENABLE_SITE_GROUP_PUBLISH_CHECK);
-
-        // Fetch and classify evaluations
-        List<EvalEvaluation> partialEvals = new ArrayList<>();
-        List<EvalEvaluation> inqueueEvals = new ArrayList<>();
-        List<EvalEvaluation> activeEvals  = new ArrayList<>();
-        List<EvalEvaluation> closedEvals  = new ArrayList<>();
-
-        List<Long> takableEvaluationIds = new ArrayList<>();
-
-        List<EvalEvaluation> evals = evaluationSetupService.getVisibleEvaluationsForUser(
-                currentUserId, false, false, true, maxAgeToDisplay);
-
-        if (category != null && !category.isEmpty()) {
-            evals = evals.stream()
-                    .filter(e -> category.equals(e.getEvalCategory()))
-                    .collect(java.util.stream.Collectors.toList());
-        }
-
-        for (EvalEvaluation eval : evals) {
-            String state = evaluationService.updateEvaluationState(eval.getId());
-            if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(state)) {
-                partialEvals.add(eval);
-            } else if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(state)) {
-                inqueueEvals.add(eval);
-                takableEvaluationIds.add(eval.getId());
-            } else if (EvalConstants.EVALUATION_STATE_ACTIVE.equals(state) ||
-                       EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(state)) {
-                activeEvals.add(eval);
-                takableEvaluationIds.add(eval.getId());
-            } else if (EvalConstants.EVALUATION_STATE_CLOSED.equals(state) ||
-                       EvalConstants.EVALUATION_STATE_VIEWABLE.equals(state)) {
-                closedEvals.add(eval);
-            }
-        }
-
-        // Verificar grupos no publicados (UM specific)
-        Map<Long, List<EvalAssignGroup>> takableAssignGroups = new HashMap<>();
-        int countUnpublishedGroups = 0;
-        if (checkUnpublished && !takableEvaluationIds.isEmpty()) {
-            takableAssignGroups = evaluationService.getAssignGroupsForEvals(
-                    takableEvaluationIds.toArray(new Long[0]), true, null);
-        }
-
-        // Build rows for each section
-        List<EvalRow> partialRows  = new ArrayList<>();
-        List<EvalRow> inqueueRows  = new ArrayList<>();
-        List<EvalRow> activeRows   = new ArrayList<>();
-        List<EvalRow> closedRows   = new ArrayList<>();
-
-        for (EvalEvaluation eval : partialEvals) {
-            EvalRow row = new EvalRow();
-            row.setEvalId(eval.getId());
-            row.setTitle(eval.getTitle());
-            row.setOwnerName(commonLogic.getEvalUserById(eval.getOwner()).displayName);
-            row.setLastModified(eval.getLastModified() != null ? df.format(eval.getLastModified()) : "");
-            row.setLastModifiedSort(eval.getLastModified() != null ? String.valueOf(eval.getLastModified().getTime()) : "0");
-            row.setCanEdit(true);
-            row.setCanDelete(true);
-            row.setCanChown(true);
-            partialRows.add(row);
-        }
-
-        for (EvalEvaluation eval : inqueueEvals) {
-            EvalRow row = buildCommonRow(eval, df, locale, currentUserId, userReadonlyAdmin, isUserAdmin,
-                    earlyCloseAllowed, reopeningAllowed, viewResultsIgnoreDates, responsesRequired, false, contextPath);
-
-            // Verificar grupos no publicados
-            if (checkUnpublished) {
-                List<EvalAssignGroup> assignGroups = takableAssignGroups.get(eval.getId());
-                if (assignGroups != null) {
-                    int unpublished = 0;
-                    for (EvalAssignGroup ag : assignGroups) {
-                        if (!commonLogic.isEvalGroupPublished(ag.getEvalGroupId())) {
-                            unpublished++;
-                        }
-                    }
-                    if (unpublished > 0) {
-                        countUnpublishedGroups++;
-                    }
-                }
-            }
-            inqueueRows.add(row);
-        }
-
-        for (EvalEvaluation eval : activeEvals) {
-            EvalRow row = buildCommonRow(eval, df, locale, currentUserId, userReadonlyAdmin, isUserAdmin,
-                    earlyCloseAllowed, reopeningAllowed, viewResultsIgnoreDates, responsesRequired, true, contextPath);
-            activeRows.add(row);
-        }
-
-        for (EvalEvaluation eval : closedEvals) {
-            EvalRow row = buildCommonRow(eval, df, locale, currentUserId, userReadonlyAdmin, isUserAdmin,
-                    earlyCloseAllowed, reopeningAllowed, viewResultsIgnoreDates, responsesRequired, false, contextPath);
-            row.setCanChown(false); // chown not available for closed evals
-            closedRows.add(row);
-        }
-
-        // Navegar
+        ControlDisplaySettings displaySettings = loadControlDisplaySettings(currentUserId);
+        List<EvalEvaluation> evals = getVisibleEvaluations(currentUserId, maxAgeToDisplay, category);
+        EvaluationBuckets buckets = bucketEvaluations(evals);
+        Map<Long, List<EvalAssignGroup>> takableAssignGroups = loadTakableAssignGroups(displaySettings, buckets);
+        EvaluationRows rows = buildEvaluationRows(buckets, takableAssignGroups, displaySettings,
+                df, locale, currentUserId, contextPath);
         boolean canBegin = authoringService.canCreateTemplate(currentUserId);
 
-        model.addAttribute("partialRows",           partialRows);
-        model.addAttribute("inqueueRows",           inqueueRows);
-        model.addAttribute("activeRows",            activeRows);
-        model.addAttribute("closedRows",            closedRows);
-        model.addAttribute("countUnpublishedGroups", countUnpublishedGroups);
-        model.addAttribute("canBegin",              canBegin);
-        model.addAttribute("earlyCloseAllowed",     earlyCloseAllowed);
-        model.addAttribute("partialCleanupDays",    EvalConstants.EVALUATION_PARTIAL_CLEANUP_DAYS);
-        model.addAttribute("maxAgeToDisplay",       maxAgeToDisplay);
-        model.addAttribute("RateMode",              RateMode.class);
-        model.addAttribute("ReportMode",            ReportMode.class);
+        addControlEvaluationsModel(model, rows, canBegin, displaySettings.earlyCloseAllowed, maxAgeToDisplay);
 
         return "control_evaluations";
     }
@@ -264,12 +169,142 @@ public class ControlEvaluationsController extends EvalControllerSupport {
     @PostMapping("/close")
     public String closeEval(@RequestParam Long evaluationId,
                             @RequestParam(defaultValue = "6") int maxAgeToDisplay) {
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         evaluationSetupService.closeEvaluation(evaluationId, currentUserId);
         return "redirect:/control_evaluations?maxAgeToDisplay=" + maxAgeToDisplay;
     }
 
     // Private methods -----------------------------------------------------------------------
+
+    private ControlDisplaySettings loadControlDisplaySettings(String currentUserId) {
+        ControlDisplaySettings displaySettings = new ControlDisplaySettings();
+        displaySettings.userReadonlyAdmin = commonLogic.isUserReadonlyAdmin(currentUserId);
+        displaySettings.isUserAdmin = commonLogic.isUserAdmin(currentUserId);
+        displaySettings.earlyCloseAllowed = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_EARLY_CLOSE);
+        displaySettings.reopeningAllowed = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_REOPEN);
+        displaySettings.viewResultsIgnoreDates = (Boolean) settings.get(EvalSettings.VIEW_SURVEY_RESULTS_IGNORE_DATES);
+        displaySettings.responsesRequired = (Integer) settings.get(EvalSettings.RESPONSES_REQUIRED_TO_VIEW_RESULTS);
+        displaySettings.checkUnpublished = (Boolean) settings.get(EvalSettings.ENABLE_SITE_GROUP_PUBLISH_CHECK);
+        return displaySettings;
+    }
+
+    private List<EvalEvaluation> getVisibleEvaluations(String currentUserId, int maxAgeToDisplay, String category) {
+        List<EvalEvaluation> evals = evaluationSetupService.getVisibleEvaluationsForUser(
+                currentUserId, false, false, true, maxAgeToDisplay);
+        if (category == null || category.isEmpty()) {
+            return evals;
+        }
+        return evals.stream()
+                .filter(e -> category.equals(e.getEvalCategory()))
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    private EvaluationBuckets bucketEvaluations(List<EvalEvaluation> evals) {
+        EvaluationBuckets buckets = new EvaluationBuckets();
+        for (EvalEvaluation eval : evals) {
+            String state = evaluationService.updateEvaluationState(eval.getId());
+            if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(state)) {
+                buckets.partialEvals.add(eval);
+            } else if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(state)) {
+                buckets.inqueueEvals.add(eval);
+                buckets.takableEvaluationIds.add(eval.getId());
+            } else if (EvalConstants.EVALUATION_STATE_ACTIVE.equals(state) ||
+                       EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(state)) {
+                buckets.activeEvals.add(eval);
+                buckets.takableEvaluationIds.add(eval.getId());
+            } else if (EvalConstants.EVALUATION_STATE_CLOSED.equals(state) ||
+                       EvalConstants.EVALUATION_STATE_VIEWABLE.equals(state)) {
+                buckets.closedEvals.add(eval);
+            }
+        }
+        return buckets;
+    }
+
+    private Map<Long, List<EvalAssignGroup>> loadTakableAssignGroups(ControlDisplaySettings displaySettings,
+            EvaluationBuckets buckets) {
+        if (!displaySettings.checkUnpublished || buckets.takableEvaluationIds.isEmpty()) {
+            return new HashMap<>();
+        }
+        return evaluationService.getAssignGroupsForEvals(
+                buckets.takableEvaluationIds.toArray(new Long[0]), true, null);
+    }
+
+    private EvaluationRows buildEvaluationRows(EvaluationBuckets buckets, Map<Long, List<EvalAssignGroup>> takableAssignGroups,
+            ControlDisplaySettings displaySettings, DateFormat df, Locale locale, String currentUserId, String contextPath) {
+        EvaluationRows rows = new EvaluationRows();
+        for (EvalEvaluation eval : buckets.partialEvals) {
+            rows.partialRows.add(buildPartialRow(eval, df));
+        }
+        for (EvalEvaluation eval : buckets.inqueueEvals) {
+            rows.inqueueRows.add(buildCommonRow(eval, df, locale, currentUserId,
+                    displaySettings.userReadonlyAdmin, displaySettings.isUserAdmin,
+                    displaySettings.earlyCloseAllowed, displaySettings.reopeningAllowed,
+                    displaySettings.viewResultsIgnoreDates, displaySettings.responsesRequired, false, contextPath));
+            if (hasUnpublishedGroup(eval, takableAssignGroups, displaySettings.checkUnpublished)) {
+                rows.countUnpublishedGroups++;
+            }
+        }
+        for (EvalEvaluation eval : buckets.activeEvals) {
+            rows.activeRows.add(buildCommonRow(eval, df, locale, currentUserId,
+                    displaySettings.userReadonlyAdmin, displaySettings.isUserAdmin,
+                    displaySettings.earlyCloseAllowed, displaySettings.reopeningAllowed,
+                    displaySettings.viewResultsIgnoreDates, displaySettings.responsesRequired, true, contextPath));
+        }
+        for (EvalEvaluation eval : buckets.closedEvals) {
+            EvalRow row = buildCommonRow(eval, df, locale, currentUserId,
+                    displaySettings.userReadonlyAdmin, displaySettings.isUserAdmin,
+                    displaySettings.earlyCloseAllowed, displaySettings.reopeningAllowed,
+                    displaySettings.viewResultsIgnoreDates, displaySettings.responsesRequired, false, contextPath);
+            row.setCanChown(false);
+            rows.closedRows.add(row);
+        }
+        return rows;
+    }
+
+    private EvalRow buildPartialRow(EvalEvaluation eval, DateFormat df) {
+        EvalRow row = new EvalRow();
+        row.setEvalId(eval.getId());
+        row.setTitle(eval.getTitle());
+        row.setOwnerName(commonLogic.getEvalUserById(eval.getOwner()).displayName);
+        row.setLastModified(eval.getLastModified() != null ? df.format(eval.getLastModified()) : "");
+        row.setLastModifiedSort(eval.getLastModified() != null ? String.valueOf(eval.getLastModified().getTime()) : "0");
+        row.setCanEdit(true);
+        row.setCanDelete(true);
+        row.setCanChown(true);
+        return row;
+    }
+
+    private boolean hasUnpublishedGroup(EvalEvaluation eval, Map<Long, List<EvalAssignGroup>> takableAssignGroups,
+            boolean checkUnpublished) {
+        if (!checkUnpublished) {
+            return false;
+        }
+        List<EvalAssignGroup> assignGroups = takableAssignGroups.get(eval.getId());
+        if (assignGroups == null) {
+            return false;
+        }
+        for (EvalAssignGroup ag : assignGroups) {
+            if (!commonLogic.isEvalGroupPublished(ag.getEvalGroupId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void addControlEvaluationsModel(Model model, EvaluationRows rows,
+            boolean canBegin, boolean earlyCloseAllowed, int maxAgeToDisplay) {
+        model.addAttribute("partialRows",            rows.partialRows);
+        model.addAttribute("inqueueRows",            rows.inqueueRows);
+        model.addAttribute("activeRows",             rows.activeRows);
+        model.addAttribute("closedRows",             rows.closedRows);
+        model.addAttribute("countUnpublishedGroups", rows.countUnpublishedGroups);
+        model.addAttribute("canBegin",               canBegin);
+        model.addAttribute("earlyCloseAllowed",      earlyCloseAllowed);
+        model.addAttribute("partialCleanupDays",     EvalConstants.EVALUATION_PARTIAL_CLEANUP_DAYS);
+        model.addAttribute("maxAgeToDisplay",        maxAgeToDisplay);
+        model.addAttribute("RateMode",               RateMode.class);
+        model.addAttribute("ReportMode",             ReportMode.class);
+    }
 
     private EvalRow buildCommonRow(EvalEvaluation eval, DateFormat df, Locale locale,
             String currentUserId, boolean userReadonlyAdmin, boolean isUserAdmin,

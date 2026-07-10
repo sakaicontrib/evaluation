@@ -23,21 +23,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList;
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.TemplateItemGroup;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -54,23 +49,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/evaluation_assignments")
-public class EvaluationAssignmentsController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationService")
-    private EvalEvaluationService evaluationService;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalSettings")
-    private EvalSettings settings;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic")
-    private ExternalHierarchyLogic hierLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalAuthoringService")
-    private EvalAuthoringService authoringService;
-
+public class EvaluationAssignmentsController extends EvalControllerSupport {
     @Data
     public static class GroupRow {
         private final String title;
@@ -179,7 +158,7 @@ public class EvaluationAssignmentsController {
             List<String> populated = new ArrayList<>();
             for (EvalAssignHierarchy ah : assignHierarchies) {
                 if (populated.contains(ah.getNodeId())) continue;
-                EvalHierarchyNode node = hierLogic.getNodeById(ah.getNodeId());
+                EvalHierarchyNode node = hierarchyLogic.getNodeById(ah.getNodeId());
                 List<GroupRow> nodeGroups = new ArrayList<>();
                 for (EvalAssignGroup ag : assignGroups) {
                     if (ah.getNodeId().equals(ag.getNodeId())) {

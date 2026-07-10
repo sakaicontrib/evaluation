@@ -14,11 +14,12 @@
  */
 package org.sakaiproject.evaluation.logic;
 
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.sakaiproject.evaluation.model.EvalConfig;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * Test case for EvaluationSettingsImpl
@@ -27,7 +28,9 @@ import org.sakaiproject.evaluation.model.EvalConfig;
  */
 public class EvalSettingsImplTest extends BaseTestEvalLogic {
 
-	private EvalSettingsImpl evalSettings;
+	@Autowired
+	@Qualifier("org.sakaiproject.evaluation.logic.EvalSettings")
+	private EvalSettings evalSettings;
 
 	private EvalConfig config1;
 	private EvalConfig config3;
@@ -50,22 +53,13 @@ public class EvalSettingsImplTest extends BaseTestEvalLogic {
 	public void onSetUpBeforeTransaction() throws Exception {
 	   super.onSetUpBeforeTransaction();
 
-      // load up any other needed spring beans
-
-		// setup the mock objects if needed
-
-		// create and setup the object to be tested
-		evalSettings = new EvalSettingsImpl();
-		evalSettings.setDao(evaluationDao);
-		evalSettings.setExternalLogic(externalLogic);
-
 		// create test objects
 		config1 = new EvalConfig(TEST_NAME1, TEST_VALUE1);
 		config3 = new EvalConfig(TEST_NAME3, TEST_VALUE3);
 
 		// preload additional data if desired
-		evaluationDao.save(config1);
-		evaluationDao.save(config3);
+		persistence.save(config1);
+		persistence.save(config3);
 		
 	}
 

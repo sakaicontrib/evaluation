@@ -57,12 +57,13 @@
         <property name="evaluationAccessAPI" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService"/>
         <property name="messageSource" ref="messageSource"/>
         <property name="commonLogic" ref="org.sakaiproject.evaluation.logic.EvalCommonLogic"/>
-        <property name="evaluationService" ref="org.sakaiproject.evaluation.logic.EvalEvaluationService"/>
         <property name="reportingPermissions" ref="org.sakaiproject.evaluation.logic.ReportingPermissions"/>
         <property name="exportersMap">
             <map>
                 <entry key="csvResultsReport" value-ref="CSVReportExporter"/>
+                <entry key="csvResultsReportSectioned" value-ref="CSVReportExporter"/>
                 <entry key="xlsResultsReport" value-ref="XLSReportExporter"/>
+                <entry key="xlsResultsReportSectioned" value-ref="XLSReportExporter"/>
                 <entry key="pdfResultsReport" value-ref="PDFReportExporter"/>
                 <entry key="pdfResultsReportIndividual" value-ref="PDFReportExporterIndividual"/>
                 <entry key="csvTakersReport" value-ref="CSVTakersExporter"/>

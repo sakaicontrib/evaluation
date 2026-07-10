@@ -23,7 +23,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.EvalScale;
@@ -31,7 +30,8 @@ import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
-import org.sakaiproject.genericdao.api.search.Search;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,34 +43,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
 
-   protected EvalAuthoringServiceImpl authoringService;
+   @Autowired
+   @Qualifier("org.sakaiproject.evaluation.logic.EvalAuthoringService")
+   protected EvalAuthoringService authoringService;
 
    // run this before each test starts
    @Before
    public void onSetUpBeforeTransaction() throws Exception {
       super.onSetUpBeforeTransaction();
-
-      // load up any other needed spring beans
-      EvalSettings settings = (EvalSettings) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalSettings");
-      if (settings == null) {
-         throw new NullPointerException("EvalSettings could not be retrieved from spring context");
-      }
-
-      EvalSecurityChecksImpl securityChecks = 
-         (EvalSecurityChecksImpl) applicationContext.getBean("org.sakaiproject.evaluation.logic.externals.EvalSecurityChecks");
-      if (securityChecks == null) {
-         throw new NullPointerException("EvalSecurityChecksImpl could not be retrieved from spring context");
-      }
-      
-      // setup the mock objects if needed
-
-      // create and setup the object to be tested
-      authoringService = new EvalAuthoringServiceImpl();
-      authoringService.setDao(evaluationDao);
-      authoringService.setCommonLogic(commonLogic);
-      authoringService.setSettings(settings);
-      authoringService.setSecurityChecks(securityChecks);
-
    }
 
    /**
@@ -82,10 +62,10 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
    @Test
    public void testPreloadedItemGroupsData() {
       // check the full count of preloaded items
-      Assert.assertEquals(18, evaluationDao.countAll(EvalItemGroup.class) );
+      Assert.assertEquals(18, persistence.countAll(EvalItemGroup.class) );
 
-      Assert.assertEquals(12, evaluationDao.countAll(EvalTemplate.class) );
-      List<EvalTemplate> templates1 = evaluationDao.findAll(EvalTemplate.class);
+      Assert.assertEquals(12, persistence.countAll(EvalTemplate.class) );
+      List<EvalTemplate> templates1 = persistence.findAll(EvalTemplate.class);
       Assert.assertEquals(12, templates1.size());
    }
 
@@ -95,13 +75,13 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       // to the templates the way we think we are
       List<Long> ids;
 
-      Assert.assertEquals(46, evaluationDao.countAll(EvalItem.class) );
+      Assert.assertEquals(46, persistence.countAll(EvalItem.class) );
 
       // check the full count of preloaded items
-      Assert.assertEquals(20, evaluationDao.countAll(EvalTemplateItem.class) );
+      Assert.assertEquals(20, persistence.countAll(EvalTemplateItem.class) );
 
       EvalTemplate template = (EvalTemplate) 
-      evaluationDao.findById(EvalTemplate.class, etdl.templateAdmin.getId());
+      persistence.findById(EvalTemplate.class, etdl.templateAdmin.getId());
 
       // No longer supporting this type of linkage between templates and items
 //    Set items = template.getItems();
@@ -127,7 +107,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       Assert.assertTrue(l.contains( etdl.item5.getId() ));
 
       // test getting another set of items
-      EvalItem item = (EvalItem) evaluationDao.findById(EvalItem.class, etdl.item1.getId());
+      EvalItem item = (EvalItem) persistence.findById(EvalItem.class, etdl.item1.getId());
       Set<EvalTemplateItem> itItems = item.getTemplateItems();
       Assert.assertNotNull( itItems );
       Assert.assertEquals(3, itItems.size());
@@ -198,13 +178,13 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
             EvalTestDataLoad.UNLOCKED), EvalTestDataLoad.MAINT_USER_ID);
 
       // fetch scales to work with
-      EvalScale testScale1 = (EvalScale) evaluationDao.findById(EvalScale.class, 
+      EvalScale testScale1 = (EvalScale) persistence.findById(EvalScale.class, 
             etdl.scale1.getId());
-      EvalScale testScale2 = (EvalScale) evaluationDao.findById(EvalScale.class, 
+      EvalScale testScale2 = (EvalScale) persistence.findById(EvalScale.class, 
             etdl.scale2.getId());
-      EvalScale testScale3 = (EvalScale) evaluationDao.findById(EvalScale.class, 
+      EvalScale testScale3 = (EvalScale) persistence.findById(EvalScale.class, 
             etdl.scale3.getId());
-      EvalScale testScale4 = (EvalScale) evaluationDao.findById(EvalScale.class, 
+      EvalScale testScale4 = (EvalScale) persistence.findById(EvalScale.class, 
             etdl.scale4.getId());
 
       // test editing unlocked scale
@@ -654,13 +634,13 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       }
 
       // fetch items to work with (for editing tests)
-      EvalItem testItem1 = (EvalItem) evaluationDao.findById(EvalItem.class, 
+      EvalItem testItem1 = (EvalItem) persistence.findById(EvalItem.class, 
             etdl.item4.getId());
-      EvalItem testItem2 = (EvalItem) evaluationDao.findById(EvalItem.class, 
+      EvalItem testItem2 = (EvalItem) persistence.findById(EvalItem.class, 
             etdl.item6.getId());
-      EvalItem testItem3 = (EvalItem) evaluationDao.findById(EvalItem.class, 
+      EvalItem testItem3 = (EvalItem) persistence.findById(EvalItem.class, 
             etdl.item7.getId());
-      EvalItem testItem4 = (EvalItem) evaluationDao.findById(EvalItem.class, 
+      EvalItem testItem4 = (EvalItem) persistence.findById(EvalItem.class, 
             etdl.item1.getId());
 
       // test editing unlocked item
@@ -806,7 +786,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       EvalScale scale1 = new EvalScale(EvalTestDataLoad.ADMIN_USER_ID, "Scale MC", EvalConstants.SCALE_MODE_ADHOC, 
             EvalConstants.SHARING_PRIVATE, false, "description", 
             null, options1, false);
-      evaluationDao.save(scale1);
+      persistence.save(scale1);
 
       EvalItem item1 = new EvalItem(EvalTestDataLoad.ADMIN_USER_ID, "mutli choice", EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_MULTIPLECHOICE, 
             false);
@@ -815,14 +795,14 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       authoringService.saveItem(item1, EvalTestDataLoad.ADMIN_USER_ID);
 
       // check that the item and scale are saved
-      Assert.assertNotNull( evaluationDao.findById(EvalScale.class, scale1.getId()) );
-      Assert.assertNotNull( evaluationDao.findById(EvalItem.class, item1.getId()) );
+      Assert.assertNotNull( persistence.findById(EvalScale.class, scale1.getId()) );
+      Assert.assertNotNull( persistence.findById(EvalItem.class, item1.getId()) );
 
       authoringService.deleteItem(item1.getId(), EvalTestDataLoad.ADMIN_USER_ID);
 
       // not check that they are both gone
-      Assert.assertNull( evaluationDao.findById(EvalItem.class, item1.getId()) );
-      Assert.assertNull( evaluationDao.findById(EvalScale.class, scale1.getId()) );
+      Assert.assertNull( persistence.findById(EvalItem.class, item1.getId()) );
+      Assert.assertNull( persistence.findById(EvalScale.class, scale1.getId()) );
 
    }
 
@@ -1195,7 +1175,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
    public void testSaveTemplateItem() {
 
       // load up a no items template to work with
-      EvalTemplate noItems = (EvalTemplate) evaluationDao.findById(EvalTemplate.class, etdl.templateAdminNoItems.getId());
+      EvalTemplate noItems = (EvalTemplate) persistence.findById(EvalTemplate.class, etdl.templateAdminNoItems.getId());
 
       // test saving a new templateItem actually creates the linkage in the item and template
       EvalTemplateItem eiTest1 = new EvalTemplateItem( EvalTestDataLoad.ADMIN_USER_ID, 
@@ -1342,13 +1322,13 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       }
 
       // fetch items to work with (for editing tests)
-      EvalTemplateItem testTemplateItem1 = (EvalTemplateItem) evaluationDao.findById(EvalTemplateItem.class, 
+      EvalTemplateItem testTemplateItem1 = (EvalTemplateItem) persistence.findById(EvalTemplateItem.class, 
             etdl.templateItem3PU.getId()); // ADMIN, editable
-      EvalTemplateItem testTemplateItem2 = (EvalTemplateItem) evaluationDao.findById(EvalTemplateItem.class, 
+      EvalTemplateItem testTemplateItem2 = (EvalTemplateItem) persistence.findById(EvalTemplateItem.class, 
             etdl.templateItem3U.getId()); // MAINT, editable
-      EvalTemplateItem testTemplateItem3 = (EvalTemplateItem) evaluationDao.findById(EvalTemplateItem.class, 
+      EvalTemplateItem testTemplateItem3 = (EvalTemplateItem) persistence.findById(EvalTemplateItem.class, 
             etdl.templateItem3A.getId()); // ADMIN, uneditable
-      EvalTemplateItem testTemplateItem4 = (EvalTemplateItem) evaluationDao.findById(EvalTemplateItem.class, 
+      EvalTemplateItem testTemplateItem4 = (EvalTemplateItem) persistence.findById(EvalTemplateItem.class, 
             etdl.templateItem1P.getId()); // MAINT, uneditable
 
       // test editing templateItem not in LOCKED templateItem
@@ -2145,13 +2125,13 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       }
 
       // fetch templates to work with (for editing tests)
-      EvalTemplate testTemplate1 = (EvalTemplate) evaluationDao.findById(EvalTemplate.class, 
+      EvalTemplate testTemplate1 = (EvalTemplate) persistence.findById(EvalTemplate.class, 
             etdl.templatePublicUnused.getId());
-      EvalTemplate testTemplate2 = (EvalTemplate) evaluationDao.findById(EvalTemplate.class, 
+      EvalTemplate testTemplate2 = (EvalTemplate) persistence.findById(EvalTemplate.class, 
             etdl.templateUnused.getId());
-      EvalTemplate testTemplate3 = (EvalTemplate) evaluationDao.findById(EvalTemplate.class, 
+      EvalTemplate testTemplate3 = (EvalTemplate) persistence.findById(EvalTemplate.class, 
             etdl.templatePublic.getId());
-      EvalTemplate testTemplate4 = (EvalTemplate) evaluationDao.findById(EvalTemplate.class, 
+      EvalTemplate testTemplate4 = (EvalTemplate) persistence.findById(EvalTemplate.class, 
             etdl.templateUserUnused.getId());
 
       // test editing unlocked template
@@ -2541,7 +2521,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       copiedIds = authoringService.copyScales(scaleIds, "new scale 1", EvalTestDataLoad.MAINT_USER_ID, true);
       Assert.assertNotNull(copiedIds);
       Assert.assertEquals(scaleIds.length, copiedIds.length);
-      EvalScale copy1 = (EvalScale) evaluationDao.findById(EvalScale.class, copiedIds[0]);
+      EvalScale copy1 = (EvalScale) persistence.findById(EvalScale.class, copiedIds[0]);
       Assert.assertNotNull(copy1);
 
       // verify the copy worked
@@ -2566,7 +2546,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       copiedIds = authoringService.copyScales(scaleIds, "", EvalTestDataLoad.MAINT_USER_ID, false);
       Assert.assertNotNull(copiedIds);
       Assert.assertEquals(scaleIds.length, copiedIds.length);
-      EvalScale copy2 = (EvalScale) evaluationDao.findById(EvalScale.class, copiedIds[0]);
+      EvalScale copy2 = (EvalScale) persistence.findById(EvalScale.class, copiedIds[0]);
       Assert.assertNotNull(copy2);
       Assert.assertNotNull(copy2.getTitle());
 
@@ -2576,7 +2556,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       Assert.assertNotNull(copiedIds);
       Assert.assertEquals(scaleIds.length, copiedIds.length);
       for( Long copiedId : copiedIds ) {
-         Assert.assertNotNull(evaluationDao.findById(EvalScale.class, copiedId));
+         Assert.assertNotNull(persistence.findById(EvalScale.class, copiedId));
        }
 
       // check that invalid scaleid causes death
@@ -2603,7 +2583,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       copiedIds = authoringService.copyItems(itemIds, EvalTestDataLoad.MAINT_USER_ID, true, true);
       Assert.assertNotNull(copiedIds);
       Assert.assertEquals(itemIds.length, copiedIds.length);
-      EvalItem copy1 = (EvalItem) evaluationDao.findById(EvalItem.class, copiedIds[0]);
+      EvalItem copy1 = (EvalItem) persistence.findById(EvalItem.class, copiedIds[0]);
       Assert.assertNotNull(copy1);
 
       // verify the copy worked
@@ -2638,7 +2618,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       copiedIds = authoringService.copyItems(itemIds, EvalTestDataLoad.MAINT_USER_ID, true, false);
       Assert.assertNotNull(copiedIds);
       Assert.assertEquals(itemIds.length, copiedIds.length);
-      EvalItem copy2 = (EvalItem) evaluationDao.findById(EvalItem.class, copiedIds[0]);
+      EvalItem copy2 = (EvalItem) persistence.findById(EvalItem.class, copiedIds[0]);
       Assert.assertNotNull(copy2);
 
       // verify the copy worked
@@ -2673,7 +2653,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       copiedIds = authoringService.copyItems(itemIds, EvalTestDataLoad.MAINT_USER_ID, true, true);
       Assert.assertNotNull(copiedIds);
       Assert.assertEquals(itemIds.length, copiedIds.length);
-      EvalItem copy3 = (EvalItem) evaluationDao.findById(EvalItem.class, copiedIds[0]);
+      EvalItem copy3 = (EvalItem) persistence.findById(EvalItem.class, copiedIds[0]);
       Assert.assertNotNull(copy3);
 
       // verify the copy worked
@@ -2702,7 +2682,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       Assert.assertNotNull(copiedIds);
       Assert.assertEquals(itemIds.length, copiedIds.length);
       for( Long copiedId : copiedIds ) {
-         Assert.assertNotNull(evaluationDao.findById(EvalItem.class, copiedId));
+         Assert.assertNotNull(persistence.findById(EvalItem.class, copiedId));
       }
 
       // check we can copy a bunch of things (without children)
@@ -2711,7 +2691,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       Assert.assertNotNull(copiedIds);
       Assert.assertEquals(itemIds.length, copiedIds.length);
       for( Long copiedId : copiedIds ) {
-         Assert.assertNotNull(evaluationDao.findById(EvalItem.class, copiedId));
+         Assert.assertNotNull(persistence.findById(EvalItem.class, copiedId));
        }
 
       // check that invalid itemId causes exception
@@ -2739,7 +2719,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       copiedIds = authoringService.copyTemplateItems(templateItemIds, EvalTestDataLoad.MAINT_USER_ID, true, null, true);
       Assert.assertNotNull(copiedIds);
       Assert.assertEquals(templateItemIds.length, copiedIds.length);
-      EvalTemplateItem copy1 = (EvalTemplateItem) evaluationDao.findById(EvalTemplateItem.class, copiedIds[0]);
+      EvalTemplateItem copy1 = (EvalTemplateItem) persistence.findById(EvalTemplateItem.class, copiedIds[0]);
       Assert.assertNotNull(copy1);
 
       // verify the copy worked
@@ -2775,7 +2755,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       copiedIds = authoringService.copyTemplateItems(templateItemIds, EvalTestDataLoad.MAINT_USER_ID, true, null, false);
       Assert.assertNotNull(copiedIds);
       Assert.assertEquals(templateItemIds.length, copiedIds.length);
-      EvalTemplateItem copy2 = (EvalTemplateItem) evaluationDao.findById(EvalTemplateItem.class, copiedIds[0]);
+      EvalTemplateItem copy2 = (EvalTemplateItem) persistence.findById(EvalTemplateItem.class, copiedIds[0]);
       Assert.assertNotNull(copy2);
 
       // verify the copy worked
@@ -2804,14 +2784,14 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
 
 
       // only 1 countable item in the block template
-      Assert.assertEquals( 1, authoringService.getItemCountForTemplate(etdl.templateAdminBlock.getId()) );
+      Assert.assertEquals( 1, authoringService.getNonBlockItemCountForTemplate(etdl.templateAdminBlock.getId()) );
 
       // test out copying a complete block
       templateItemIds = new Long[] {etdl.templateItem9B.getId(), etdl.templateItem2B.getId(), etdl.templateItem3B.getId()};
       copiedIds = authoringService.copyTemplateItems(templateItemIds, EvalTestDataLoad.MAINT_USER_ID, true, null, false);
       Assert.assertNotNull(copiedIds);
       Assert.assertEquals(templateItemIds.length, copiedIds.length);
-      List<EvalTemplateItem> templateItems = evaluationDao.findBySearch(EvalTemplateItem.class, new Search("id", copiedIds) );
+      List<EvalTemplateItem> templateItems = authoringDao.getTemplateItemsByIds(copiedIds);
       Assert.assertNotNull(templateItems);
       Assert.assertEquals(templateItemIds.length, templateItems.size());
 
@@ -2842,7 +2822,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       }
 
       // now 2 countable items in the block template
-      Assert.assertEquals( 2, authoringService.getItemCountForTemplate(etdl.templateAdminBlock.getId()) );
+      Assert.assertEquals( 2, authoringService.getNonBlockItemCountForTemplate(etdl.templateAdminBlock.getId()) );
 
 
       // now copy over to a new template
@@ -2851,7 +2831,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       copiedIds = authoringService.copyTemplateItems(templateItemIds, EvalTestDataLoad.MAINT_USER_ID, true, etdl.templateAdmin.getId(), false);
       Assert.assertNotNull(copiedIds);
       Assert.assertEquals(templateItemIds.length, copiedIds.length);
-      EvalTemplateItem copy3 = (EvalTemplateItem) evaluationDao.findById(EvalTemplateItem.class, copiedIds[0]);
+      EvalTemplateItem copy3 = (EvalTemplateItem) persistence.findById(EvalTemplateItem.class, copiedIds[0]);
       Assert.assertNotNull(copy3);
 
       // check the template
@@ -2865,10 +2845,10 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       Assert.assertNotNull(copiedIds);
       Assert.assertEquals(templateItemIds.length, copiedIds.length);
       for( Long copiedId : copiedIds ) {
-         Assert.assertNotNull(evaluationDao.findById(EvalTemplateItem.class, copiedId));
+         Assert.assertNotNull(persistence.findById(EvalTemplateItem.class, copiedId));
        }
 
-      Assert.assertEquals( 2, authoringService.getItemCountForTemplate(etdl.templateUser.getId()) );
+      Assert.assertEquals( 2, authoringService.getNonBlockItemCountForTemplate(etdl.templateUser.getId()) );
 
       // check we can copy a bunch of things (without children) into the same template
       templateItemIds = new Long[] {etdl.templateItem1User.getId(), etdl.templateItem5User.getId()};
@@ -2876,10 +2856,10 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       Assert.assertNotNull(copiedIds);
       Assert.assertEquals(templateItemIds.length, copiedIds.length);
       for( Long copiedId : copiedIds ) {
-         Assert.assertNotNull(evaluationDao.findById(EvalTemplateItem.class, copiedId));
+         Assert.assertNotNull(persistence.findById(EvalTemplateItem.class, copiedId));
       }
 
-      Assert.assertEquals( 4, authoringService.getItemCountForTemplate(etdl.templateUser.getId()) );
+      Assert.assertEquals( 4, authoringService.getNonBlockItemCountForTemplate(etdl.templateUser.getId()) );
 
       // check that trying to do an inside copy of TIs from multiple templates causes Assert.failure
       templateItemIds = new Long[] {etdl.templateItem1P.getId(), etdl.templateItem2A.getId()};
@@ -2912,7 +2892,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       EvalTemplate original = etdl.templateUser;
       copiedId = authoringService.copyTemplate(original.getId(), "copy templateUser", EvalTestDataLoad.MAINT_USER_ID, true, true);
       Assert.assertNotNull(copiedId);
-      EvalTemplate copy1 = (EvalTemplate) evaluationDao.findById(EvalTemplate.class, copiedId);
+      EvalTemplate copy1 = (EvalTemplate) persistence.findById(EvalTemplate.class, copiedId);
       Assert.assertNotNull(copy1);
 
       // verify the copy worked
@@ -2950,7 +2930,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       original = etdl.templatePublic;
       copiedId = authoringService.copyTemplate(original.getId(), "", EvalTestDataLoad.MAINT_USER_ID, true, false);
       Assert.assertNotNull(copiedId);
-      EvalTemplate copy2 = (EvalTemplate) evaluationDao.findById(EvalTemplate.class, copiedId);
+      EvalTemplate copy2 = (EvalTemplate) persistence.findById(EvalTemplate.class, copiedId);
       Assert.assertNotNull(copy2);
 
       // verify the copy worked
@@ -2988,7 +2968,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       original = etdl.templateUnused;
       copiedId = authoringService.copyTemplate(original.getId(), "", EvalTestDataLoad.MAINT_USER_ID, true, true);
       Assert.assertNotNull(copiedId);
-      EvalTemplate copy3 = (EvalTemplate) evaluationDao.findById(EvalTemplate.class, copiedId);
+      EvalTemplate copy3 = (EvalTemplate) persistence.findById(EvalTemplate.class, copiedId);
       Assert.assertNotNull(copy3);
       Assert.assertNotNull(copy3.getTitle());
 
@@ -2999,6 +2979,58 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
       } catch (IllegalArgumentException e) {
          Assert.assertNotNull(e);
       }
+   }
+
+   @Test
+   public void testCopyTemplateWithBlockItemsRemapsCopiedChildren() {
+      Long copiedId = authoringService.copyTemplate(etdl.templateAdminBlock.getId(), "copy block template",
+            EvalTestDataLoad.ADMIN_USER_ID, true, true);
+      Assert.assertNotNull(copiedId);
+
+      List<EvalTemplateItem> copiedItems = authoringService.getTemplateItemsForTemplate(copiedId, null, null, null);
+      Assert.assertNotNull(copiedItems);
+      Assert.assertEquals(3, copiedItems.size());
+
+      EvalTemplateItem copiedParent = null;
+      List<EvalTemplateItem> copiedChildren = new ArrayList<>();
+      for (EvalTemplateItem copiedItem : copiedItems) {
+         Assert.assertEquals(copiedId, copiedItem.getTemplate().getId());
+         Assert.assertEquals(EvalTestDataLoad.ADMIN_USER_ID, copiedItem.getOwner());
+         Assert.assertTrue(copiedItem.isHidden());
+         Assert.assertNotNull(copiedItem.getCopyOf());
+         Assert.assertNotNull(copiedItem.getItem());
+         Assert.assertNotNull(copiedItem.getItem().getCopyOf());
+
+         if (copiedItem.getBlockParent()) {
+            copiedParent = copiedItem;
+         } else {
+            copiedChildren.add(copiedItem);
+         }
+      }
+
+      Assert.assertNotNull(copiedParent);
+      Assert.assertEquals(etdl.templateItem9B.getId(), copiedParent.getCopyOf());
+      Assert.assertNull(copiedParent.getBlockId());
+      Assert.assertEquals(etdl.item9.getId(), copiedParent.getItem().getCopyOf());
+
+      Assert.assertEquals(2, copiedChildren.size());
+      for (EvalTemplateItem copiedChild : copiedChildren) {
+         Assert.assertEquals(Boolean.FALSE, copiedChild.getBlockParent());
+         Assert.assertEquals(copiedParent.getId(), copiedChild.getBlockId());
+         Assert.assertFalse(etdl.templateItem9B.getId().equals(copiedChild.getBlockId()));
+         Assert.assertTrue(etdl.templateItem2B.getId().equals(copiedChild.getCopyOf())
+               || etdl.templateItem3B.getId().equals(copiedChild.getCopyOf()));
+         Assert.assertTrue(etdl.item2.getId().equals(copiedChild.getItem().getCopyOf())
+               || etdl.item3.getId().equals(copiedChild.getItem().getCopyOf()));
+      }
+
+      List<EvalTemplateItem> copiedBlockItems =
+            authoringService.getBlockChildTemplateItemsForBlockParent(copiedParent.getId(), true);
+      Assert.assertNotNull(copiedBlockItems);
+      Assert.assertEquals(3, copiedBlockItems.size());
+      Assert.assertEquals(copiedParent.getId(), copiedBlockItems.get(0).getId());
+      Assert.assertEquals(copiedParent.getId(), copiedBlockItems.get(1).getBlockId());
+      Assert.assertEquals(copiedParent.getId(), copiedBlockItems.get(2).getBlockId());
    }
 
 

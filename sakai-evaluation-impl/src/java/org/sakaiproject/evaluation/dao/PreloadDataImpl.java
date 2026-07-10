@@ -14,6 +14,11 @@
  */
 package org.sakaiproject.evaluation.dao;
 
+import org.sakaiproject.evaluation.dao.EvaluationAuthoringDao;
+import org.sakaiproject.evaluation.dao.EvaluationEmailTemplateDao;
+import org.sakaiproject.evaluation.dao.EvaluationDaoBase;
+import org.sakaiproject.evaluation.dao.EvaluationSettingsDao;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,8 +38,6 @@ import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.utils.SettingsLogicUtils;
-import org.sakaiproject.genericdao.api.search.Restriction;
-import org.sakaiproject.genericdao.api.search.Search;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -48,9 +51,24 @@ import lombok.extern.slf4j.Slf4j;
 public class PreloadDataImpl {
 
 
-    private EvaluationDao dao;
-    public void setDao(EvaluationDao evaluationDao) {
-        this.dao = evaluationDao;
+    private EvaluationDaoBase persistence;
+    public void setPersistence(EvaluationDaoBase persistence) {
+        this.persistence = persistence;
+    }
+
+    private EvaluationSettingsDao settingsDao;
+    public void setSettingsDao(EvaluationSettingsDao settingsDao) {
+        this.settingsDao = settingsDao;
+    }
+
+    private EvaluationEmailTemplateDao emailTemplateDao;
+    public void setEmailTemplateDao(EvaluationEmailTemplateDao emailTemplateDao) {
+        this.emailTemplateDao = emailTemplateDao;
+    }
+
+    private EvaluationAuthoringDao authoringDao;
+    public void setAuthoringDao(EvaluationAuthoringDao authoringDao) {
+        this.authoringDao = authoringDao;
     }
 
     private EvalExternalLogic externalLogic;
@@ -85,7 +103,7 @@ public class PreloadDataImpl {
     public boolean checkCriticalDataPreloaded() {
         boolean preloaded = true;
         populateEvalConfig();
-        long configDBCount = dao.countAll(EvalConfig.class);
+        long configDBCount = settingsDao.countEvalConfigs();
         if (configDBCount <= 0) {
         	//No config settings found in DB
             preloaded = false;
@@ -98,13 +116,12 @@ public class PreloadDataImpl {
         	}else{         
         		//Get defined email templates for defaultEmailTempates list. Does not load data into DB
 	        	populateEmailTemplates();
-	            long emailTemplateCount = dao.countBySearch(EvalEmailTemplate.class,
-	                    new Search( new Restriction("defaultType", "", Restriction.NOT_NULL) ) );
+	            long emailTemplateCount = emailTemplateDao.countDefaultEmailTemplates();
 	            if (emailTemplateCount < defaultEmailTempates.size()) {
 	            	//Either there are no templates loaded or some (not all) templates in defaultEmailTempates are in the DB
 	                preloaded = false;
 	            } else {
-	                int scaleCount = dao.countAll(EvalScale.class);
+	                int scaleCount = authoringDao.countEvalScales();
 	                if (scaleCount <= 0) {
 	                    preloaded = false;
 	                }
@@ -129,7 +146,7 @@ public class PreloadDataImpl {
     	if( evalConfigMap.isEmpty()){
     		populateEvalConfig();
     	}
-        List<EvalConfig> configInDB = dao.findAll(EvalConfig.class);
+        List<EvalConfig> configInDB = settingsDao.getAllEvalConfigs();
         
         //convert DB configurations into maps with the Config Name as key
         Map<String, String> configInDBMap = new HashMap<>();
@@ -164,7 +181,7 @@ public class PreloadDataImpl {
     }
 
     private void saveConfig(String key, String value) {
-        dao.save(new EvalConfig(SettingsLogicUtils.getName(key), value));
+        persistence.save(new EvalConfig(SettingsLogicUtils.getName(key), value));
     }
 
     /**
@@ -175,8 +192,7 @@ public class PreloadDataImpl {
     		populateEmailTemplates();
     	}
         // check if there are any emailTemplates present in the DB
-    	List<EvalEmailTemplate> currentDefaultsList = dao.findBySearch(EvalEmailTemplate.class,
-                new Search( new Restriction("defaultType", "", Restriction.NOT_NULL) ) );
+        List<EvalEmailTemplate> currentDefaultsList = emailTemplateDao.getDefaultEmailTemplates();
     	
         // convert to map with defaultType as key
     	Map<String, EvalEmailTemplate> currentDefaultsMap = new HashMap<>();
@@ -190,7 +206,7 @@ public class PreloadDataImpl {
         	for(EvalEmailTemplate emailTemplate : defaultEmailTempates){
         		if(! currentDefaultsMap.containsKey(emailTemplate.getDefaultType())){
         			//this default template is not in the DB, lets add it
-        			dao.save(emailTemplate);
+        			persistence.save(emailTemplate);
         			count++;
         		}
         	}
@@ -206,7 +222,7 @@ public class PreloadDataImpl {
     public void preloadScales() {
 
         // check if there are any scales present
-        int count = dao.countAll(EvalScale.class);
+        int count = authoringDao.countEvalScales();
         if (count == 0) {
             // NOTE: If you change the number of scales here (14 currently),
             // you will need to update the test in EvalScalesLogicImplTest also
@@ -258,7 +274,7 @@ public class PreloadDataImpl {
             //       new String[] { "Req. in Major", "Req. out of Major",
             //       "Elective filling Req.", "Free Elec. in Major", "Free Elec. out of Major" });
 
-            log.info("Preloaded " + dao.countAll(EvalScale.class) + " evaluation scales");
+            log.info("Preloaded " + authoringDao.countEvalScales() + " evaluation scales");
         }
     }
 
@@ -272,7 +288,7 @@ public class PreloadDataImpl {
         EvalScale scale = new EvalScale(ADMIN_OWNER, title, EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PUBLIC, 
                 Boolean.TRUE, "",
                 ideal, options, Boolean.FALSE);
-        dao.save(scale);
+        persistence.save(scale);
         return scale;
     }
 
@@ -282,7 +298,7 @@ public class PreloadDataImpl {
     public void preloadExpertItems() {
 
         // check if there are any items present
-        int count = dao.countAll(EvalItem.class);
+        int count = authoringDao.countEvalItems();
         if (count == 0) {
             // NOTE: If you change the number of items here
             // you will need to update the test in the logic tests
@@ -362,8 +378,8 @@ public class PreloadDataImpl {
             // general catch all
             saveCategoryGroup(EvalConstants.EXPERT_ITEM_CATEGORY_TITLE, "General use items", null);
             
-            log.info("Preloaded " + dao.countAll(EvalItem.class) + " evaluation items");
-            log.info("Preloaded " + dao.countAll(EvalItemGroup.class) + " evaluation item groups");
+            log.info("Preloaded " + authoringDao.countEvalItems() + " evaluation items");
+            log.info("Preloaded " + authoringDao.countEvalItemGroups() + " evaluation item groups");
         }
 
     }
@@ -373,21 +389,21 @@ public class PreloadDataImpl {
                 description, EvalConstants.SHARING_PUBLIC, EvalConstants.ITEM_TYPE_SCALED, Boolean.TRUE,
                 expertDescription, scale, null, Boolean.FALSE, false, false, 
                 null, EvalConstants.ITEM_SCALE_DISPLAY_FULL_COLORED, category, Boolean.FALSE);
-        dao.save(item);
+        persistence.save(item);
         return item;
     }
 
     private EvalItemGroup saveObjectiveGroup(String title, String description, Set<EvalItem> items, EvalItemGroup parentGroup) {
         EvalItemGroup group = new EvalItemGroup(ADMIN_OWNER, EvalConstants.ITEM_GROUP_TYPE_OBJECTIVE, title,
                 description, Boolean.TRUE, parentGroup, items);
-        dao.save( group );
+        persistence.save( group );
         return group;
     }
 
     private EvalItemGroup saveCategoryGroup(String title, String description, Set<EvalItem> items) {
         EvalItemGroup group = new EvalItemGroup(ADMIN_OWNER, EvalConstants.ITEM_GROUP_TYPE_CATEGORY, title,
                 description, Boolean.TRUE, null, items);
-        dao.save( group );
+        persistence.save( group );
         return group;
     }
     
@@ -553,8 +569,7 @@ public class PreloadDataImpl {
     		configNames[i] = SettingsLogicUtils.getName(configNames[i]);
     	}
     	
-    	Search search = new Search(new Restriction("name", configNames));
-    	defaultConfigCount = dao.countBySearch(EvalConfig.class, search);
+        defaultConfigCount = settingsDao.countEvalConfigsByNames(configNames);
     	return defaultConfigCount;
     }
 

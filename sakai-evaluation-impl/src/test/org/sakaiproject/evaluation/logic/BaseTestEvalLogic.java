@@ -16,11 +16,25 @@ package org.sakaiproject.evaluation.logic;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.sakaiproject.evaluation.dao.EvaluationDao;
+import org.sakaiproject.evaluation.dao.EvaluationAdminSupportDao;
+import org.sakaiproject.evaluation.dao.EvaluationAssignmentDao;
+import org.sakaiproject.evaluation.dao.EvaluationAuthoringDao;
+import org.sakaiproject.evaluation.dao.EvaluationConsolidatedEmailDao;
+import org.sakaiproject.evaluation.dao.EvaluationDaoBase;
+import org.sakaiproject.evaluation.dao.EvaluationEmailTemplateDao;
+import org.sakaiproject.evaluation.dao.EvaluationGroupNodeDao;
+import org.sakaiproject.evaluation.dao.EvaluationLockDao;
+import org.sakaiproject.evaluation.dao.EvaluationQueryDao;
+import org.sakaiproject.evaluation.dao.EvaluationResponseDao;
+import org.sakaiproject.evaluation.dao.EvaluationSettingsDao;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
+import org.sakaiproject.evaluation.test.EvalTestDaoFixture;
+import org.sakaiproject.evaluation.test.EvaluationServiceTestConfiguration;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
 import org.sakaiproject.evaluation.test.PreloadTestDataImpl;
 import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
@@ -31,54 +45,66 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
  * the other logic tests can extend this to avoid having as much duplicated code<br/>
  * This does the following:<br/>
  * Loads up the DAO and preloads the test data<br/>
- * Loads the following spring contexts: hibernate-test.xml, spring-hibernate.xml, logic-support.xml<br/>
+ * Loads the evaluation service test configuration<br/>
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
 @DirtiesContext
-@ContextConfiguration(locations={
-		"/hibernate-test.xml",
-		"classpath:org/sakaiproject/evaluation/spring-hibernate.xml",
-		"classpath:org/sakaiproject/evaluation/logic-support.xml"})
+@ContextConfiguration(classes = EvaluationServiceTestConfiguration.class)
 public abstract class BaseTestEvalLogic extends AbstractTransactionalJUnit4SpringContextTests {
 
-   protected EvaluationDao evaluationDao;
+   @Autowired
+   protected EvalTestDaoFixture daos;
+
+   protected EvaluationDaoBase persistence;
+   protected EvaluationSettingsDao settingsDao;
+   protected EvaluationEmailTemplateDao emailTemplateDao;
+   protected EvaluationAuthoringDao authoringDao;
+   protected EvaluationGroupNodeDao groupNodeDao;
+   protected EvaluationAdminSupportDao adminSupportDao;
+   protected EvaluationResponseDao responseDao;
+   protected EvaluationAssignmentDao assignmentDao;
+   protected EvaluationQueryDao queryDao;
+   protected EvaluationLockDao lockDao;
+   protected EvaluationConsolidatedEmailDao consolidatedEmailDao;
+
+   @Autowired
+   @Qualifier("org.sakaiproject.evaluation.logic.EvalCommonLogic")
    protected EvalCommonLogic commonLogic;
+   @Autowired
+   @Qualifier("org.sakaiproject.evaluation.logic.externals.EvalExternalLogic")
    protected MockEvalExternalLogic externalLogic;
+   @Autowired
+   @Qualifier("org.sakaiproject.evaluation.test.PreloadTestData")
+   private PreloadTestDataImpl preloadTestData;
    protected EvalTestDataLoad etdl;
 
    @Before
    public void onSetUpBeforeTransaction() throws Exception {
-
-      // load the spring created dao class bean from the Spring Application Context
-      evaluationDao = (EvaluationDao) applicationContext.getBean("org.sakaiproject.evaluation.dao.EvaluationDao");
-      if (evaluationDao == null) {
-         throw new NullPointerException("DAO could not be retrieved from spring context");
-      }
-
-      externalLogic = (MockEvalExternalLogic) applicationContext.getBean("org.sakaiproject.evaluation.logic.externals.EvalExternalLogic");
-      if (externalLogic == null) {
-         throw new NullPointerException("externalLogic could not be retrieved from spring context");
-      }
-
-      commonLogic = (EvalCommonLogic) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalCommonLogic");
-      if (commonLogic == null) {
-         throw new NullPointerException("commonLogic could not be retrieved from spring context");
-      }
+      bindDaoFixture(daos);
 
       // check the preloaded test data
-      Assert.assertTrue("Error preloading test data", evaluationDao.countAll(EvalEvaluation.class) > 0);
-
-      PreloadTestDataImpl ptd = (PreloadTestDataImpl) applicationContext.getBean("org.sakaiproject.evaluation.test.PreloadTestData");
-      if (ptd == null) {
-         throw new NullPointerException("PreloadTestDataImpl could not be retrieved from spring context");
-      }
+      Assert.assertTrue("Error preloading test data", persistence.countAll(EvalEvaluation.class) > 0);
 
       // get test objects
-      etdl = ptd.getEtdl();
+      etdl = preloadTestData.getEtdl();
       if (etdl.scale1.getId() == null) {
          throw new IllegalStateException("Failure in loadup of data");
       }
 
+   }
+
+   protected void bindDaoFixture(EvalTestDaoFixture fixture) {
+      persistence = fixture.persistence;
+      settingsDao = fixture.settingsDao;
+      emailTemplateDao = fixture.emailTemplateDao;
+      authoringDao = fixture.authoringDao;
+      groupNodeDao = fixture.groupNodeDao;
+      adminSupportDao = fixture.adminSupportDao;
+      responseDao = fixture.responseDao;
+      assignmentDao = fixture.assignmentDao;
+      queryDao = fixture.queryDao;
+      lockDao = fixture.lockDao;
+      consolidatedEmailDao = fixture.consolidatedEmailDao;
    }
 }

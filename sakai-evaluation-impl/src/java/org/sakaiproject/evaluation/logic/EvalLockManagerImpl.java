@@ -14,31 +14,33 @@
  */
 package org.sakaiproject.evaluation.logic;
 
-import org.sakaiproject.evaluation.dao.EvaluationDao;
+import org.sakaiproject.evaluation.dao.EvaluationLockDao;
+
 
 /**
  * 
  *
  */
 public class EvalLockManagerImpl implements EvalLockManager {
-	
-    private EvaluationDao dao;
-    public void setDao(EvaluationDao dao) {
-        this.dao = dao;
+
+    private EvaluationLockDao lockDao;
+    public void setLockDao(EvaluationLockDao lockDao) {
+        this.lockDao = lockDao;
     }
+
 	
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalLockManager#obtainLock(java.lang.String, java.lang.String, long)
 	 */
 	public Boolean obtainLock(String lockId, String executerId, long timePeriod) {
-		return dao.obtainLock(lockId, executerId, timePeriod);
+		return lockDao.obtainLock(lockId, executerId, timePeriod);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.sakaiproject.evaluation.logic.EvalLockManager#releaseLock(java.lang.String, java.lang.String)
 	 */
 	public Boolean releaseLock(String lockId, String executerId) {
-		return dao.releaseLock(lockId, executerId);
+		return lockDao.releaseLock(lockId, executerId);
 	}
 
 }

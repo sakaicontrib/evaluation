@@ -17,11 +17,7 @@ package org.sakaiproject.evaluation.tool.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,13 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/control_expert_items")
-public class ControlExpertItemsController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalAuthoringService")
-    private EvalAuthoringService authoringService;
+public class ControlExpertItemsController extends EvalControllerSupport {
 
     @Data
     public static class GroupRow {
@@ -63,7 +53,7 @@ public class ControlExpertItemsController {
 
     @GetMapping
     public String show(Model model) {
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         List<EvalItemGroup> groups = authoringService.getAllItemGroups(currentUserId, true);
 
         List<GroupRow> rows = new ArrayList<>();

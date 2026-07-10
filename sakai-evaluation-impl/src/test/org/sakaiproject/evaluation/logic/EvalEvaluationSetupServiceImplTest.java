@@ -15,26 +15,28 @@
 package org.sakaiproject.evaluation.logic;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.exceptions.BlankRequiredFieldException;
 import org.sakaiproject.evaluation.logic.exceptions.InvalidDatesException;
-import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
+import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
-import org.sakaiproject.evaluation.test.mocks.MockEvalJobLogic;
+import org.sakaiproject.evaluation.test.mocks.MockEvalExternalLogic;
 import org.sakaiproject.evaluation.test.mocks.MockExternalHierarchyLogic;
-import org.sakaiproject.genericdao.api.search.Search;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 
 /**
@@ -44,65 +46,23 @@ import org.sakaiproject.genericdao.api.search.Search;
  */
 public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
 
-    protected EvalEvaluationSetupServiceImpl evaluationSetupService;
+    @Autowired
+    @Qualifier("org.sakaiproject.evaluation.logic.EvalEvaluationSetupService")
+    protected EvalEvaluationSetupService evaluationSetupService;
+    @Autowired
+    @Qualifier("org.sakaiproject.evaluation.logic.EvalEvaluationService")
     private EvalEvaluationService evaluationService;
+    @Autowired
+    @Qualifier("org.sakaiproject.evaluation.logic.EvalAuthoringService")
     private EvalAuthoringService authoringService;
+    @Autowired
+    @Qualifier("org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic")
+    private MockExternalHierarchyLogic hierarchyLogic;
 
     // run this before each test starts
     @Before
     public void onSetUpBeforeTransaction() throws Exception {
         super.onSetUpBeforeTransaction();
-
-        // load up any other needed spring beans
-        EvalSettings settings = (EvalSettings) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalSettings");
-        if (settings == null) {
-            throw new NullPointerException("EvalSettings could not be retrieved from spring context");
-        }
-
-        EvalSecurityChecksImpl securityChecks = 
-            (EvalSecurityChecksImpl) applicationContext.getBean("org.sakaiproject.evaluation.logic.externals.EvalSecurityChecks");
-        if (securityChecks == null) {
-            throw new NullPointerException("EvalSecurityChecksImpl could not be retrieved from spring context");
-        }
-
-        EvalBeanUtils evalBeanUtils = (EvalBeanUtils) applicationContext.getBean(EvalBeanUtils.class.getName());
-        if (evalBeanUtils == null) {
-            throw new NullPointerException("EvalEvaluationService could not be retrieved from spring context");
-        }
-
-        evaluationService = (EvalEvaluationService) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalEvaluationService");
-        if (evaluationService == null) {
-            throw new NullPointerException("EvalEvaluationService could not be retrieved from spring context");
-        }
-
-        // setup the mock objects if needed
-        EvalEmailsLogicImpl emailsLogicImpl = new EvalEmailsLogicImpl();
-        emailsLogicImpl.setEvaluationService(evaluationService);
-        emailsLogicImpl.setCommonLogic(commonLogic);
-        emailsLogicImpl.setSettings(settings);
-
-        // create the other needed logic impls
-        EvalAuthoringServiceImpl authoringServiceImpl = new EvalAuthoringServiceImpl();
-        authoringServiceImpl.setDao(evaluationDao);
-        authoringServiceImpl.setCommonLogic(commonLogic);
-        authoringServiceImpl.setSecurityChecks(securityChecks);
-        authoringServiceImpl.setSettings(settings);
-        authoringService = authoringServiceImpl;
-
-
-        // create and setup the object to be tested
-        evaluationSetupService = new EvalEvaluationSetupServiceImpl();
-        evaluationSetupService.setDao(evaluationDao);
-        evaluationSetupService.setCommonLogic(commonLogic);
-        evaluationSetupService.setHierarchyLogic( new MockExternalHierarchyLogic() );
-        evaluationSetupService.setSettings(settings);
-        evaluationSetupService.setSecurityChecks(securityChecks);
-        evaluationSetupService.setEvaluationService(evaluationService);
-        evaluationSetupService.setEvalJobLogic( new MockEvalJobLogic() ); // set to the mock object
-        evaluationSetupService.setEmails(emailsLogicImpl);
-        evaluationSetupService.setAuthoringService(authoringServiceImpl);
-        evaluationSetupService.setEvalBeanUtils(evalBeanUtils);
-
     }
 
     /**
@@ -319,12 +279,11 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
     @Test
     public void testDeleteEvaluation() {
         // remove evaluation which has not started (uses 2 email templates)
-        EvalEvaluation unStarted = evaluationDao.findById(EvalEvaluation.class, etdl.evaluationNew.getId());
+        EvalEvaluation unStarted = persistence.findById(EvalEvaluation.class, etdl.evaluationNew.getId());
         Assert.assertNotNull(unStarted);
         Long availableId = unStarted.getAvailableEmailTemplate().getId();
         Long reminderId = unStarted.getReminderEmailTemplate().getId();
-        long countEmailTemplates = evaluationDao.countBySearch(EvalEmailTemplate.class,
-                new Search("id", new Long[] {availableId, reminderId}) );
+        long countEmailTemplates = countExistingEmailTemplates(availableId, reminderId);
         Assert.assertEquals(2, countEmailTemplates);
 
         evaluationSetupService.deleteEvaluation(unStarted.getId(), EvalTestDataLoad.MAINT_USER_ID);
@@ -332,8 +291,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertNull(eval);
 
         // check to make sure the associated email templates were also removed
-        countEmailTemplates = evaluationDao.countBySearch(EvalEmailTemplate.class, 
-                new Search("id", new Long[] {availableId, reminderId}) );
+        countEmailTemplates = countExistingEmailTemplates(availableId, reminderId);
         Assert.assertEquals(0, countEmailTemplates);
 
         // attempt to remove evaluation which is not owned
@@ -345,14 +303,12 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         }
 
         // attempt to remove evaluation with assigned groups (check for cleanup)
-        long countACs = evaluationDao.countBySearch(EvalAssignGroup.class, 
-                new Search("evaluation.id", etdl.evaluationNewAdmin.getId()) );
+        long countACs = assignmentDao.getAssignGroupsForEvals(new Long[] {etdl.evaluationNewAdmin.getId()}, true, null).size();
         Assert.assertEquals(3, countACs);
         evaluationSetupService.deleteEvaluation(etdl.evaluationNewAdmin.getId(), EvalTestDataLoad.ADMIN_USER_ID);
         eval = evaluationService.getEvaluationById(etdl.evaluationNewAdmin.getId());
         Assert.assertNull(eval);
-        countACs = evaluationDao.countBySearch(EvalAssignGroup.class, 
-                new Search("evaluation.id", etdl.evaluationNewAdmin.getId()) );
+        countACs = assignmentDao.getAssignGroupsForEvals(new Long[] {etdl.evaluationNewAdmin.getId()}, true, null).size();
         Assert.assertEquals(0, countACs);
 
         // attempt to remove evaluation which is active
@@ -366,7 +322,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         // attempt to remove evaluation which is completed but no responses (allowed)
         Long evalIdToRemove = etdl.evaluationClosedUntaken.getId();
         evaluationSetupService.deleteEvaluation(evalIdToRemove, EvalTestDataLoad.ADMIN_USER_ID);
-        Assert.assertNull( evaluationDao.findById(EvalEvaluation.class, evalIdToRemove) );
+        Assert.assertNull( persistence.findById(EvalEvaluation.class, evalIdToRemove) );
 
         // remove eval with responses (check that it is not actually removed)
         evalIdToRemove = etdl.evaluationClosed.getId();
@@ -390,7 +346,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         evalIdToRemove = evalTest485.getId();
         evaluationSetupService.deleteEvaluation(evalIdToRemove, EvalTestDataLoad.ADMIN_USER_ID);
         Assert.assertNull( evaluationService.getEvaluationById(evalIdToRemove) );
-        Assert.assertNull( evaluationDao.findById(EvalTemplate.class, templateId) );
+        Assert.assertNull( persistence.findById(EvalTemplate.class, templateId) );
 
         // test for an invalid Eval that it does not cause an exception
         evaluationSetupService.deleteEvaluation( EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.MAINT_USER_ID);
@@ -413,7 +369,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         evalIdToRemove = evalTest545.getId();
         evaluationSetupService.deleteEvaluation(evalIdToRemove, EvalTestDataLoad.ADMIN_USER_ID);
         Assert.assertNull( evaluationService.getEvaluationById(evalIdToRemove) );
-        Assert.assertNotNull( evaluationDao.findById(EvalTemplate.class, checkEval545templateId) );
+        Assert.assertNotNull( persistence.findById(EvalTemplate.class, checkEval545templateId) );
 
     }
 
@@ -453,9 +409,9 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         List<Long> ids;
 
         // testing instructor approval
-        EvalAssignGroup eag = (EvalAssignGroup) evaluationDao.findById(EvalAssignGroup.class, etdl.assign5.getId());
+        EvalAssignGroup eag = (EvalAssignGroup) persistence.findById(EvalAssignGroup.class, etdl.assign5.getId());
         eag.setInstructorApproval(false);
-        evaluationDao.save(eag);
+        persistence.save(eag);
 
         // get all evaluations for user
         evals = evaluationSetupService.getEvaluationsForUser(EvalTestDataLoad.USER_ID, null, null, true);
@@ -768,13 +724,13 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         }
 
         // test user can remove
-        EvalEvaluation eval = (EvalEvaluation) evaluationDao.findById(EvalEvaluation.class, etdl.evaluationNew.getId());
+        EvalEvaluation eval = (EvalEvaluation) persistence.findById(EvalEvaluation.class, etdl.evaluationNew.getId());
         Assert.assertNotNull(eval.getReminderEmailTemplate());
 
         evaluationSetupService.removeEmailTemplate(etdl.emailTemplate2.getId(), EvalTestDataLoad.MAINT_USER_ID);
 
         Assert.assertNull(eval.getReminderEmailTemplate());
-        Assert.assertNull( evaluationDao.findById(EvalEmailTemplate.class, etdl.emailTemplate2.getId()) );
+        Assert.assertNull( persistence.findById(EvalEmailTemplate.class, etdl.emailTemplate2.getId()) );
 
         // test cannot remove default templates
         EvalEmailTemplate defaultTemplate = evaluationService.getDefaultEmailTemplate(EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
@@ -801,8 +757,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         evaluationSetupService.saveAssignGroup(eacNew, EvalTestDataLoad.MAINT_USER_ID);
 
         // check save worked
-        List<EvalAssignGroup> l = evaluationDao.findBySearch(EvalAssignGroup.class, 
-                new Search("evaluation.id", etdl.evaluationNew.getId()) );
+        List<EvalAssignGroup> l = assignmentDao.getAssignGroupsForEvals(new Long[] {etdl.evaluationNew.getId()}, true, null);
         Assert.assertNotNull(l);
         Assert.assertEquals(1, l.size());
         Assert.assertTrue(l.contains(eacNew));
@@ -815,26 +770,25 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         evaluationSetupService.saveAssignGroup(eacActive, EvalTestDataLoad.MAINT_USER_ID);
 
         // check save worked
-        l = evaluationDao.findBySearch(EvalAssignGroup.class, 
-                new Search("evaluation.id", etdl.evaluationActive.getId()) );
+        l = assignmentDao.getAssignGroupsForEvals(new Long[] {etdl.evaluationActive.getId()}, true, null);
         Assert.assertNotNull(l);
         Assert.assertEquals(2, l.size());
         Assert.assertTrue(l.contains(eacActive));
 
         // test modify safe part while active
-        EvalAssignGroup testEac1 = (EvalAssignGroup) evaluationDao.
+        EvalAssignGroup testEac1 = (EvalAssignGroup) persistence.
         findById( EvalAssignGroup.class, etdl.assign1.getId() );
         testEac1.setStudentsViewResults( Boolean.TRUE );
         evaluationSetupService.saveAssignGroup(testEac1, EvalTestDataLoad.MAINT_USER_ID);
 
         // test modify safe part while closed
-        EvalAssignGroup testEac2 = (EvalAssignGroup) evaluationDao.
+        EvalAssignGroup testEac2 = (EvalAssignGroup) persistence.
         findById( EvalAssignGroup.class, etdl.assign4.getId() );
         testEac2.setStudentsViewResults( Boolean.TRUE );
         evaluationSetupService.saveAssignGroup(testEac2, EvalTestDataLoad.MAINT_USER_ID);
 
         // test admin can modify un-owned evalGroupId
-        EvalAssignGroup testEac3 = (EvalAssignGroup) evaluationDao.
+        EvalAssignGroup testEac3 = (EvalAssignGroup) persistence.
         findById( EvalAssignGroup.class, etdl.assign6.getId() );
         testEac3.setStudentsViewResults( Boolean.TRUE );
         evaluationSetupService.saveAssignGroup(testEac3, EvalTestDataLoad.ADMIN_USER_ID);
@@ -948,12 +902,11 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         EvalAssignGroup eac2 = new EvalAssignGroup(EvalTestDataLoad.ADMIN_USER_ID, EvalTestDataLoad.SITE2_REF, 
                 EvalConstants.GROUP_TYPE_SITE, etdl.evaluationNew, Boolean.FALSE, Boolean.TRUE, 
                 Boolean.FALSE);
-        evaluationDao.save(eac1);
-        evaluationDao.save(eac2);
+        persistence.save(eac1);
+        persistence.save(eac2);
 
         // check save worked
-        List<EvalAssignGroup> l = evaluationDao.findBySearch(EvalAssignGroup.class, 
-                new Search("evaluation.id", etdl.evaluationNew.getId()) );
+        List<EvalAssignGroup> l = assignmentDao.getAssignGroupsForEvals(new Long[] {etdl.evaluationNew.getId()}, true, null);
         Assert.assertNotNull(l);
         Assert.assertEquals(2, l.size());
         Assert.assertTrue(l.contains(eac1));
@@ -966,8 +919,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         evaluationSetupService.deleteAssignGroup( etdl.assign8.getId(), EvalTestDataLoad.MAINT_USER_ID );
 
         // check save worked
-        l = evaluationDao.findBySearch(EvalAssignGroup.class, 
-                new Search("evaluation.id", etdl.evaluationNew.getId()) );
+        l = assignmentDao.getAssignGroupsForEvals(new Long[] {etdl.evaluationNew.getId()}, true, null);
         Assert.assertNotNull(l);
         Assert.assertEquals(1, l.size());
         Assert.assertTrue(! l.contains(eac1));
@@ -1140,6 +1092,145 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertTrue(currentAssign.size() == 2);
     }
 
+    @Test
+    public void testSynchronizeUserAssignmentsForcedPreservesSameUserAcrossAssignmentTypes() {
+        externalLogic.setCurrentUserId(EvalTestDataLoad.MAINT_USER_ID);
+        EvalEvaluation evaluation = etdl.evaluationNew;
+        evaluation.setAllRolesParticipate(Boolean.TRUE);
+        evaluation.setSectionAwareness(Boolean.FALSE);
+        persistence.update(evaluation);
+        Long evaluationId = evaluation.getId();
+
+        saveSiteAssignGroup(evaluation, EvalTestDataLoad.SITE2_REF);
+
+        List<Long> changedIds = evaluationSetupService.synchronizeUserAssignmentsForced(evaluation, EvalTestDataLoad.SITE2_REF, true);
+        Assert.assertEquals(4, changedIds.size());
+
+        List<EvalAssignUser> participants = evaluationService.getParticipantsForEval(evaluationId, null,
+                new String[] {EvalTestDataLoad.SITE2_REF}, null, EvalEvaluationService.STATUS_ANY, null, null);
+        Assert.assertEquals(4, participants.size());
+        Assert.assertEquals(1, countAssignments(participants, EvalAssignUser.TYPE_EVALUATEE, EvalAssignUser.STATUS_LINKED));
+        Assert.assertEquals(3, countAssignments(participants, EvalAssignUser.TYPE_EVALUATOR, EvalAssignUser.STATUS_LINKED));
+        Assert.assertEquals(EvalAssignUser.STATUS_LINKED,
+                findAssignment(participants, EvalTestDataLoad.MAINT_USER_ID, EvalAssignUser.TYPE_EVALUATEE).getStatus());
+        Assert.assertEquals(EvalAssignUser.STATUS_LINKED,
+                findAssignment(participants, EvalTestDataLoad.MAINT_USER_ID, EvalAssignUser.TYPE_EVALUATOR).getStatus());
+    }
+
+    @Test
+    public void testSynchronizeUserAssignmentsForcedCreatesAndPreservesManualStatuses() {
+        externalLogic.setCurrentUserId(EvalTestDataLoad.MAINT_USER_ID);
+        EvalEvaluation evaluation = etdl.evaluationNew;
+        evaluation.setSectionAwareness(Boolean.FALSE);
+        persistence.update(evaluation);
+        Long evaluationId = evaluation.getId();
+
+        saveSiteAssignGroup(evaluation, EvalTestDataLoad.SITE2_REF);
+
+        List<EvalAssignUser> participants = evaluationService.getParticipantsForEval(evaluationId, null,
+                new String[] {EvalTestDataLoad.SITE2_REF}, null, EvalEvaluationService.STATUS_ANY, null, null);
+        Assert.assertNotNull(participants);
+        Assert.assertTrue(participants.isEmpty());
+
+        List<Long> changedIds = evaluationSetupService.synchronizeUserAssignmentsForced(evaluation, EvalTestDataLoad.SITE2_REF, true);
+        Assert.assertEquals(3, changedIds.size());
+
+        participants = evaluationService.getParticipantsForEval(evaluationId, null,
+                new String[] {EvalTestDataLoad.SITE2_REF}, null, EvalEvaluationService.STATUS_ANY, null, null);
+        Assert.assertEquals(3, participants.size());
+        Assert.assertEquals(1, countAssignments(participants, EvalAssignUser.TYPE_EVALUATEE, EvalAssignUser.STATUS_LINKED));
+        Assert.assertEquals(2, countAssignments(participants, EvalAssignUser.TYPE_EVALUATOR, EvalAssignUser.STATUS_LINKED));
+
+        EvalAssignUser unlinked = findAssignment(participants, EvalTestDataLoad.USER_ID, EvalAssignUser.TYPE_EVALUATOR);
+        EvalAssignUser removed = findAssignment(participants, EvalTestDataLoad.STUDENT_USER_ID, EvalAssignUser.TYPE_EVALUATOR);
+        unlinked.setStatus(EvalAssignUser.STATUS_UNLINKED);
+        removed.setStatus(EvalAssignUser.STATUS_REMOVED);
+        persistence.update(unlinked);
+        persistence.update(removed);
+
+        changedIds = evaluationSetupService.synchronizeUserAssignmentsForced(evaluation, EvalTestDataLoad.SITE2_REF, true);
+        Assert.assertTrue(changedIds.isEmpty());
+
+        participants = evaluationService.getParticipantsForEval(evaluationId, null,
+                new String[] {EvalTestDataLoad.SITE2_REF}, null, EvalEvaluationService.STATUS_ANY, null, null);
+        Assert.assertEquals(3, participants.size());
+        Assert.assertEquals(1, countAssignments(participants, EvalAssignUser.TYPE_EVALUATEE, EvalAssignUser.STATUS_LINKED));
+        Assert.assertEquals(1, countAssignments(participants, EvalAssignUser.TYPE_EVALUATOR, EvalAssignUser.STATUS_UNLINKED));
+        Assert.assertEquals(1, countAssignments(participants, EvalAssignUser.TYPE_EVALUATOR, EvalAssignUser.STATUS_REMOVED));
+
+        List<EvalAssignUser> visibleParticipants = evaluationService.getParticipantsForEval(evaluationId, null,
+                new String[] {EvalTestDataLoad.SITE2_REF}, null, null, null, null);
+        Assert.assertEquals(2, visibleParticipants.size());
+    }
+
+    private EvalAssignGroup saveSiteAssignGroup(EvalEvaluation evaluation, String evalGroupId) {
+        EvalAssignGroup assignGroup = new EvalAssignGroup(EvalTestDataLoad.MAINT_USER_ID, evalGroupId,
+                EvalConstants.GROUP_TYPE_SITE, evaluation, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
+        persistence.save(assignGroup);
+        return assignGroup;
+    }
+
+    private int countAssignments(List<EvalAssignUser> participants, String type, String status) {
+        int count = 0;
+        for (EvalAssignUser participant : participants) {
+            if (type.equals(participant.getType()) && status.equals(participant.getStatus())) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private EvalAssignUser findAssignment(List<EvalAssignUser> participants, String userId, String type) {
+        for (EvalAssignUser participant : participants) {
+            if (userId.equals(participant.getUserId()) && type.equals(participant.getType())) {
+                return participant;
+            }
+        }
+        Assert.fail("Could not find assignment for " + userId + " and " + type);
+        return null;
+    }
+
+    @Test
+    public void testSetEvalAssignmentsExpandsSectionAwareGroups() {
+        externalLogic.setCurrentUserId(EvalTestDataLoad.MAINT_USER_ID);
+        EvalEvaluation evaluation = etdl.evaluationNew;
+        evaluation.setSectionAwareness(Boolean.TRUE);
+        persistence.update(evaluation);
+
+        Set<String> nodeEvalGroups = new HashSet<>();
+        nodeEvalGroups.add(EvalTestDataLoad.SITE2_REF);
+        hierarchyLogic.setEvalGroupsForNode(hierarchyLogic.root.id, nodeEvalGroups);
+
+        List<EvalAssignHierarchy> assignments = evaluationSetupService.setEvalAssignments(evaluation.getId(),
+                new String[] {hierarchyLogic.root.id}, null, true);
+        Assert.assertNotNull(assignments);
+        Assert.assertEquals(3, assignments.size());
+
+        List<EvalAssignGroup> assignGroups = evaluationService.getAssignGroupsForEvals(
+                new Long[] {evaluation.getId()}, true, true).get(evaluation.getId());
+        Assert.assertNotNull(assignGroups);
+        Assert.assertEquals(2, assignGroups.size());
+        Assert.assertFalse(hasAssignGroup(assignGroups, EvalTestDataLoad.SITE2_REF));
+        Assert.assertTrue(hasAssignGroup(assignGroups, MockEvalExternalLogic.SITE2_SECTION_A_REF));
+        Assert.assertTrue(hasAssignGroup(assignGroups, MockEvalExternalLogic.SITE2_SECTION_B_REF));
+
+        List<EvalAssignUser> participants = evaluationService.getParticipantsForEval(evaluation.getId(), null,
+                null, null, EvalEvaluationService.STATUS_ANY, null, null);
+        Assert.assertNotNull(participants);
+        Assert.assertEquals(3, participants.size());
+        Assert.assertEquals(1, countAssignments(participants, EvalAssignUser.TYPE_EVALUATEE, EvalAssignUser.STATUS_LINKED));
+        Assert.assertEquals(2, countAssignments(participants, EvalAssignUser.TYPE_EVALUATOR, EvalAssignUser.STATUS_LINKED));
+    }
+
+    private boolean hasAssignGroup(List<EvalAssignGroup> assignGroups, String evalGroupId) {
+        for (EvalAssignGroup assignGroup : assignGroups) {
+            if (evalGroupId.equals(assignGroup.getEvalGroupId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Test method for {@link org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl#synchronizeUserAssignments(java.lang.Long, java.lang.String)}.
      */
@@ -1159,7 +1250,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertNotNull(currentAssign);
         currentSize = currentAssign.size();
         Assert.assertTrue(currentSize > 0);
-        currentEAUs = evaluationDao.countAll(EvalAssignUser.class);
+        currentEAUs = persistence.countAll(EvalAssignUser.class);
         Assert.assertTrue(currentEAUs > 0);
 
         evaluationSetupService.synchronizeUserAssignments(evaluationId, null);
@@ -1169,7 +1260,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertNotNull(currentAssign);
         newSize = currentAssign.size();
         Assert.assertTrue(newSize > 0);
-        newEAUs = evaluationDao.countAll(EvalAssignUser.class);
+        newEAUs = persistence.countAll(EvalAssignUser.class);
         Assert.assertTrue(newEAUs > 0);
 
         // make sure the size does not change
@@ -1183,7 +1274,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertNotNull(currentAssign);
         currentSize = currentAssign.size();
         Assert.assertTrue(currentSize > 0);
-        currentEAUs = evaluationDao.countAll(EvalAssignUser.class);
+        currentEAUs = persistence.countAll(EvalAssignUser.class);
         Assert.assertTrue(currentEAUs > 0);
 
         evaluationSetupService.synchronizeUserAssignments(evaluationId, null);
@@ -1193,7 +1284,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertNotNull(currentAssign);
         newSize = currentAssign.size();
         Assert.assertTrue(newSize > 0);
-        newEAUs = evaluationDao.countAll(EvalAssignUser.class);
+        newEAUs = persistence.countAll(EvalAssignUser.class);
         Assert.assertTrue(newEAUs > 0);
 
         // make sure the size does not change
@@ -1239,7 +1330,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertNotNull(evalEvaluatorAssignments);
         evalEvaluatorSize = evalEvaluatorAssignments.size();
         
-        allAssignmentsSize = evaluationDao.countAll(EvalAssignUser.class);
+        allAssignmentsSize = persistence.countAll(EvalAssignUser.class);
 
         evaluationSetupService.synchronizeUserAssignments(evaluationId, null);
 
@@ -1253,7 +1344,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertNotNull(evalEvaluatorAssignments);        
         newEvalEvaluatorSize = evalEvaluatorAssignments.size();
         
-        newAllAssignmentsSize = evaluationDao.countAll(EvalAssignUser.class);
+        newAllAssignmentsSize = persistence.countAll(EvalAssignUser.class);
 
         Assert.assertEquals(evalTotalSize, newEvalTotalSize);
         Assert.assertEquals(evalEvaluatorSize, newEvalEvaluatorSize);
@@ -1288,7 +1379,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertNotNull(evalEvaluatorAssignments);
         evalEvaluatorSize = evalEvaluatorAssignments.size();
         
-        allAssignmentsSize = evaluationDao.countAll(EvalAssignUser.class);
+        allAssignmentsSize = persistence.countAll(EvalAssignUser.class);
 
         evaluationSetupService.synchronizeUserAssignments(evaluationId, null);
 
@@ -1302,7 +1393,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertNotNull(evalEvaluatorAssignments);        
         newEvalEvaluatorSize = evalEvaluatorAssignments.size();
         
-        newAllAssignmentsSize = evaluationDao.countAll(EvalAssignUser.class);
+        newAllAssignmentsSize = persistence.countAll(EvalAssignUser.class);
 
         Assert.assertEquals(evalTotalSize, newEvalTotalSize);
         Assert.assertEquals(evalEvaluatorSize, newEvalEvaluatorSize);
@@ -1335,7 +1426,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertNotNull(evalEvaluatorAssignments);
         evalEvaluatorSize = evalEvaluatorAssignments.size();
         
-        allAssignmentsSize = evaluationDao.countAll(EvalAssignUser.class);
+        allAssignmentsSize = persistence.countAll(EvalAssignUser.class);
 
         evaluationSetupService.synchronizeUserAssignments(evaluationId, null);
 
@@ -1349,7 +1440,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertNotNull(evalEvaluatorAssignments);        
         newEvalEvaluatorSize = evalEvaluatorAssignments.size();
         
-        newAllAssignmentsSize = evaluationDao.countAll(EvalAssignUser.class);
+        newAllAssignmentsSize = persistence.countAll(EvalAssignUser.class);
 
         Assert.assertEquals(evalTotalSize, newEvalTotalSize);
         Assert.assertEquals(evalEvaluatorSize, newEvalEvaluatorSize);
@@ -1384,7 +1475,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         userAssign.setEvaluation(assignGroup.getEvaluation());
         userAssign.setAssignGroupId(assignGroup.getId());
         
-        evaluationDao.save(userAssign);
+        persistence.save(userAssign);
         
         evaluationId = etdl.evaluation_allRoleAssignments_allRolesParticipate.getId();
         evalAllAssignments = evaluationService.getParticipantsForEval(evaluationId, null, 
@@ -1396,7 +1487,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertNotNull(evalEvaluatorAssignments);
         evalEvaluatorSize = evalEvaluatorAssignments.size();
         
-        allAssignmentsSize = evaluationDao.countAll(EvalAssignUser.class);
+        allAssignmentsSize = persistence.countAll(EvalAssignUser.class);
 
         
         evaluationSetupService.synchronizeUserAssignments(evaluationId, null);
@@ -1411,7 +1502,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertNotNull(evalEvaluatorAssignments);        
         newEvalEvaluatorSize = evalEvaluatorAssignments.size();
         
-        newAllAssignmentsSize = evaluationDao.countAll(EvalAssignUser.class);
+        newAllAssignmentsSize = persistence.countAll(EvalAssignUser.class);
 
         Assert.assertEquals(evalTotalSize -1, newEvalTotal);
         Assert.assertEquals(evalEvaluatorSize-1, newEvalEvaluatorSize);
@@ -1446,7 +1537,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertNotNull(evalEvaluatorAssignments);
         evalEvaluatorSize = evalEvaluatorAssignments.size();
         
-        allAssignmentsSize = evaluationDao.countAll(EvalAssignUser.class);
+        allAssignmentsSize = persistence.countAll(EvalAssignUser.class);
 
         evaluationSetupService.synchronizeUserAssignments(evaluationId, null);
 
@@ -1460,7 +1551,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertNotNull(evalEvaluatorAssignments);        
         newEvalEvaluatorSize = evalEvaluatorAssignments.size();
         
-        newAllAssignmentsSize = evaluationDao.countAll(EvalAssignUser.class);
+        newAllAssignmentsSize = persistence.countAll(EvalAssignUser.class);
 
         Assert.assertEquals(evalTotalSize, newEvalTotalSize);
         Assert.assertEquals(evalEvaluatorSize, newEvalEvaluatorSize);
@@ -1495,7 +1586,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         userAssign.setEvaluation(assignGroup.getEvaluation());
         userAssign.setAssignGroupId(assignGroup.getId());
         
-        evaluationDao.save(userAssign);
+        persistence.save(userAssign);
         
         evaluationId = etdl.evaluation_allRoleAssignments_notAllRolesParticipate.getId();
         
@@ -1509,7 +1600,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertNotNull(evalEvaluatorAssignments);
         evalEvaluatorSize = evalEvaluatorAssignments.size();
         
-        allAssignmentsSize = evaluationDao.countAll(EvalAssignUser.class);
+        allAssignmentsSize = persistence.countAll(EvalAssignUser.class);
      
         evaluationSetupService.synchronizeUserAssignments(evaluationId, null);
 
@@ -1523,7 +1614,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertNotNull(evalEvaluatorAssignments);        
         newEvalEvaluatorSize = evalEvaluatorAssignments.size();
         
-        newAllAssignmentsSize = evaluationDao.countAll(EvalAssignUser.class);
+        newAllAssignmentsSize = persistence.countAll(EvalAssignUser.class);
 
         Assert.assertEquals(evalTotalSize - 1, newEvalTotalSize);
         Assert.assertEquals(evalEvaluatorSize - 1, newEvalEvaluatorSize);
@@ -1550,7 +1641,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertNotNull(currentAssign);
         currentSize = currentAssign.size();
         Assert.assertTrue(currentSize > 0);
-        currentEAUs = evaluationDao.countAll(EvalAssignUser.class);
+        currentEAUs = persistence.countAll(EvalAssignUser.class);
         Assert.assertTrue(currentEAUs > 0);
 
         evaluation = evaluationService.getEvaluationById(evaluationId);
@@ -1561,7 +1652,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertNotNull(currentAssign);
         newSize = currentAssign.size();
         Assert.assertTrue(newSize > 0);
-        newEAUs = evaluationDao.countAll(EvalAssignUser.class);
+        newEAUs = persistence.countAll(EvalAssignUser.class);
         Assert.assertTrue(newEAUs > 0);
 
         // make sure the size does not change
@@ -1575,7 +1666,7 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertNotNull(currentAssign);
         currentSize = currentAssign.size();
         Assert.assertTrue(currentSize > 0);
-        currentEAUs = evaluationDao.countAll(EvalAssignUser.class);
+        currentEAUs = persistence.countAll(EvalAssignUser.class);
         Assert.assertTrue(currentEAUs > 0);
 
         evaluation = evaluationService.getEvaluationById(evaluationId);
@@ -1630,11 +1721,21 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         Assert.assertEquals(EvalTestDataLoad.MAINT_USER_ID_3, evalAssignGroup.getOwner());
         Assert.assertEquals(EvalConstants.GROUP_TYPE_PROVIDED, evalAssignGroup.getEvalGroupType());
         
-        List<EvalAssignUser> participantsForEval = evaluationDao.getParticipantsForEval(evaluationId, null, null, null, 
+        List<EvalAssignUser> participantsForEval = assignmentDao.getParticipantsForEval(evaluationId, null, null, null, 
         		null, null, null);
         
         Assert.assertEquals(1, participantsForEval.size());
         Assert.assertEquals(EvalTestDataLoad.MAINT_USER_ID_3, participantsForEval.get(0).getUserId());
+    }
+
+    private int countExistingEmailTemplates(Long... emailTemplateIds) {
+        int count = 0;
+        for (Long emailTemplateId : emailTemplateIds) {
+            if (persistence.findById(EvalEmailTemplate.class, emailTemplateId) != null) {
+                count++;
+            }
+        }
+        return count;
     }
 
 }

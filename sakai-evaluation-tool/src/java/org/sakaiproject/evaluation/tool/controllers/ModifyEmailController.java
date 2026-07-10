@@ -16,11 +16,6 @@ package org.sakaiproject.evaluation.tool.controllers;
 
 import java.util.Objects;
 
-import javax.annotation.Resource;
-
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
-import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,16 +32,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/modify_email")
-public class ModifyEmailController {
+public class ModifyEmailController extends EvalControllerSupport {
 
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationService")
-    private EvalEvaluationService evaluationService;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationSetupService")
-    private EvalEvaluationSetupService evaluationSetupService;
 
     @GetMapping
     public String show(@RequestParam(required = false) Long templateId,
@@ -74,33 +61,39 @@ public class ModifyEmailController {
                        @RequestParam String subject,
                        @RequestParam String message) {
 
-        String userId = commonLogic.getCurrentUserId();
-        EvalEmailTemplate template = loadTemplate(templateId, emailType, evaluationId);
+        String userId = currentUserId();
+        Long[] savedTemplateId = new Long[1];
 
-        // A brand-new template pre-populated from the default: if the user submits it
-        // without changing anything, skip saving so we don't permanently clone the
-        // default template for every evaluation that never customizes its emails.
-        boolean unchanged = template.getId() == null
-                && textEquals(template.getSubject(), subject)
-                && textEquals(template.getMessage(), message);
+        daoInvoker.invokeTransactionalAccess(() -> {
+            EvalEmailTemplate template = loadTemplate(templateId, emailType, evaluationId);
 
-        if (!unchanged) {
-            template.setSubject(subject);
-            template.setMessage(message);
-            if (template.getType() == null && emailType != null) {
-                template.setType(emailType);
+            // A brand-new template pre-populated from the default: if the user submits it
+            // without changing anything, skip saving so we don't permanently clone the
+            // default template for every evaluation that never customizes its emails.
+            boolean unchanged = template.getId() == null
+                    && textEquals(template.getSubject(), subject)
+                    && textEquals(template.getMessage(), message);
+
+            if (!unchanged) {
+                template.setSubject(subject);
+                template.setMessage(message);
+                if (template.getType() == null && emailType != null) {
+                    template.setType(emailType);
+                }
+                evaluationSetupService.saveEmailTemplate(template, userId);
+
+                if (evaluationId != null) {
+                    evaluationSetupService.assignEmailTemplate(template.getId(), evaluationId, null, userId);
+                }
             }
-            evaluationSetupService.saveEmailTemplate(template, userId);
 
-            if (evaluationId != null) {
-                evaluationSetupService.assignEmailTemplate(template.getId(), evaluationId, null, userId);
-            }
-        }
+            savedTemplateId[0] = template.getId();
+        });
 
         if (evaluationId != null) {
             StringBuilder redirect = new StringBuilder("redirect:/preview_email?evaluationId=").append(evaluationId);
-            if (template.getId() != null) {
-                redirect.append("&templateId=").append(template.getId());
+            if (savedTemplateId[0] != null) {
+                redirect.append("&templateId=").append(savedTemplateId[0]);
             }
             if (emailType != null) {
                 redirect.append("&emailType=").append(emailType);
@@ -123,7 +116,7 @@ public class ModifyEmailController {
     @PostMapping("/reset")
     public String reset(@RequestParam Long evaluationId,
                         @RequestParam String emailType) {
-        String userId = commonLogic.getCurrentUserId();
+        String userId = currentUserId();
         evaluationSetupService.assignEmailTemplate(null, evaluationId, emailType, userId);
         return "redirect:/preview_email?emailType=" + emailType + "&evaluationId=" + evaluationId;
     }
@@ -142,7 +135,7 @@ public class ModifyEmailController {
         }
         // new template, pre-populated from default if available
         EvalEmailTemplate t = new EvalEmailTemplate();
-        t.setOwner(commonLogic.getCurrentUserId());
+        t.setOwner(currentUserId());
         if (emailType != null) t.setType(emailType);
         if (defaultTemplate != null) {
             t.setSubject(defaultTemplate.getSubject());

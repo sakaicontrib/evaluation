@@ -17,19 +17,12 @@ package org.sakaiproject.evaluation.tool.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
-import org.sakaiproject.evaluation.tool.LocalTemplateLogic;
 import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.springframework.stereotype.Controller;
@@ -46,25 +39,8 @@ import lombok.Data;
  */
 @Controller
 @RequestMapping("/modify_template_items")
-public class ModifyTemplateItemsController {
+public class ModifyTemplateItemsController extends EvalControllerSupport {
 
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalAuthoringService")
-    private EvalAuthoringService authoringService;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationService")
-    private EvalEvaluationService evaluationService;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalSettings")
-    private EvalSettings settings;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic")
-    private ExternalHierarchyLogic hierarchyLogic;
-
-    @Resource(name = "localTemplateLogic")
-    private LocalTemplateLogic localTemplateLogic;
 
     @Data
     public static class TemplateItemRow {
@@ -105,7 +81,7 @@ public class ModifyTemplateItemsController {
                        @RequestParam(required = false) Long templateItemId,
                        Model model) {
 
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         EvalTemplate template = localTemplateLogic.fetchTemplate(templateId);
         List<EvalTemplateItem> allItems = localTemplateLogic.fetchTemplateItems(templateId);
 

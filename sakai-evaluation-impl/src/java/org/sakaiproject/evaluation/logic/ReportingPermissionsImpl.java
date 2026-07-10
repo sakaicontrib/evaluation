@@ -14,6 +14,8 @@
  */
 package org.sakaiproject.evaluation.logic;
 
+import org.sakaiproject.evaluation.dao.EvaluationAssignmentDao;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,7 +25,6 @@ import java.util.Set;
 
 import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -58,9 +59,9 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
  */
 public class ReportingPermissionsImpl implements ReportingPermissions {
 
-    private EvaluationDao dao;
-    public void setDao(EvaluationDao dao) {
-        this.dao = dao;
+    private EvaluationAssignmentDao assignmentDao;
+    public void setAssignmentDao(EvaluationAssignmentDao assignmentDao) {
+        this.assignmentDao = assignmentDao;
     }
 
     private EvalCommonLogic commonLogic;
@@ -139,7 +140,7 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
              * locks.
              */
             if (checkBasedOnRole) {
-                groupIdsTogo = getViewableGroupsForEvalAndUserByRole(evaluation, currentUserId, null);
+                groupIdsTogo = getViewableGroupsForEvalAndUserByRoleInternal(evaluation, currentUserId, null);
             } else {
                 // user can view all groups
                 // Should the includeUnapproved be true or false for this use case?? (swg) - false -AZ
@@ -207,7 +208,7 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
      */
     private boolean checkGroupsForEvalUserGroups(EvalEvaluation evaluation, String[] groupIds, String userId) {
         boolean allowed = false;
-        FlagHashSet<String> fhs = getViewableGroupsForEvalAndUserByRole(evaluation, userId, groupIds);
+        FlagHashSet<String> fhs = getViewableGroupsForEvalAndUserByRoleInternal(evaluation, userId, groupIds);
         if ( groupIds == null) {
             // checked all groups so compare to the totalCount
             if (fhs.size() == fhs.totalCount) {
@@ -241,7 +242,12 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
      * if null then check all groups for this evaluation
      * @return the set of evalGroupIds that can be viewed by this user
      */
-    protected FlagHashSet<String> getViewableGroupsForEvalAndUserByRole(EvalEvaluation eval, String userId, String[] groupIds) {
+    @Override
+    public Set<String> getViewableGroupsForEvalAndUserByRole(EvalEvaluation eval, String userId, String[] groupIds) {
+        return getViewableGroupsForEvalAndUserByRoleInternal(eval, userId, groupIds);
+    }
+
+    private FlagHashSet<String> getViewableGroupsForEvalAndUserByRoleInternal(EvalEvaluation eval, String userId, String[] groupIds) {
         if (eval == null || userId == null || "".equals(userId)) {
             throw new IllegalArgumentException("eval and userId must be set");
         }
@@ -336,14 +342,15 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
      * otherwise the role is treated as the student/learner/evaluator
      * @return the set of viewable evalGroupIds
      */
-    protected FlagHashSet<String> getEvalGroupIdsForUserRole(Long evaluationId, String userId, String[] groupIds, boolean isUserInstructor) {
+    @Override
+    public Set<String> getEvalGroupIdsForUserRole(Long evaluationId, String userId, String[] groupIds, boolean isUserInstructor) {
         FlagHashSet<String> viewableGroupIds = new FlagHashSet<>();
         String type = EvalAssignUser.TYPE_EVALUATOR;
         if (isUserInstructor) {
             type = EvalAssignUser.TYPE_EVALUATEE;
         }
         if (groupIds == null || groupIds.length > 0) {
-            Set<String> gids = dao.getViewableEvalGroupIds(evaluationId, type, groupIds);
+            Set<String> gids = assignmentDao.getViewableEvalGroupIds(evaluationId, type, groupIds);
             viewableGroupIds.addAll( gids );
         }
         return viewableGroupIds;

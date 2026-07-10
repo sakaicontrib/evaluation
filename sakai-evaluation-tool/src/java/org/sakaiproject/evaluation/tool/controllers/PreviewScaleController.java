@@ -19,15 +19,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalAuthoringService;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
-import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
-import org.sakaiproject.evaluation.tool.utils.ScaledUtils;
+import org.sakaiproject.evaluation.tool.utils.ScaleOptionsBuilder;
+import org.sakaiproject.evaluation.tool.utils.ScaleOptionsBuilder.OptionData;
+import org.sakaiproject.evaluation.tool.utils.ScaleOptionsBuilder.SteppedRow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -47,24 +46,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/preview_scale")
-public class PreviewScaleController {
+public class PreviewScaleController extends EvalControllerSupport {
 
     @Data
-    public static class OptionData {
-        int index;
-        String value;
-        String label;
-    }
-
-    @Data
-    public static class SteppedRow {
-        String label;
-        int middleCount;
-        String value;
-    }
-
-    @Data
-    public static class ScaleSection {
+    public static class ScaleSection implements ScaleOptionsBuilder.ScaleOptionsTarget {
         String displaySetting;
         String title;
         String questionText;
@@ -84,10 +69,6 @@ public class PreviewScaleController {
         // Stepped (options in reverse order)
         List<SteppedRow> steppedRows;
     }
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalAuthoringService")
-    private EvalAuthoringService authoringService;
-
     @Autowired
     private MessageSource messageSource;
 
@@ -134,94 +115,7 @@ public class PreviewScaleController {
         s.setDisplaySetting(ds);
         s.setTitle(title);
         s.setQuestionText("Sample question text (" + title + ")");
-
-        List<String> rawOptions = scale.getOptions();
-        int n = rawOptions.size();
-
-        boolean isCompact   = EvalConstants.ITEM_SCALE_DISPLAY_COMPACT.equals(ds)
-                           || EvalConstants.ITEM_SCALE_DISPLAY_COMPACT_COLORED.equals(ds);
-        boolean isStepped   = EvalConstants.ITEM_SCALE_DISPLAY_STEPPED.equals(ds)
-                           || EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED.equals(ds);
-        boolean isMatrix    = EvalConstants.ITEM_SCALE_DISPLAY_MATRIX.equals(ds)
-                           || EvalConstants.ITEM_SCALE_DISPLAY_MATRIX_COLORED.equals(ds);
-        boolean isColored   = EvalConstants.ITEM_SCALE_DISPLAY_COMPACT_COLORED.equals(ds)
-                           || EvalConstants.ITEM_SCALE_DISPLAY_FULL_COLORED.equals(ds)
-                           || EvalConstants.ITEM_SCALE_DISPLAY_STEPPED_COLORED.equals(ds)
-                           || EvalConstants.ITEM_SCALE_DISPLAY_MATRIX_COLORED.equals(ds);
-
-        if (isColored) {
-            s.setIdealImageUrl(resolveContextUrl(EvalToolConstants.COLORED_IMAGE_URLS[ScaledUtils.idealIndex(scale)]));
-        }
-
-        if (isCompact) {
-            s.setStartLabel(rawOptions.get(0));
-            s.setEndLabel(rawOptions.get(n - 1));
-            if (isColored) {
-                s.setStartClass(ScaledUtils.getStartClass(scale));
-                s.setEndClass(ScaledUtils.getEndClass(scale));
-            }
-            List<OptionData> opts = new ArrayList<>();
-            for (int j = 0; j < n; j++) {
-                OptionData o = new OptionData();
-                o.setIndex(j);
-                o.setValue(String.valueOf(j));
-                o.setLabel(" ");
-                opts.add(o);
-            }
-            s.setOptions(opts);
-
-        } else if (isStepped) {
-            List<SteppedRow> rows = new ArrayList<>();
-            for (int j = 0; j < n; j++) {
-                SteppedRow row = new SteppedRow();
-                row.setLabel(rawOptions.get(n - 1 - j));
-                row.setMiddleCount(j);
-                row.setValue(String.valueOf(n - 1 - j));
-                rows.add(row);
-            }
-            s.setSteppedRows(rows);
-            List<OptionData> opts = new ArrayList<>();
-            for (int j = 0; j < n; j++) {
-                OptionData o = new OptionData();
-                o.setIndex(j);
-                o.setValue(String.valueOf(n - 1 - j));
-                o.setLabel(rawOptions.get(n - 1 - j));
-                opts.add(o);
-            }
-            s.setOptions(opts);
-
-        } else if (isMatrix) {
-            List<String> headers = RenderingUtils.getMatrixLabels(rawOptions);
-            s.setMatrixLabelStart(headers.get(0));
-            s.setMatrixLabelEnd(headers.get(1));
-            if (headers.size() >= 3) s.setMatrixLabelMiddle(headers.get(2));
-            List<OptionData> opts = new ArrayList<>();
-            for (int j = 0; j < n; j++) {
-                OptionData o = new OptionData();
-                o.setIndex(j);
-                o.setValue(String.valueOf(n - 1 - j));
-                o.setLabel(String.valueOf(j + 1));
-                opts.add(o);
-            }
-            s.setOptions(opts);
-
-        } else {
-            // Full, FullColored, Vertical
-            List<OptionData> opts = new ArrayList<>();
-            for (int j = 0; j < n; j++) {
-                OptionData o = new OptionData();
-                o.setIndex(j);
-                o.setValue(String.valueOf(j));
-                o.setLabel(rawOptions.get(j));
-                opts.add(o);
-            }
-            s.setOptions(opts);
-        }
-
+        ScaleOptionsBuilder.applyRenderOptions(s, ScaleOptionsBuilder.forScale(scale, ds));
         return s;
-    }
-
-    private String resolveContextUrl(String url) {
-        return url.replace("$context", "");
     }
 }

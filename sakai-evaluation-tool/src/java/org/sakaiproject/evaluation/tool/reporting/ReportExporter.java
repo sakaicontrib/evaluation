@@ -34,9 +34,9 @@ public interface ReportExporter {
     * @param evaluation the {@link EvalEvaluation} object to build the report for
     * @param groupIds the set of groups to include results data from
     * @param outputStream the resulting data will be placed into this
-    * @param newReportStyle toggle new report style on/off
+    * @param exportType the export type constant selecting report layout
     */
-   public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream, boolean newReportStyle);
+   public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream, String exportType);
    
    /**
     * Generates the export which will be placed into the OutputStream for sending to the user via an HTTP response
@@ -45,10 +45,10 @@ public interface ReportExporter {
     * @param groupIds the set of groups to include results data from
 	* @param evaluateeId restrict this report to only the results for this instructor
     * @param outputStream the resulting data will be placed into this
-    * @param newReportStyle toggle new report style on/off
+    * @param exportType the export type constant selecting report layout
     */
-   public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream, boolean newReportStyle);
-   public void setEvalMessageLocator(EvalMessageLocator locator);
+   public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream, String exportType);
+   public void setMessageSource(ReportMessageSource messageSource);
 
    
    public String getContentType();

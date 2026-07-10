@@ -28,7 +28,7 @@
     <link th:href="${skinRepo + '/' + skinDefault + '/tool.css'}" type="text/css" rel="stylesheet" media="screen"/>
     <script th:src="@{/content/js/jquery/jquery-1.4.4.min.js}"></script>
     <script th:src="@{/webjars/autosize/3.0.21/dist/autosize.min.js}"></script>
-    <script th:src="@{/content/js/utils.js}"></script>
+    <th:block th:replace="~{fragments/evalsys_scripts :: evalsys}"></th:block>
     <script th:src="@{/content/js/jquery/jquery.tipsy.js}"></script>
     <script th:src="@{/content/js/toggleCommentBox.js}"></script>
     <script th:src="@{/content/js/evalTakeEval.js}"></script>

@@ -51,6 +51,13 @@ public interface EvalEvaluationService {
     public static final String CSV_RESULTS_REPORT = "csvResultsReport";
     public static final String PDF_RESULTS_REPORT_INDIVIDUAL = "pdfResultsReportIndividual";
     public static final String CSV_TAKERS_REPORT = "csvTakersReport";
+    public static final String CSV_RESULTS_REPORT_SECTIONED = "csvResultsReportSectioned";
+    public static final String XLS_RESULTS_REPORT_SECTIONED = "xlsResultsReportSectioned";
+
+    public static boolean isSectionedResultsExport(String exportType) {
+        return CSV_RESULTS_REPORT_SECTIONED.equals(exportType)
+                || XLS_RESULTS_REPORT_SECTIONED.equals(exportType);
+    }
     // EVALUATIONS
 
     /**

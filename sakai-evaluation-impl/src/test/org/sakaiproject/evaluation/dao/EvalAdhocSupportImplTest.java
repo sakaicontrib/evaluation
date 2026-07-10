@@ -29,6 +29,8 @@ import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAdhocUser;
 import org.sakaiproject.evaluation.test.EvalTestDataLoad;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 
 /**
@@ -38,26 +40,18 @@ import org.sakaiproject.evaluation.test.EvalTestDataLoad;
  */
 public class EvalAdhocSupportImplTest extends BaseTestEvalLogic {
 
-   EvalAdhocSupportImpl adhocSupportLogic;
+   @Autowired
+   @Qualifier("org.sakaiproject.evaluation.dao.EvalAdhocSupport")
+   EvalAdhocSupport adhocSupportLogic;
+   @Autowired
+   @Qualifier("org.sakaiproject.evaluation.logic.EvalSettings")
+   EvalSettings settings;
 
    // run this before each test starts
    @Override
    @Before
    public void onSetUpBeforeTransaction() throws Exception {
       super.onSetUpBeforeTransaction();
-
-      // load up any other needed spring beans
-      EvalSettings settings = (EvalSettings) applicationContext.getBean("org.sakaiproject.evaluation.logic.EvalSettings");
-      if (settings == null) {
-         throw new NullPointerException("EvalSettings could not be retrieved from spring context");
-      }
-
-      // setup the mock objects if needed
-
-      // create and setup the object to be tested
-      adhocSupportLogic = new EvalAdhocSupportImpl();
-      adhocSupportLogic.setDao(evaluationDao);
-      adhocSupportLogic.setSettings(settings);
 
       // enable these for the tests
       settings.set(EvalSettings.ENABLE_ADHOC_GROUPS, true);

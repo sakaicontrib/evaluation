@@ -14,10 +14,6 @@
  */
 package org.sakaiproject.evaluation.tool.controllers;
 
-import javax.annotation.Resource;
-
-import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
@@ -33,13 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/remove_item")
-public class RemoveItemController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalAuthoringService")
-    private EvalAuthoringService authoringService;
+public class RemoveItemController extends EvalControllerSupport {
 
     @GetMapping
     public String show(@RequestParam(required = false) Long itemId,
@@ -76,7 +66,7 @@ public class RemoveItemController {
     public String remove(@RequestParam(required = false) Long itemId,
                          @RequestParam(required = false) Long templateItemId,
                          @RequestParam(required = false) Long templateId) {
-        String userId = commonLogic.getCurrentUserId();
+        String userId = currentUserId();
         if (templateItemId != null) {
             authoringService.deleteTemplateItem(templateItemId, userId);
             return "redirect:/modify_template_items?templateId=" + templateId;

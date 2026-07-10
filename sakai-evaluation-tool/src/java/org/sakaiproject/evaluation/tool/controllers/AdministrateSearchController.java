@@ -21,10 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -41,16 +37,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/administrate_search")
-public class AdministrateSearchController {
+public class AdministrateSearchController extends EvalControllerSupport {
 
     public static final int PAGE_SIZE = 20;
     public static final int MAX_GROUP_SIZE = 200;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationService")
-    private EvalEvaluationService evaluationService;
 
     @Data
     public static class EvalRow {
@@ -72,7 +62,7 @@ public class AdministrateSearchController {
             @RequestParam(required = false, defaultValue = "false") boolean searchGroups,
             Model model) {
 
-        if (!commonLogic.isUserAdmin(commonLogic.getCurrentUserId()))
+        if (!isCurrentUserAdmin())
             throw new SecurityException("Non-admin users may not access this page");
 
         // The "searchByGroup" button present in the request indicates a group search

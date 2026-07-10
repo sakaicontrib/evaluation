@@ -22,9 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAdmin;
@@ -42,13 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/control_eval_admin")
-public class ControlEvalAdminController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalSettings")
-    private EvalSettings evalSettings;
+public class ControlEvalAdminController extends EvalControllerSupport {
 
     @Data
     public static class AdminRow {
@@ -62,7 +53,7 @@ public class ControlEvalAdminController {
 
     @GetMapping
     public String show(Model model) {
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         if (!commonLogic.isUserAdmin(currentUserId))
             throw new SecurityException("Users who are not assigned as eval admins may not access this page");
 
@@ -92,7 +83,7 @@ public class ControlEvalAdminController {
         }
         model.addAttribute("adminRows", rows);
 
-        boolean sakaiAdminAccessEnabled = Boolean.TRUE.equals(evalSettings.get(EvalSettings.ENABLE_SAKAI_ADMIN_ACCESS));
+        boolean sakaiAdminAccessEnabled = Boolean.TRUE.equals(settings.get(EvalSettings.ENABLE_SAKAI_ADMIN_ACCESS));
         model.addAttribute("sakaiAdminAccessEnabled", sakaiAdminAccessEnabled);
         model.addAttribute("isEvalAdmin", commonLogic.isUserEvalAdmin(currentUserId));
 
@@ -106,7 +97,7 @@ public class ControlEvalAdminController {
 
     @PostMapping("/assign")
     public String assign(@RequestParam String userEid, RedirectAttributes ra) {
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         if (!commonLogic.isUserAdmin(currentUserId))
             throw new SecurityException("Users who are not eval admins cannot assign other users as eval admins");
 
@@ -131,7 +122,7 @@ public class ControlEvalAdminController {
 
     @PostMapping("/unassign")
     public String unassign(@RequestParam String userId, RedirectAttributes ra) {
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         if (!commonLogic.isUserAdmin(currentUserId))
             throw new SecurityException("Users who are not eval admins cannot unassign other users as eval admins");
 
@@ -151,12 +142,12 @@ public class ControlEvalAdminController {
 
     @PostMapping("/toggle")
     public String toggle(RedirectAttributes ra) {
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         if (!commonLogic.isUserEvalAdmin(currentUserId))
             throw new SecurityException("Only eval admins can enable/disable sakai admin access");
 
-        boolean current = Boolean.TRUE.equals(evalSettings.get(EvalSettings.ENABLE_SAKAI_ADMIN_ACCESS));
-        evalSettings.set(EvalSettings.ENABLE_SAKAI_ADMIN_ACCESS, !current);
+        boolean current = Boolean.TRUE.equals(settings.get(EvalSettings.ENABLE_SAKAI_ADMIN_ACCESS));
+        settings.set(EvalSettings.ENABLE_SAKAI_ADMIN_ACCESS, !current);
         if (current) {
             ra.addFlashAttribute("successMessage", "controlevaladmin.message.sakai.admin.access.disabled");
             log.info("Sakai admin access to evaluation system is disabled by {}", currentUserId);

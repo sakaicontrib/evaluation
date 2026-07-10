@@ -14,11 +14,7 @@
  */
 package org.sakaiproject.evaluation.tool.controllers;
 
-import javax.annotation.Resource;
-
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,13 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/remove_expert_item")
-public class RemoveExpertItemController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalAuthoringService")
-    private EvalAuthoringService authoringService;
+public class RemoveExpertItemController extends EvalControllerSupport {
 
     @GetMapping
     public String show(@RequestParam String type,
@@ -67,7 +57,7 @@ public class RemoveExpertItemController {
 
         boolean isCategory = EvalConstants.ITEM_GROUP_TYPE_CATEGORY.equals(type);
         Long eigId = isCategory ? categoryId : objectiveId;
-        authoringService.removeItemGroup(eigId, commonLogic.getCurrentUserId(), Boolean.FALSE);
+        authoringService.removeItemGroup(eigId, currentUserId(), Boolean.FALSE);
         return "redirect:/control_expert_items";
     }
 }

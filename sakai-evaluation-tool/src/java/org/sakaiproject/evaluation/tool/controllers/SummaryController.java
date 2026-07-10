@@ -20,15 +20,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import javax.annotation.Resource;
-
-import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.EvalDeliveryService;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
-import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
@@ -50,7 +42,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/summary")
-public class SummaryController {
+public class SummaryController extends EvalControllerSupport {
 
     // DTOs for passing data to the template -----------------------------------------------------------
 
@@ -80,33 +72,13 @@ public class SummaryController {
 
     // Servicios -----------------------------------------------------------------------------------
 
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalAuthoringService")
-    private EvalAuthoringService authoringService;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationService")
-    private EvalEvaluationService evaluationService;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationSetupService")
-    private EvalEvaluationSetupService evaluationSetupService;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalDeliveryService")
-    private EvalDeliveryService deliveryService;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalSettings")
-    private EvalSettings settings;
-
-    @Resource(name = "org.sakaiproject.evaluation.beans.EvalBeanUtils")
-    private EvalBeanUtils evalBeanUtils;
 
     // Handler -------------------------------------------------------------------------------------
 
     @GetMapping
     public String show(Locale locale, Model model) {
 
-        String userId = commonLogic.getCurrentUserId();
+        String userId = currentUserId();
         DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
 
         // --- Permisos generales ---

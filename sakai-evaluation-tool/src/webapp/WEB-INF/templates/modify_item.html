@@ -27,7 +27,7 @@
     <script src="/library/webjars/jquery/1.12.4/jquery.min.js"></script>
     <script src="/library/webjars/jquery-ui/1.12.1/jquery-ui.min.js"></script>
     <script src="/library/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js"></script>
-    <script th:src="@{/content/js/utils.js}"></script>
+    <th:block th:replace="~{fragments/evalsys_scripts :: evalsys}"></th:block>
     [(${sakaiHtmlHead})]
 </head>
 <body>

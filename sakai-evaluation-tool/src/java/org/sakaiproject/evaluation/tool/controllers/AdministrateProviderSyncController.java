@@ -19,11 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.quartz.CronExpression;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.scheduling.GroupMembershipSync;
 import org.sakaiproject.evaluation.utils.EvalUtils;
@@ -40,13 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/administrate_provider_sync")
-public class AdministrateProviderSyncController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalSettings")
-    private EvalSettings evalSettings;
+public class AdministrateProviderSyncController extends EvalControllerSupport {
 
     private static final String JOB_GROUP = "org.sakaiproject.evaluation.tool.ProviderSyncBean";
     private static final long DELAY_MILLIS = 2L * 60L * 1000L;
@@ -69,17 +60,17 @@ public class AdministrateProviderSyncController {
                              RedirectAttributes ra) {
         checkAdmin();
         if (syncUnassignedOnStartup != null)
-            evalSettings.set(EvalSettings.SYNC_UNASSIGNED_GROUPS_ON_STARTUP, syncUnassignedOnStartup);
+            settings.set(EvalSettings.SYNC_UNASSIGNED_GROUPS_ON_STARTUP, syncUnassignedOnStartup);
         if (syncOnStateChange != null)
-            evalSettings.set(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_STATE_CHANGE, syncOnStateChange);
+            settings.set(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_STATE_CHANGE, syncOnStateChange);
         if (syncOnGroupSave != null)
-            evalSettings.set(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_GROUP_SAVE, syncOnGroupSave);
+            settings.set(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_GROUP_SAVE, syncOnGroupSave);
         if (syncOnGroupUpdate != null)
-            evalSettings.set(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_GROUP_UPDATE, syncOnGroupUpdate);
+            settings.set(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_GROUP_UPDATE, syncOnGroupUpdate);
         if (syncServerId != null && !syncServerId.isEmpty())
-            evalSettings.set(EvalSettings.SYNC_SERVER, syncServerId);
+            settings.set(EvalSettings.SYNC_SERVER, syncServerId);
         ra.addFlashAttribute("successMessage", "administrate.sync.event.saved");
-        log.info("Admin ({}) saved sync event settings", commonLogic.getCurrentUserId());
+        log.info("Admin ({}) saved sync event settings", currentUserId());
         return "redirect:/administrate_provider_sync?tab=0";
     }
 
@@ -97,10 +88,10 @@ public class AdministrateProviderSyncController {
             return "redirect:/administrate_provider_sync?tab=1";
         }
         if (syncServerId != null && !syncServerId.isEmpty())
-            evalSettings.set(EvalSettings.SYNC_SERVER, syncServerId);
+            settings.set(EvalSettings.SYNC_SERVER, syncServerId);
         scheduleCronJob(cronExpression.trim(), stateList.trim());
         ra.addFlashAttribute("successMessage", "administrate.sync.job.success");
-        log.info("Admin ({}) scheduled sync: cron={} states={}", commonLogic.getCurrentUserId(), cronExpression, stateList);
+        log.info("Admin ({}) scheduled sync: cron={} states={}", currentUserId(), cronExpression, stateList);
         return "redirect:/administrate_provider_sync?tab=1";
     }
 
@@ -125,9 +116,9 @@ public class AdministrateProviderSyncController {
                     job.get(EvalConstants.CRON_SCHEDULER_JOB_GROUP));
         }
         if (syncServerId != null && !syncServerId.isEmpty())
-            evalSettings.set(EvalSettings.SYNC_SERVER, syncServerId);
+            settings.set(EvalSettings.SYNC_SERVER, syncServerId);
         scheduleCronJob(cronExpression.trim(), stateList.trim());
-        log.info("Admin ({}) updated sync job {}", commonLogic.getCurrentUserId(), fullJobName);
+        log.info("Admin ({}) updated sync job {}", currentUserId(), fullJobName);
         return "redirect:/administrate_provider_sync?tab=1";
     }
 
@@ -167,24 +158,24 @@ public class AdministrateProviderSyncController {
                 cal.get(Calendar.HOUR_OF_DAY) + " " + cal.get(Calendar.DAY_OF_MONTH) + " " +
                 (cal.get(Calendar.MONTH) + 1) + " ? " + cal.get(Calendar.YEAR);
         if (syncServerId != null && !syncServerId.isEmpty())
-            evalSettings.set(EvalSettings.SYNC_SERVER, syncServerId);
+            settings.set(EvalSettings.SYNC_SERVER, syncServerId);
         scheduleCronJob(cron, stateList.trim());
         ra.addFlashAttribute("successMessage", "administrate.sync.quick.success");
         ra.addFlashAttribute("successArgs", new Object[]{"2", stateList});
-        log.info("Admin ({}) quick sync scheduled: states={}", commonLogic.getCurrentUserId(), stateList);
+        log.info("Admin ({}) quick sync scheduled: states={}", currentUserId(), stateList);
         return "redirect:/administrate_provider_sync?tab=2";
     }
 
     private void loadModel(Model model) {
         model.addAttribute("syncUnassignedOnStartup",
-                Boolean.TRUE.equals(evalSettings.get(EvalSettings.SYNC_UNASSIGNED_GROUPS_ON_STARTUP)));
+                Boolean.TRUE.equals(settings.get(EvalSettings.SYNC_UNASSIGNED_GROUPS_ON_STARTUP)));
         model.addAttribute("syncOnStateChange",
-                Boolean.TRUE.equals(evalSettings.get(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_STATE_CHANGE)));
+                Boolean.TRUE.equals(settings.get(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_STATE_CHANGE)));
         model.addAttribute("syncOnGroupSave",
-                Boolean.TRUE.equals(evalSettings.get(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_GROUP_SAVE)));
+                Boolean.TRUE.equals(settings.get(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_GROUP_SAVE)));
         model.addAttribute("syncOnGroupUpdate",
-                Boolean.TRUE.equals(evalSettings.get(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_GROUP_UPDATE)));
-        Object syncServer = evalSettings.get(EvalSettings.SYNC_SERVER);
+                Boolean.TRUE.equals(settings.get(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_GROUP_UPDATE)));
+        Object syncServer = settings.get(EvalSettings.SYNC_SERVER);
         model.addAttribute("syncServerId", syncServer != null ? syncServer.toString() : "");
 
         List<String> serverIds = commonLogic.getServers();
@@ -229,7 +220,7 @@ public class AdministrateProviderSyncController {
     }
 
     private void checkAdmin() {
-        if (!commonLogic.isUserAdmin(commonLogic.getCurrentUserId()))
+        if (!isCurrentUserAdmin())
             throw new SecurityException("Non-admin users may not access this page");
     }
 }

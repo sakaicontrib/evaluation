@@ -14,10 +14,6 @@
  */
 package org.sakaiproject.evaluation.tool.controllers;
 
-import javax.annotation.Resource;
-
-import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,17 +27,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/remove_template")
-public class RemoveTemplateController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalAuthoringService")
-    private EvalAuthoringService authoringService;
+public class RemoveTemplateController extends EvalControllerSupport {
 
     @GetMapping
     public String show(@RequestParam Long templateId, Model model) {
-        String userId = commonLogic.getCurrentUserId();
+        String userId = currentUserId();
         EvalTemplate template = authoringService.getTemplateById(templateId);
         boolean canRemove = authoringService.canRemoveTemplate(userId, templateId);
 
@@ -53,7 +43,7 @@ public class RemoveTemplateController {
 
     @PostMapping
     public String remove(@RequestParam Long templateId) {
-        String userId = commonLogic.getCurrentUserId();
+        String userId = currentUserId();
         authoringService.deleteTemplate(templateId, userId);
         return "redirect:/control_templates";
     }

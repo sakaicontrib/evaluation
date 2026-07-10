@@ -14,11 +14,7 @@
  */
 package org.sakaiproject.evaluation.tool.controllers;
 
-import javax.annotation.Resource;
-
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.springframework.stereotype.Controller;
@@ -37,13 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/chown_eval")
-public class ChownEvalController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationService")
-    private EvalEvaluationService evaluationService;
+public class ChownEvalController extends EvalControllerSupport {
 
     @GetMapping
     public String show(@RequestParam Long evaluationId,
@@ -61,7 +51,7 @@ public class ChownEvalController {
                         @RequestParam String newOwner,
                         RedirectAttributes redirectAttributes) {
 
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         EvalEvaluation evaluation = evaluationService.getEvaluationById(evaluationId);
 
         // resolve new owner: try by username, then by internal id, then by email

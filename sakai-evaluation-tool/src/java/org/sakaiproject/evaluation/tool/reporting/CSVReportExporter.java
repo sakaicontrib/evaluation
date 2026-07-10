@@ -14,7 +14,7 @@
  */
 package org.sakaiproject.evaluation.tool.reporting;
 
-import org.sakaiproject.evaluation.tool.reporting.EvalMessageLocator;
+import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -47,7 +47,7 @@ import com.opencsv.CSVWriter;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * 
+ *
  * @author Steven Githens
  * @author Aaron Zeckoski (aaronz@vt.edu)
  */
@@ -69,15 +69,15 @@ public class CSVReportExporter implements ReportExporter {
         this.responseAggregator = bean;
     }
 
-    private EvalMessageLocator messageLocator;
-    public void setEvalMessageLocator(EvalMessageLocator locator) {
-        this.messageLocator = locator;
+    private ReportMessageSource messages;
+    public void setMessageSource(ReportMessageSource messageSource) {
+        this.messages = messageSource;
     }
 
     /**
      * Utility method to take a list of strings and append them to a StringBuilder
      * in CSV style
-     * 
+     *
      * @param sb - the StringBuilder object to use
      * @param entries - the entries to add to the StringBuilder
      */
@@ -108,7 +108,7 @@ public class CSVReportExporter implements ReportExporter {
 
     /**
      * Build the .csv report in the new (section based) format.
-     * 
+     *
      * @param evaluation - the EvalEvaluation object
      * @param groupIDs - group ID's associated with the evaluation
      * @param outputStream - the OutputStream to write to
@@ -137,19 +137,19 @@ public class CSVReportExporter implements ReportExporter {
             // Generate static column headers
             if( evaluation.getSectionAwareness() )
             {
-                instructorRelatedQuestionHeaders.add( messageLocator.getMessage( "viewreport.section.header" ) );
-                courseRelatedQuestionHeaders.add( messageLocator.getMessage( "viewreport.section.header" ) );
+                instructorRelatedQuestionHeaders.add( messages.getMessage( "viewreport.section.header" ) );
+                courseRelatedQuestionHeaders.add( messages.getMessage( "viewreport.section.header" ) );
             }
             else
             {
-                instructorRelatedQuestionHeaders.add( messageLocator.getMessage( "viewreport.site.header" ) );
-                courseRelatedQuestionHeaders.add( messageLocator.getMessage( "viewreport.site.header" ) );
+                instructorRelatedQuestionHeaders.add( messages.getMessage( "viewreport.site.header" ) );
+                courseRelatedQuestionHeaders.add( messages.getMessage( "viewreport.site.header" ) );
             }
-            courseRelatedQuestionHeaders.add( messageLocator.getMessage( "viewreport.responseID.header" ) );
-            instructorRelatedQuestionHeaders.add( messageLocator.getMessage( "viewreport.responseID.header" ) );
-            instructorRelatedQuestionHeaders.add( messageLocator.getMessage( "viewreport.instructorID.header" ) );
-            instructorRelatedQuestionHeaders.add( messageLocator.getMessage( "viewreport.firstName.header" ) );
-            instructorRelatedQuestionHeaders.add( messageLocator.getMessage( "viewreport.lastName.header" ) );
+            courseRelatedQuestionHeaders.add( messages.getMessage( "viewreport.responseID.header" ) );
+            instructorRelatedQuestionHeaders.add( messages.getMessage( "viewreport.responseID.header" ) );
+            instructorRelatedQuestionHeaders.add( messages.getMessage( "viewreport.instructorID.header" ) );
+            instructorRelatedQuestionHeaders.add( messages.getMessage( "viewreport.firstName.header" ) );
+            instructorRelatedQuestionHeaders.add( messages.getMessage( "viewreport.lastName.header" ) );
 
             // Generate dynamic question (column) headers
             for( DataTemplateItem dti : dtiList )
@@ -173,7 +173,7 @@ public class CSVReportExporter implements ReportExporter {
                     instructorRelatedQuestionHeaders.add( questionText );
                     if( dti.usesComments() )
                     {
-                        instructorRelatedQuestionHeaders.add( messageLocator.getMessage( "viewreport.comments.header" ) );
+                        instructorRelatedQuestionHeaders.add( messages.getMessage( "viewreport.comments.header" ) );
                     }
                 }
                 else
@@ -181,7 +181,7 @@ public class CSVReportExporter implements ReportExporter {
                     courseRelatedQuestionHeaders.add( questionText );
                     if( dti.usesComments() )
                     {
-                        courseRelatedQuestionHeaders.add( messageLocator.getMessage( "viewreport.comments.header" ) );
+                        courseRelatedQuestionHeaders.add( messages.getMessage( "viewreport.comments.header" ) );
                     }
                 }
             }
@@ -370,7 +370,7 @@ public class CSVReportExporter implements ReportExporter {
      * @param dti
      * @return true if the item is for the current user; false otherwise
      */
-    public boolean isItemNotForCurrentUser( boolean instructorViewAllResults, String currentUserID, String evalOwner, DataTemplateItem dti )
+    private boolean isItemNotForCurrentUser( boolean instructorViewAllResults, String currentUserID, String evalOwner, DataTemplateItem dti )
     {
         return !instructorViewAllResults                                                       // If the eval is so configured,
                 && !commonLogic.isUserAdmin( currentUserID )                                  // and currentUser is not an admin
@@ -382,22 +382,22 @@ public class CSVReportExporter implements ReportExporter {
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.tool.reporting.ReportExporter#buildReport(org.sakaiproject.evaluation.model.EvalEvaluation, java.lang.String[], java.io.OutputStream)
      */
-    public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream, boolean newReportStyle) {
-        buildReport(evaluation, groupIds, null, outputStream, newReportStyle);
+    public void buildReport(EvalEvaluation evaluation, String[] groupIds, OutputStream outputStream, String exportType) {
+        buildReport(evaluation, groupIds, null, outputStream, exportType);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.sakaiproject.evaluation.tool.reporting.ReportExporter#buildReport(org.sakaiproject.evaluation
      * .model.EvalEvaluation, java.lang.String[], java.lang.String, java.io.OutputStream)
      */
-    public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream, boolean newReportStyle) {
-    	//Make sure responseAggregator is using this messageLocator
-        responseAggregator.setMessageLocator(messageLocator);
+    public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream, String exportType) {
+        //Make sure responseAggregator is using this message source
+        responseAggregator.setMessageSource(messages);
 
-        if( newReportStyle )
+        if (EvalEvaluationService.isSectionedResultsExport(exportType))
         {
             buildReportSectionAware( evaluation, groupIds, outputStream );
         }
@@ -427,7 +427,7 @@ public class CSVReportExporter implements ReportExporter {
                 if (!instructorViewAllResults // If the eval is so configured,
                   && !isCurrentUserAdmin // and currentUser is not an admin
                   && !currentUserId.equals(evalOwner) // and currentUser is not the eval creator
-                  && !EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType) 
+                  && !EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType)
                   && !currentUserId.equals(commonLogic.getEvalUserById(dti.associateId).userId) ) {
                     //skip instructor items that aren't for the current user
                     continue;
@@ -437,23 +437,23 @@ public class CSVReportExporter implements ReportExporter {
                 questionTextRow.add(commonLogic.makePlainTextFromHTML(dti.templateItem.getItem().getItemText()));
                 if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(dti.associateType)) {
                     EvalUser user = commonLogic.getEvalUserById( dti.associateId );
-                    String instructorMsg = messageLocator.getMessage("reporting.spreadsheet.instructor", 
+                    String instructorMsg = messages.getMessage("reporting.spreadsheet.instructor",
                             new Object[] {user.displayName} );
                     questionCatRow.add( instructorMsg );
                 } else if (EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(dti.associateType)) {
                     EvalUser user = commonLogic.getEvalUserById( dti.associateId );
-                    String assistantMsg = messageLocator.getMessage("reporting.spreadsheet.ta", 
+                    String assistantMsg = messages.getMessage("reporting.spreadsheet.ta",
                             new Object[] {user.displayName} );
                     questionCatRow.add( assistantMsg );
                 } else if (EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType)) {
-                    questionCatRow.add(messageLocator.getMessage("reporting.spreadsheet.course"));
+                    questionCatRow.add(messages.getMessage("reporting.spreadsheet.course"));
                 } else {
-                    questionCatRow.add(messageLocator.getMessage("unknown.caps"));
+                    questionCatRow.add(messages.getMessage("unknown.caps"));
                 }
 
                 if (dti.usesComments()) {
                     // add an extra column for comments
-                    questionTypeRow.add(messageLocator.getMessage("viewreport.comments.header"));
+                    questionTypeRow.add(messages.getMessage("viewreport.comments.header"));
                     // also add in blanks for the other columns
                     questionTextRow.add("");
                     questionCatRow.add("");
@@ -477,7 +477,7 @@ public class CSVReportExporter implements ReportExporter {
                     if (!instructorViewAllResults // If the eval is so configured,
                       && !isCurrentUserAdmin // and currentUser is not an admin
                       && !currentUserId.equals(evalOwner) // and currentUser is not the eval creator
-                      && !EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType) 
+                      && !EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType)
                       && !currentUserId.equals(commonLogic.getEvalUserById(dti.associateId).userId) ) {
                         //skip instructor items that aren't for the current user
                         continue;

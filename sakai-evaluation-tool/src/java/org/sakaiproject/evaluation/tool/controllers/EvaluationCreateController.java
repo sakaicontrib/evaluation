@@ -17,15 +17,9 @@ package org.sakaiproject.evaluation.tool.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.lang3.StringUtils;
 
-import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.springframework.stereotype.Controller;
@@ -43,19 +37,8 @@ import lombok.Data;
  */
 @Controller
 @RequestMapping("/evaluation_create")
-public class EvaluationCreateController {
+public class EvaluationCreateController extends EvalControllerSupport {
 
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalAuthoringService")
-    private EvalAuthoringService authoringService;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationSetupService")
-    private EvalEvaluationSetupService evaluationSetupService;
-
-    @Resource(name = "org.sakaiproject.evaluation.beans.EvalBeanUtils")
-    private EvalBeanUtils evalBeanUtils;
 
     // DTO for template row in the selection table
     @Data
@@ -67,7 +50,7 @@ public class EvaluationCreateController {
 
     @GetMapping
     public String show(@RequestParam(required = false) Long templateId, Model model) {
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
 
         List<EvalTemplate> templates = authoringService.getTemplatesForUser(currentUserId, null, false);
 
@@ -103,7 +86,7 @@ public class EvaluationCreateController {
             model.addAttribute("titleError", true);
             return "evaluation_create";
         }
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
 
         // Create a new evaluation in PARTIAL state (same process as EvaluationBeanLocator)
         EvalEvaluation eval = new EvalEvaluation(

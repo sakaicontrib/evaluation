@@ -25,13 +25,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.EvalDeliveryService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
-import org.sakaiproject.evaluation.logic.ReportingPermissions;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
@@ -65,31 +61,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/report_view")
-public class ReportViewController {
+public class ReportViewController extends EvalControllerSupport {
 
     private static final String VIEWMODE_REGULAR = "viewmode_regular";
     private static final String VIEWMODE_ALLESSAYS = "viewmode_allessays";
 
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationService")
-    private EvalEvaluationService evaluationService;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalDeliveryService")
-    private EvalDeliveryService deliveryService;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalSettings")
-    private EvalSettings evalSettings;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.ReportingPermissions")
-    private ReportingPermissions reportingPermissions;
 
     @Resource(name = "org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil")
     private EvalResponseAggregatorUtil responseAggregator;
 
-    @Resource(name = "org.sakaiproject.evaluation.beans.EvalBeanUtils")
-    private EvalBeanUtils evalBeanUtils;
 
     // -------------------------------------------------------------------------
     // DTOs
@@ -143,9 +123,10 @@ public class ReportViewController {
     @Data
     public static class ExportOption {
         private final String type;
+        private final String sectionedType;
         private final String labelKey;
-        private final String filename;
         private final String url;
+        private final String sectionedUrl;
     }
 
     @Data
@@ -167,7 +148,7 @@ public class ReportViewController {
                        HttpServletRequest request,
                        Model model) {
 
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
 
         model.addAttribute("notAllowed", false);
         model.addAttribute("notEnoughResponses", false);
@@ -227,7 +208,7 @@ public class ReportViewController {
 
         Boolean instructorViewAllResults = evaluation.getInstructorViewAllResults() == null
                 ? Boolean.FALSE : evaluation.getInstructorViewAllResults();
-        boolean useCourseOnly = !Boolean.FALSE.equals(evalSettings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY));
+        boolean useCourseOnly = !Boolean.FALSE.equals(settings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY));
 
         for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {
             if (!renderAnyForUser(tig.getTemplateItems(), commonLogic.getEvalUserById(tig.associateId),
@@ -276,6 +257,8 @@ public class ReportViewController {
         String ctxPath = request.getContextPath();
         List<ExportOption> exportOptions = buildExportOptions(evaluation, groupIds, ctxPath);
         List<IndividualPdf> individualPdfs = buildIndividualPdfs(evaluation, groupIds, ctxPath);
+        boolean hasSectionedExports = exportOptions.stream()
+                .anyMatch(opt -> opt.getSectionedType() != null);
 
         model.addAttribute("evaluation", evaluation);
         model.addAttribute("evaluationId", evaluationId);
@@ -289,6 +272,7 @@ public class ReportViewController {
         model.addAttribute("hasComments", totalComments > 0);
         model.addAttribute("hasTextResponses", totalTextResponses > 0);
         model.addAttribute("exportOptions", exportOptions);
+        model.addAttribute("hasSectionedExports", hasSectionedExports);
         model.addAttribute("individualPdfs", individualPdfs);
         model.addAttribute("notAllowed", false);
 
@@ -307,7 +291,7 @@ public class ReportViewController {
                          HttpServletResponse response) throws IOException {
 
         EvalEvaluation evaluation = evaluationService.getEvaluationById(evaluationId);
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
 
         if (!reportingPermissions.canViewEvaluationResponses(evaluation, groupIds)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
@@ -331,12 +315,17 @@ public class ReportViewController {
         String contentType;
         switch (type) {
             case EvalEvaluationService.XLS_RESULTS_REPORT:
+            case EvalEvaluationService.XLS_RESULTS_REPORT_SECTIONED:
                 filename = title + ".xlsx";
                 contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
                 break;
             case EvalEvaluationService.CSV_RESULTS_REPORT:
                 filename = title + ".csv";
                 contentType = "text/csv";
+                break;
+            case EvalEvaluationService.CSV_RESULTS_REPORT_SECTIONED:
+                filename = title + ".zip";
+                contentType = "application/zip";
                 break;
             case EvalEvaluationService.CSV_TAKERS_REPORT:
                 filename = title + "-takers.csv";
@@ -439,29 +428,44 @@ public class ReportViewController {
 
     private List<ExportOption> buildExportOptions(EvalEvaluation evaluation, String[] groupIds, String ctxPath) {
         List<ExportOption> options = new ArrayList<>();
-        String title = sanitizeFilename(evaluation.getTitle());
-        if (Boolean.TRUE.equals(evalSettings.get(EvalSettings.ENABLE_XLS_REPORT_EXPORT))) {
-            options.add(new ExportOption(EvalEvaluationService.XLS_RESULTS_REPORT, "viewreport.view.xls", title + ".xlsx",
-                    buildDownloadUrl(ctxPath, evaluation.getId(), groupIds, EvalEvaluationService.XLS_RESULTS_REPORT, null)));
+        if (Boolean.TRUE.equals(settings.get(EvalSettings.ENABLE_XLS_REPORT_EXPORT))) {
+            options.add(new ExportOption(
+                    EvalEvaluationService.XLS_RESULTS_REPORT,
+                    EvalEvaluationService.XLS_RESULTS_REPORT_SECTIONED,
+                    "viewreport.view.xls",
+                    buildDownloadUrl(ctxPath, evaluation.getId(), groupIds, EvalEvaluationService.XLS_RESULTS_REPORT, null),
+                    buildDownloadUrl(ctxPath, evaluation.getId(), groupIds, EvalEvaluationService.XLS_RESULTS_REPORT_SECTIONED, null)));
         }
-        if (Boolean.TRUE.equals(evalSettings.get(EvalSettings.ENABLE_CSV_REPORT_EXPORT))) {
-            options.add(new ExportOption(EvalEvaluationService.CSV_RESULTS_REPORT, "viewreport.view.csv", title + ".csv",
-                    buildDownloadUrl(ctxPath, evaluation.getId(), groupIds, EvalEvaluationService.CSV_RESULTS_REPORT, null)));
+        if (Boolean.TRUE.equals(settings.get(EvalSettings.ENABLE_CSV_REPORT_EXPORT))) {
+            options.add(new ExportOption(
+                    EvalEvaluationService.CSV_RESULTS_REPORT,
+                    EvalEvaluationService.CSV_RESULTS_REPORT_SECTIONED,
+                    "viewreport.view.csv",
+                    buildDownloadUrl(ctxPath, evaluation.getId(), groupIds, EvalEvaluationService.CSV_RESULTS_REPORT, null),
+                    buildDownloadUrl(ctxPath, evaluation.getId(), groupIds, EvalEvaluationService.CSV_RESULTS_REPORT_SECTIONED, null)));
         }
-        if (Boolean.TRUE.equals(evalSettings.get(EvalSettings.ENABLE_PDF_REPORT_EXPORT))) {
-            options.add(new ExportOption(EvalEvaluationService.PDF_RESULTS_REPORT, "viewreport.view.pdf", title + ".pdf",
-                    buildDownloadUrl(ctxPath, evaluation.getId(), groupIds, EvalEvaluationService.PDF_RESULTS_REPORT, null)));
+        if (Boolean.TRUE.equals(settings.get(EvalSettings.ENABLE_PDF_REPORT_EXPORT))) {
+            options.add(new ExportOption(
+                    EvalEvaluationService.PDF_RESULTS_REPORT,
+                    null,
+                    "viewreport.view.pdf",
+                    buildDownloadUrl(ctxPath, evaluation.getId(), groupIds, EvalEvaluationService.PDF_RESULTS_REPORT, null),
+                    null));
         }
-        if (Boolean.TRUE.equals(evalSettings.get(EvalSettings.ENABLE_LIST_OF_TAKERS_EXPORT))) {
-            options.add(new ExportOption(EvalEvaluationService.CSV_TAKERS_REPORT, "viewreport.view.listofevaluationtakers", title + "-takers.csv",
-                    buildDownloadUrl(ctxPath, evaluation.getId(), groupIds, EvalEvaluationService.CSV_TAKERS_REPORT, null)));
+        if (Boolean.TRUE.equals(settings.get(EvalSettings.ENABLE_LIST_OF_TAKERS_EXPORT))) {
+            options.add(new ExportOption(
+                    EvalEvaluationService.CSV_TAKERS_REPORT,
+                    null,
+                    "viewreport.view.listofevaluationtakers",
+                    buildDownloadUrl(ctxPath, evaluation.getId(), groupIds, EvalEvaluationService.CSV_TAKERS_REPORT, null),
+                    null));
         }
         return options;
     }
 
     private List<IndividualPdf> buildIndividualPdfs(EvalEvaluation evaluation, String[] groupIds, String ctxPath) {
         List<IndividualPdf> list = new ArrayList<>();
-        if (!Boolean.TRUE.equals(evalSettings.get(EvalSettings.ENABLE_PDF_REPORT_EXPORT))) return list;
+        if (!Boolean.TRUE.equals(settings.get(EvalSettings.ENABLE_PDF_REPORT_EXPORT))) return list;
         String title = sanitizeFilename(evaluation.getTitle());
         List<EvalAssignUser> evaluatees = evaluationService.getParticipantsForEval(
                 evaluation.getId(), null, null, EvalAssignUser.TYPE_EVALUATEE, null, null, null);

@@ -17,11 +17,7 @@ package org.sakaiproject.evaluation.tool.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
@@ -41,13 +37,7 @@ import lombok.Data;
  */
 @Controller
 @RequestMapping("/choose_existing_items")
-public class ChooseExistingItemsController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalAuthoringService")
-    private EvalAuthoringService authoringService;
+public class ChooseExistingItemsController extends EvalControllerSupport {
 
     @Data
     public static class ItemRow {
@@ -62,7 +52,7 @@ public class ChooseExistingItemsController {
                        @RequestParam(required = false, defaultValue = "") String searchString,
                        Model model) {
 
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         String filter = searchString.isEmpty() ? null : searchString;
         List<EvalItem> items = authoringService.getItemsForUser(currentUserId, null, filter, false);
 
@@ -98,7 +88,7 @@ public class ChooseExistingItemsController {
                          @RequestParam(required = false) List<Long> selectedIds) {
 
         if (selectedIds != null && !selectedIds.isEmpty()) {
-            String currentUserId = commonLogic.getCurrentUserId();
+            String currentUserId = currentUserId();
             EvalTemplate template = authoringService.getTemplateById(templateId);
 
             String hierarchyLevel = EvalConstants.HIERARCHY_LEVEL_TOP;

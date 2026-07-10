@@ -22,11 +22,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Resource;
-
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
-import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
@@ -53,11 +49,6 @@ import lombok.Data;
 @RequestMapping("/evaluation_assign_confirm")
 public class EvaluationAssignConfirmController extends EvalControllerSupport {
 
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationSetupService")
-    private EvalEvaluationSetupService evaluationSetupService;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic")
-    private ExternalHierarchyLogic hierarchyLogic;
 
     @Data
     public static class GroupConfirmRow {
@@ -151,7 +142,7 @@ public class EvaluationAssignConfirmController extends EvalControllerSupport {
         if (selectedGroupIDs == null) selectedGroupIDs = new String[0];
         if (selectedHierarchyNodeIDs == null) selectedHierarchyNodeIDs = new String[0];
 
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         final String[] finalGroupIDs = selectedGroupIDs;
         final String[] finalNodeIDs = selectedHierarchyNodeIDs;
         String[] redirectHolder = {null};

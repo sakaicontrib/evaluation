@@ -53,16 +53,18 @@ public class UnblockItemController extends EvalControllerSupport {
     public String unblock(@RequestParam Long templateItemId,
                           @RequestParam Long templateId) {
 
-        EvalTemplateItem templateItem = authoringService.getTemplateItemById(templateItemId);
-        if (!TemplateItemUtils.isBlockChild(templateItem)) {
-            throw new IllegalStateException("Template item " + templateItemId + " is not part of a group");
-        }
+        daoInvoker.invokeTransactionalAccess(() -> {
+            EvalTemplateItem templateItem = authoringService.getTemplateItemById(templateItemId);
+            if (!TemplateItemUtils.isBlockChild(templateItem)) {
+                throw new IllegalStateException("Template item " + templateItemId + " is not part of a group");
+            }
 
-        templateItem.setBlockParent(null);
-        templateItem.setBlockId(null);
-        // Saving without a display order puts the item at the bottom of the template.
-        templateItem.setDisplayOrder(null);
-        authoringService.saveTemplateItem(templateItem, commonLogic.getCurrentUserId());
+            templateItem.setBlockParent(null);
+            templateItem.setBlockId(null);
+            // Saving without a display order puts the item at the bottom of the template.
+            templateItem.setDisplayOrder(null);
+            authoringService.saveTemplateItem(templateItem, currentUserId());
+        });
 
         return "redirect:/modify_template_items?templateId=" + templateId;
     }

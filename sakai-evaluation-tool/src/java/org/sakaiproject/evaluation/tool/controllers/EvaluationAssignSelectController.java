@@ -21,13 +21,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
-import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
@@ -46,16 +43,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/evaluation_assign_select")
-public class EvaluationAssignSelectController {
+public class EvaluationAssignSelectController extends EvalControllerSupport {
 
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationService")
-    private EvalEvaluationService evaluationService;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalEvaluationSetupService")
-    private EvalEvaluationSetupService evaluationSetupService;
 
     @Data
     public static class UserRow {
@@ -131,7 +120,7 @@ public class EvaluationAssignSelectController {
                      @RequestParam(value = "selectedUserIds", required = false) List<String> selectedUserIds,
                      HttpServletResponse response) {
 
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         boolean isInstructor = EvalAssignGroup.SELECTION_TYPE_INSTRUCTOR.equals(evalCategory);
         String assignType    = isInstructor ? EvalAssignUser.TYPE_EVALUATEE : EvalAssignUser.TYPE_ASSISTANT;
 

@@ -19,10 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Resource;
-
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
-import org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
@@ -40,13 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/modify_hierarchy_node_perms")
-public class ModifyHierarchyNodePermsController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic")
-    private ExternalHierarchyLogic hierLogic;
+public class ModifyHierarchyNodePermsController extends EvalControllerSupport {
 
     @Data
     public static class UserPermRow {
@@ -62,11 +52,11 @@ public class ModifyHierarchyNodePermsController {
                        @RequestParam(value = "expanded", required = false) List<String> expanded,
                        Model model) {
         checkAdmin();
-        EvalHierarchyNode node = hierLogic.getNodeById(nodeId);
-        Map<String, Set<String>> nodeUsersMap = hierLogic.getUsersAndPermsForNodes(nodeId)
+        EvalHierarchyNode node = hierarchyLogic.getNodeById(nodeId);
+        Map<String, Set<String>> nodeUsersMap = hierarchyLogic.getUsersAndPermsForNodes(nodeId)
                 .getOrDefault(nodeId, java.util.Collections.emptyMap());
 
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         List<UserPermRow> userRows = new ArrayList<>();
         for (Map.Entry<String, Set<String>> entry : nodeUsersMap.entrySet()) {
             EvalUser user = commonLogic.getEvalUserById(entry.getKey());
@@ -105,16 +95,16 @@ public class ModifyHierarchyNodePermsController {
             ra.addFlashAttribute("errorMessage", "modifynodeperms.error.no.perms.selected");
             return buildReturnUrl(nodeId, expanded);
         }
-        Map<String, Set<String>> existing = hierLogic.getUsersAndPermsForNodes(nodeId).getOrDefault(nodeId, java.util.Collections.emptyMap());
+        Map<String, Set<String>> existing = hierarchyLogic.getUsersAndPermsForNodes(nodeId).getOrDefault(nodeId, java.util.Collections.emptyMap());
         if (existing.containsKey(userId)) {
             ra.addFlashAttribute("errorMessage", "modifynodeperms.error.user.has.perm");
             ra.addFlashAttribute("errorArgs", new Object[]{ userEid });
             return buildReturnUrl(nodeId, expanded);
         }
-        for (String perm : perms) hierLogic.assignUserNodePerm(userId, nodeId, perm, false);
+        for (String perm : perms) hierarchyLogic.assignUserNodePerm(userId, nodeId, perm, false);
         ra.addFlashAttribute("successMessage", "modifynodeperms.success.user.added");
         ra.addFlashAttribute("successArgs", new Object[]{ userEid });
-        log.info("Admin ({}) added user {} with perms {} to node {}", commonLogic.getCurrentUserId(), userEid, perms, nodeId);
+        log.info("Admin ({}) added user {} with perms {} to node {}", currentUserId(), userEid, perms, nodeId);
         return buildReturnUrl(nodeId, expanded);
     }
 
@@ -127,15 +117,15 @@ public class ModifyHierarchyNodePermsController {
         checkAdmin();
         // Remove all existing perms for this user on this node
         for (String perm : EvalToolConstants.HIERARCHY_PERM_VALUES)
-            hierLogic.removeUserNodePerm(userId, nodeId, perm, false);
+            hierarchyLogic.removeUserNodePerm(userId, nodeId, perm, false);
         // Re-assign selected perms
         if (perms != null) {
-            for (String perm : perms) hierLogic.assignUserNodePerm(userId, nodeId, perm, false);
+            for (String perm : perms) hierarchyLogic.assignUserNodePerm(userId, nodeId, perm, false);
         }
         EvalUser user = commonLogic.getEvalUserById(userId);
         ra.addFlashAttribute("successMessage", "modifynodeperms.success.perms.saved");
         ra.addFlashAttribute("successArgs", new Object[]{ user.username != null ? user.username : userId });
-        log.info("Admin ({}) updated perms for user {} on node {}", commonLogic.getCurrentUserId(), userId, nodeId);
+        log.info("Admin ({}) updated perms for user {} on node {}", currentUserId(), userId, nodeId);
         return buildReturnUrl(nodeId, expanded);
     }
 
@@ -146,11 +136,11 @@ public class ModifyHierarchyNodePermsController {
                              RedirectAttributes ra) {
         checkAdmin();
         for (String perm : EvalToolConstants.HIERARCHY_PERM_VALUES)
-            hierLogic.removeUserNodePerm(userId, nodeId, perm, false);
+            hierarchyLogic.removeUserNodePerm(userId, nodeId, perm, false);
         EvalUser user = commonLogic.getEvalUserById(userId);
         ra.addFlashAttribute("successMessage", "modifynodeperms.success.user.removed");
         ra.addFlashAttribute("successArgs", new Object[]{ user.username != null ? user.username : userId });
-        log.info("Admin ({}) removed user {} from node {}", commonLogic.getCurrentUserId(), userId, nodeId);
+        log.info("Admin ({}) removed user {} from node {}", currentUserId(), userId, nodeId);
         return buildReturnUrl(nodeId, expanded);
     }
 
@@ -161,7 +151,7 @@ public class ModifyHierarchyNodePermsController {
     }
 
     private void checkAdmin() {
-        if (!commonLogic.isUserAdmin(commonLogic.getCurrentUserId()))
+        if (!isCurrentUserAdmin())
             throw new SecurityException("Non-admin users may not access this locator");
     }
 }

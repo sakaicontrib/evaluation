@@ -14,7 +14,7 @@
  */
 package org.sakaiproject.evaluation.test;
 
-import org.sakaiproject.evaluation.dao.EvaluationDao;
+import org.sakaiproject.evaluation.dao.EvaluationDaoBase;
 import org.sakaiproject.evaluation.dao.PreloadDataImpl;
 
 import lombok.extern.slf4j.Slf4j;
@@ -42,9 +42,9 @@ import lombok.extern.slf4j.Slf4j;
 public class PreloadTestDataImpl {
 
 
-   private EvaluationDao dao;
-   public void setDao(EvaluationDao dao) {
-      this.dao = dao;
+   private EvaluationDaoBase persistence;
+   public void setPersistence(EvaluationDaoBase persistence) {
+      this.persistence = persistence;
    }
 
    private PreloadDataImpl preloadData;
@@ -77,6 +77,6 @@ public class PreloadTestDataImpl {
     */
    public void preloadDB(){
       log.info("preloading DB...");
-      etdl = new EvalTestDataLoad(dao);
+      etdl = new EvalTestDataLoad(persistence);
    }
 }

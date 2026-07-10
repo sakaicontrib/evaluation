@@ -18,13 +18,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.dao.EvalDaoInvoker;
-import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
@@ -32,7 +28,6 @@ import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplate;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
-import org.sakaiproject.evaluation.tool.LocalTemplateLogic;
 import org.sakaiproject.evaluation.tool.utils.ScaledUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -54,23 +49,7 @@ import lombok.Data;
  */
 @Controller
 @RequestMapping("/modify_item")
-public class ModifyItemController {
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalAuthoringService")
-    private EvalAuthoringService authoringService;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalSettings")
-    private EvalSettings settings;
-
-    @Resource(name = "localTemplateLogic")
-    private LocalTemplateLogic localTemplateLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.dao.EvalDaoInvoker")
-    private EvalDaoInvoker daoInvoker;
-
+public class ModifyItemController extends EvalControllerSupport {
     @Data
     public static class ExpertGroupOption {
         Long id;
@@ -88,7 +67,7 @@ public class ModifyItemController {
         boolean inFacebox = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
         model.addAttribute("inFacebox", inFacebox);
 
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
 
         // ---- Resolve which object is being edited ----
@@ -349,7 +328,7 @@ public class ModifyItemController {
                        Model model) {
 
         boolean inFacebox = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
-        final String currentUserId = commonLogic.getCurrentUserId();
+        final String currentUserId = currentUserId();
         final boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
         final boolean inTemplate = (templateId != null);
 

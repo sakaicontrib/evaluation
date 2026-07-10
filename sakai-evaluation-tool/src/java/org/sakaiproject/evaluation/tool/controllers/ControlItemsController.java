@@ -18,11 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.annotation.Resource;
-
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.logic.EvalAuthoringService;
-import org.sakaiproject.evaluation.logic.EvalCommonLogic;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
@@ -44,7 +40,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping("/control_items")
-public class ControlItemsController {
+public class ControlItemsController extends EvalControllerSupport {
 
     @Data
     public static class ItemRow {
@@ -60,23 +56,13 @@ public class ControlItemsController {
         boolean canDelete;
         boolean odd;
     }
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalCommonLogic")
-    private EvalCommonLogic commonLogic;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalAuthoringService")
-    private EvalAuthoringService authoringService;
-
-    @Resource(name = "org.sakaiproject.evaluation.logic.EvalSettings")
-    private EvalSettings evalSettings;
-
     @GetMapping
     public String show(Model model) {
 
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
 
-        boolean useExpertItems = (Boolean) evalSettings.get(EvalSettings.USE_EXPERT_ITEMS);
+        boolean useExpertItems = (Boolean) settings.get(EvalSettings.USE_EXPERT_ITEMS);
         List<EvalItemGroup> itemGroups = authoringService.getAllItemGroups(currentUserId, true);
 
         List<EvalItem> userItems = authoringService.getItemsForUser(currentUserId, null, null, userAdmin);
@@ -128,7 +114,7 @@ public class ControlItemsController {
 
     @PostMapping("/copy")
     public String copyItem(@RequestParam Long itemId) {
-        String currentUserId = commonLogic.getCurrentUserId();
+        String currentUserId = currentUserId();
         authoringService.copyItems(new Long[]{itemId}, currentUserId, false, true);
         return "redirect:/control_items";
     }

@@ -14,6 +14,13 @@
  */
 package org.sakaiproject.evaluation.logic;
 
+import org.sakaiproject.evaluation.dao.EvaluationAssignmentDao;
+import org.sakaiproject.evaluation.dao.EvaluationAuthoringDao;
+import org.sakaiproject.evaluation.dao.EvaluationConsolidatedEmailDao;
+import org.sakaiproject.evaluation.dao.EvaluationEmailTemplateDao;
+import org.sakaiproject.evaluation.dao.EvaluationQueryDao;
+import org.sakaiproject.evaluation.dao.EvaluationResponseDao;
+
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,7 +33,6 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
-import org.sakaiproject.evaluation.dao.EvaluationDao;
 import org.sakaiproject.evaluation.logic.externals.EvalSecurityChecksImpl;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalReminderStatus;
@@ -41,9 +47,6 @@ import org.sakaiproject.evaluation.toolaccess.EvaluationAccessAPI;
 import org.sakaiproject.evaluation.toolaccess.ToolApi;
 import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
-import org.sakaiproject.genericdao.api.search.Order;
-import org.sakaiproject.genericdao.api.search.Restriction;
-import org.sakaiproject.genericdao.api.search.Search;
 import org.sakaiproject.site.api.SiteService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -64,9 +67,34 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
     protected final String EVENT_EVAL_STATE_STOP =                    "eval.evaluation.state.stop";
     protected final String EVENT_EVAL_STATE_VIEWABLE =                "eval.evaluation.state.viewable";
 
-    private EvaluationDao dao;
-    public void setDao(EvaluationDao dao) {
-        this.dao = dao;
+    private EvaluationQueryDao queryDao;
+    public void setQueryDao(EvaluationQueryDao queryDao) {
+        this.queryDao = queryDao;
+    }
+
+    private EvaluationAssignmentDao assignmentDao;
+    public void setAssignmentDao(EvaluationAssignmentDao assignmentDao) {
+        this.assignmentDao = assignmentDao;
+    }
+
+    private EvaluationResponseDao responseDao;
+    public void setResponseDao(EvaluationResponseDao responseDao) {
+        this.responseDao = responseDao;
+    }
+
+    private EvaluationEmailTemplateDao emailTemplateDao;
+    public void setEmailTemplateDao(EvaluationEmailTemplateDao emailTemplateDao) {
+        this.emailTemplateDao = emailTemplateDao;
+    }
+
+    private EvaluationConsolidatedEmailDao consolidatedEmailDao;
+    public void setConsolidatedEmailDao(EvaluationConsolidatedEmailDao consolidatedEmailDao) {
+        this.consolidatedEmailDao = consolidatedEmailDao;
+    }
+
+    private EvaluationAuthoringDao authoringDao;
+    public void setAuthoringDao(EvaluationAuthoringDao authoringDao) {
+        this.authoringDao = authoringDao;
     }
 
     private EvalCommonLogic commonLogic;
@@ -103,6 +131,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
         toolApi.exportReport(evaluation, groupIds, evaluateeId, outputStream, exportType);
     }
 
+
     private SiteService siteService;
     public void setSiteService(SiteService siteService) {
         this.siteService = siteService;
@@ -113,7 +142,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
      */
     public EvalEvaluation getEvaluationById(Long evaluationId) {
         log.debug("evalId: " + evaluationId);
-        EvalEvaluation eval = (EvalEvaluation) dao.findById(EvalEvaluation.class, evaluationId);
+        EvalEvaluation eval = queryDao.getEvaluationById(evaluationId);
         fixupEvaluation(eval);
         return eval;
     }
@@ -125,10 +154,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
         if (evaluationId == null) {
             throw new NullPointerException("evaluationId cannot be null");
         }
-        boolean exists;
-        long count = dao.countBySearch(EvalEvaluation.class, new Search("id", evaluationId));
-        exists = count > 0l;
-        return exists;
+        return queryDao.countEvaluationById(evaluationId) > 0;
     }
 
     /* (non-Javadoc)
@@ -137,7 +163,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
     public EvalEvaluation getEvaluationByEid(String eid) {
         EvalEvaluation evalEvaluation = null;
         if (eid != null) {
-            evalEvaluation = dao.findOneBySearch(EvalEvaluation.class, new Search("eid", eid));
+            evalEvaluation = queryDao.getEvaluationByEid(eid);
         }
         fixupEvaluation(evalEvaluation);
         return evalEvaluation;
@@ -148,9 +174,8 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
      */
     public int countEvaluationsByTemplateId(Long templateId) {
         log.debug("templateId: " + templateId);
-        Search search = makeSearchForEvalsByTemplate(templateId);
-        int count = (int) dao.countBySearch(EvalEvaluation.class, search );
-        return count;
+        validateTemplateExists(templateId);
+        return queryDao.countEvaluationsByTemplateId(templateId);
     }
 
     /* (non-Javadoc)
@@ -158,8 +183,8 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
      */
     public List<EvalEvaluation> getEvaluationsByTemplateId(Long templateId) {
         log.debug("templateId: " + templateId);
-        Search search = makeSearchForEvalsByTemplate(templateId);
-        List<EvalEvaluation> evals = dao.findBySearch(EvalEvaluation.class, search);
+        validateTemplateExists(templateId);
+        List<EvalEvaluation> evals = queryDao.getEvaluationsByTemplateId(templateId);
         for (EvalEvaluation evaluation : evals) {
             fixupEvaluation(evaluation);
         }
@@ -171,8 +196,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
      */
     public List<EvalEvaluation> getEvaluationsByTermId(String termId) {
     	log.debug("termId: " + termId);
-        Search search = makeSearchForEvalsByTermId(termId);
-        List<EvalEvaluation> evals = dao.findBySearch(EvalEvaluation.class, search);
+        List<EvalEvaluation> evals = queryDao.getEvaluationsByTermId(termId);
         for (EvalEvaluation evaluation : evals) {
             fixupEvaluation(evaluation);
         }
@@ -184,9 +208,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
 	 */
 	public List<EvalEvaluation> getEvaluationsByState(String state) {
 		log.debug("state: " + state);
-		Search search = new Search();
-		search.addRestriction(new Restriction("state", state));
-		List<EvalEvaluation> evals = dao.findBySearch(EvalEvaluation.class, search);
+		List<EvalEvaluation> evals = queryDao.getEvaluationsByState(state);
         for (EvalEvaluation evaluation : evals) {
             fixupEvaluation(evaluation);
         }
@@ -197,34 +219,11 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
      * @param templateId unique id of a template (must be set or exception occurs)
      * @return the search which will find evals based on a template id
      */
-    private Search makeSearchForEvalsByTemplate(Long templateId) {
-        int count = (int) dao.countBySearch(EvalTemplate.class, new Search("id", templateId) );
+    private void validateTemplateExists(Long templateId) {
+        int count = authoringDao.countTemplateById(templateId);
         if (count <= 0) {
             throw new IllegalArgumentException("Cannot find template with id: " + templateId);
         }
-        Search search = new Search(
-                new Restriction[] {
-                        new Restriction("template.id", templateId),
-                        new Restriction("state", EvalConstants.EVALUATION_STATE_PARTIAL, Restriction.NOT_EQUALS),
-                        new Restriction("state", EvalConstants.EVALUATION_STATE_DELETED, Restriction.NOT_EQUALS)
-                }
-        );
-        return search;
-    }
-    
-    /**
-     * @param termId the term id of an {@link EvalEvaluation}
-     * @return the search object that will select {@link EvalEvaluation} objects based on term id
-     */
-    private Search makeSearchForEvalsByTermId(String termId) {
-        Search search = new Search(
-                new Restriction[] {
-                        new Restriction("termId", termId),
-                        new Restriction("state", EvalConstants.EVALUATION_STATE_PARTIAL, Restriction.NOT_EQUALS),
-                        new Restriction("state", EvalConstants.EVALUATION_STATE_DELETED, Restriction.NOT_EQUALS)
-                }
-        );
-        return search;
     }
 
 	public void setAvailableEmailSent(Long[] evalIds) {
@@ -233,7 +232,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
             EvalEvaluation eval = getEvaluationById(evaluationId);
             eval.setAvailableEmailSent(Boolean.TRUE);
             // use dao because evaluation is locked
-            dao.save(eval);
+            queryDao.saveEvaluation(eval);
         }
 	}
 
@@ -255,8 +254,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
         log.debug("evalId: " + evaluationId);
         EvalEvaluation eval = getEvaluationOrFail(evaluationId);
         eval.setCurrentReminderStatus(reminderStatus);
-        dao.update(eval);
-        dao.forceCommit();
+        queryDao.saveEvaluation(eval);
     }
 
     /* (non-Javadoc)
@@ -286,7 +284,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
                     } else if ( EvalConstants.EVALUATION_STATE_VIEWABLE.equals(trueState) ) {
                         commonLogic.registerEntityEvent(EVENT_EVAL_STATE_VIEWABLE, evaluation);
                     }
-                    dao.update(evaluation);
+                    queryDao.saveEvaluation(evaluation);
                 }
             }
         }
@@ -310,13 +308,13 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
     public EvalAssignUser getAssignUserByEid(String eid) {
         EvalAssignUser eau = null;
         if (eid != null) {
-            eau = dao.findOneBySearch(EvalAssignUser.class, new Search("eid", eid));
+            eau = assignmentDao.getAssignUserByEid(eid);
         }
         return eau;
     }
 
     public EvalAssignUser getAssignUserById(Long assignUserId) {
-        EvalAssignUser eau = (EvalAssignUser) dao.findById(EvalAssignUser.class, assignUserId);
+        EvalAssignUser eau = assignmentDao.getAssignUserById(assignUserId);
         return eau;
     }
 
@@ -328,7 +326,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
             throw new IllegalArgumentException("At least one of the following must be set: evaluationId, userId");
         }
         // this is handled in the DAO now
-        return dao.getParticipantsForEval(evaluationId, userId, evalGroupIds, assignTypeConstant, assignStatusConstant, includeConstant, evalStateConstant);
+        return assignmentDao.getParticipantsForEval(evaluationId, userId, evalGroupIds, assignTypeConstant, assignStatusConstant, includeConstant, evalStateConstant);
     }
 
     public int countParticipantsForEval(Long evaluationId, String[] evalGroupIds) {
@@ -336,16 +334,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
         EvalEvaluation eval = getEvaluationOrFail(evaluationId);
         // only counting if the eval is not anonymous, anon is always effectively 0
         if (! EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(eval.getAuthControl())) {
-            // count the participants
-            Search search = new Search("evaluation.id", evaluationId);
-            // only include evaluators which are not removed
-            search.addRestriction( new Restriction("type", EvalAssignUser.TYPE_EVALUATOR) );
-            search.addRestriction( new Restriction("status", EvalAssignUser.STATUS_REMOVED, Restriction.NOT_EQUALS) );
-            // limit to a group if requested
-            if (evalGroupIds != null && evalGroupIds.length > 0) {
-                search.addRestriction( new Restriction("evalGroupId", evalGroupIds) );
-            }
-            totalEnrollments = (int) dao.countBySearch(EvalAssignUser.class, search);
+            totalEnrollments = assignmentDao.countParticipantsForEval(evaluationId, evalGroupIds);
         }
         return totalEnrollments;
     }
@@ -385,8 +374,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
         log.debug("evalId: " + evaluationId);
         EvalEvaluation eval = getEvaluationOrFail(evaluationId);
         eval.setOwner(userId);
-        dao.update(eval);
-        dao.forceCommit();
+        queryDao.saveEvaluation(eval);
         return eval;
     }
 
@@ -408,20 +396,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
             // admin trumps being in a group
             valid = true;
         } else {
-            Search search = new Search(
-                    new Restriction[] {
-                            new Restriction("evaluation.id", evaluationId),
-                            new Restriction("instructorApproval", Boolean.TRUE)
-                    });
-            if (evalGroupId == null) {
-                // no groupId is supplied so do a simpler check
-                // make sure at least one group is valid for this eval
-            } else {
-                // check that the evalGroupId is valid for this evaluation
-                search.addRestriction( new Restriction("evalGroupId", evalGroupId) );
-            }
-            // do the search
-            List<EvalAssignGroup> groups = dao.findBySearch(EvalAssignGroup.class, search);
+            List<EvalAssignGroup> groups = assignmentDao.getApprovedAssignGroupsForEvaluation(evaluationId, evalGroupId);
             if (groups.size() <= 0) {
                 // no valid groups
                 valid = false;
@@ -468,18 +443,13 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
                             // if no groupId is supplied then simply check to see if the user is in any of the groups assigned,
                             // hopefully this is faster than checking if the user has the right permission in every group -AZ
                             List<EvalAssignUser> userAssigns = getParticipantsForEval(evaluationId, userId, null, EvalAssignUser.TYPE_EVALUATOR, null, null, null);
-                            if (! userAssigns.isEmpty()) {
-                                Set<String> egids = EvalUtils.getGroupIdsFromUserAssignments(userAssigns);
-                                String[] evalGroupIds = egids.toArray(new String[egids.size()]);
-                                long count = dao.countBySearch(EvalAssignGroup.class, new Search(
-                                        new Restriction[] {
-                                                new Restriction("evaluation.id", evaluationId),
-                                                new Restriction("instructorApproval", Boolean.TRUE),
-                                                new Restriction("evalGroupId", evalGroupIds)
-                                        }) );
-                                if (count > 0l) {
-                                    // ok if at least one group is approved and in the set of groups this user can take evals in for this eval id
-                                    allowed = true;
+	                            if (! userAssigns.isEmpty()) {
+	                                Set<String> egids = EvalUtils.getGroupIdsFromUserAssignments(userAssigns);
+	                                String[] evalGroupIds = egids.toArray(new String[egids.size()]);
+	                                int count = assignmentDao.countApprovedAssignGroupsForEvaluation(evaluationId, evalGroupIds);
+	                                if (count > 0l) {
+	                                    // ok if at least one group is approved and in the set of groups this user can take evals in for this eval id
+	                                    allowed = true;
                                 } else {
                                 	log.info("User (" + userId + ") is not in a valid group for evaluation (" + evaluationId + ")");
                                     allowed = false;
@@ -539,7 +509,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
     public boolean canBeginEvaluation(String userId) {
         log.debug("Checking begin eval for: " + userId);
         boolean isAdmin = commonLogic.isUserAdmin(userId);
-        if ( isAdmin && (dao.countAll(EvalTemplate.class) > 0) ) {
+        if ( isAdmin && (authoringDao.countTemplates() > 0) ) {
             // admin can access all templates and create an evaluation if 
             // there is at least one template
             return true;
@@ -554,9 +524,9 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
                  * TODO - this check needs to be more robust at some point
                  * currently we are ignoring shared and visible templates - AZ
                  */
-                int count = dao.countSharedEntitiesForUser(EvalTemplate.class, userId, 
-                        new String[] {EvalConstants.SHARING_PUBLIC, EvalConstants.SHARING_PRIVATE}, 
-                        null, null, null, new String[] {"notEmpty"});
+                int count = authoringDao.countTemplatesForUser(userId,
+                        new String[] {EvalConstants.SHARING_PUBLIC, EvalConstants.SHARING_PRIVATE},
+                        false);
                 if (count > 0 ) {
                     // if they can access at least one template with an item then they can create an evaluation
                     return true;
@@ -594,21 +564,13 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
     public int countEvaluationGroups(Long evaluationId, boolean includeUnApproved) {
         log.debug("evalId: " + evaluationId);
 
-        Search search = new Search("evaluation.id", evaluationId);
-
-        if (! includeUnApproved) {
-            // only include those that are approved
-            search.addRestriction( new Restriction("instructorApproval", Boolean.TRUE) );
-        }
-
-        int count = (int) dao.countBySearch(EvalAssignGroup.class, search);
-        return count;
+        return assignmentDao.countEvaluationGroups(evaluationId, includeUnApproved);
     }
 
     public EvalAssignGroup getAssignGroupByEid(String eid) {
         EvalAssignGroup eag = null;
         if (eid != null) {
-            eag = dao.findOneBySearch(EvalAssignGroup.class, new Search("eid", eid));
+            eag = assignmentDao.getAssignGroupByEid(eid);
         }
         return eag;
     }
@@ -616,7 +578,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
 
     public EvalAssignGroup getAssignGroupById(Long assignGroupId) {
         log.debug("assignGroupId: " + assignGroupId);
-        EvalAssignGroup eag = (EvalAssignGroup) dao.findById(EvalAssignGroup.class, assignGroupId);
+        EvalAssignGroup eag = assignmentDao.getAssignGroupById(assignGroupId);
         return eag;
     }
 
@@ -625,26 +587,20 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
         if (evaluationId == null || evalGroupId == null || evalGroupId.isEmpty()) {
             throw new IllegalArgumentException("evaluationId and evalGroupId must not be null");
         }
-        return dao.findOneBySearch(EvalAssignGroup.class, new Search(
-                new Restriction[] {
-                        new Restriction("evaluation.id", evaluationId),
-                        new Restriction("evalGroupId", evalGroupId)
-                }) );
+        return assignmentDao.getAssignGroupByEvalAndGroupId(evaluationId, evalGroupId);
     }
 
     public List<EvalAssignHierarchy> getAssignHierarchyByEval(Long evaluationId) {
-        List<EvalAssignHierarchy> l = dao.findBySearch(EvalAssignHierarchy.class, new Search(
-                new Restriction[] {
-                        new Restriction("evaluation.id", evaluationId),
-                        new Restriction("nodeId", "", Restriction.NOT_NULL)
-                }, new Order("id")) );
-        return l;
+        return assignmentDao.getAssignHierarchyByEval(evaluationId);
     }
 
 
     public EvalAssignHierarchy getAssignHierarchyById(Long assignHierarchyId) {
-        EvalAssignHierarchy eah = (EvalAssignHierarchy) dao.findById(EvalAssignHierarchy.class, assignHierarchyId);
-        return eah;
+        if (assignHierarchyId == null) {
+            throw new IllegalArgumentException("assignHierarchyId cannot be null");
+        }
+        List<EvalAssignHierarchy> assignHierarchies = assignmentDao.getAssignHierarchiesByIds(new Long[] { assignHierarchyId });
+        return assignHierarchies.isEmpty() ? null : assignHierarchies.get(0);
     }
 
 
@@ -661,27 +617,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
                 evals.put( evaluationId, innerList );
             }
 	
-	        Search search = new Search("evaluation.id", evaluationIds);
-	
-	        if (! includeUnApproved) {
-	            // only include those that are approved
-	            search.addRestriction( new Restriction("instructorApproval", Boolean.TRUE) );
-	        }
-	
-	        // include all groups unless this is not null and then we limit
-	        if (includeHierarchyGroups != null) {
-	            if (includeHierarchyGroups) {
-	                // only include those which were added via nodes
-	                search.addRestriction( new Restriction("nodeId", "", Restriction.NOT_NULL) );
-	            } else {
-	                // only include those which were added directly (i.e. nodeId = null)
-	                search.addRestriction( new Restriction("nodeId", "", Restriction.NULL) );
-	            }
-	        }
-	
-	        // get all the groups for the given eval ids in one storage call
-	        search.addOrder( new Order("evalGroupId") );
-	        List<EvalAssignGroup> l = dao.findBySearch(EvalAssignGroup.class, search );
+	        List<EvalAssignGroup> l = assignmentDao.getAssignGroupsForEvals(evaluationIds, includeUnApproved, includeHierarchyGroups);
 
             for (EvalAssignGroup eac : l) {
                 // put stuff in inner list
@@ -756,7 +692,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
 
     public EvalResponse getResponseById(Long responseId) {
         log.debug("responseId: " + responseId);
-        EvalResponse response = (EvalResponse) dao.findById(EvalResponse.class, responseId);
+        EvalResponse response = responseDao.getResponseById(responseId);
         return response;
     }
 
@@ -767,12 +703,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
         }
 
         EvalResponse response = null;
-        List<EvalResponse> responses = dao.findBySearch(EvalResponse.class, new Search(
-                new Restriction[] {
-                        new Restriction("owner", userId),
-                        new Restriction("evaluation.id", evaluationId),
-                        new Restriction("evalGroupId", evalGroupId)
-                }) );
+        List<EvalResponse> responses = responseDao.getEvaluationResponsesForUserAndGroup(evaluationId, userId, evalGroupId);
         if (responses.size() <= 0) {
             // do nothing, no response was found
         } else if (responses.size() == 1) {
@@ -788,73 +719,35 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
     public List<Long> getResponseIds(Long evaluationId, String[] evalGroupIds, Boolean completed) {
         log.debug("evaluationId: " + evaluationId);
 
-        if (dao.countBySearch(EvalEvaluation.class, new Search("id", evaluationId)) <= 0l) {
+        if (queryDao.countEvaluationById(evaluationId) <= 0) {
             throw new IllegalArgumentException("Could not find evaluation with id: " + evaluationId);
         }
 
         // pass through to the dao method
-        List<Long> rids = dao.getResponseIds(evaluationId, evalGroupIds, null, completed);
+        List<Long> rids = responseDao.getResponseIds(evaluationId, evalGroupIds, null, completed);
         return rids;
     }
 
     public List<EvalResponse> getResponses(String userId, Long[] evaluationIds,
             String[] evalGroupIds, Boolean completed) {
 
-        Search search = new Search();
-
-        makeResponsesSearchParams(userId, evaluationIds, evalGroupIds, completed, search);
-
-        List<EvalResponse> responses = dao.findBySearch(EvalResponse.class, search);
-        return responses;
+        String ownerUserId = getResponseOwnerFilter(userId);
+        return responseDao.getEvaluationResponses(evaluationIds, ownerUserId, evalGroupIds, completed);
     }
 
 
     public int countResponses(String userId, Long[] evaluationIds, String[] evalGroupIds,
             Boolean completed) {
 
-        Search search = new Search();
-
-        makeResponsesSearchParams(userId, evaluationIds, evalGroupIds, completed, search);
-
-        int count = (int) dao.countBySearch(EvalResponse.class, search);
-        return count;
+        String ownerUserId = getResponseOwnerFilter(userId);
+        return responseDao.countEvaluationResponses(evaluationIds, ownerUserId, evalGroupIds, completed);
     }
 
-    /**
-     * Setup the responses search parameters,
-     * this is here to reduce code duplication
-     * @param userId
-     * @param evaluationIds
-     * @param evalGroupIds
-     * @param completed
-     * @param props
-     * @param values
-     * @param comparisons
-     */
-    private void makeResponsesSearchParams(String userId, Long[] evaluationIds, String[] evalGroupIds, Boolean completed, 
-            Search search) {
-        if (evaluationIds == null || evaluationIds.length == 0) {
-            throw new IllegalArgumentException("evaluationIds cannot be null or empty");
+    private String getResponseOwnerFilter(String userId) {
+        if (userId == null || userId.length() == 0 || commonLogic.isUserAdmin(userId)) {
+            return null;
         }
-
-        // basic search params
-        search.addRestriction( new Restriction("evaluation.id", evaluationIds) );
-
-        if (userId != null && userId.length() > 0) {
-            // admin can see all responses
-            if (! commonLogic.isUserAdmin(userId) ) {
-                search.addRestriction( new Restriction("owner", userId) );
-            }
-        }
-
-        if (evalGroupIds != null && evalGroupIds.length > 0) {
-            search.addRestriction( new Restriction("evalGroupId", evalGroupIds) );
-        }
-
-        if (completed != null) {
-            // if endTime is null then the response is incomplete, if not null then it is complete
-            search.addRestriction( new Restriction("endTime", "", completed ? Restriction.NOT_NULL : Restriction.NULL) );
-        }
+        return userId;
     }
 
 
@@ -881,24 +774,8 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
     // EMAIL TEMPLATES
 
     public List<EvalEmailTemplate> getEmailTemplatesForUser(String userId, String emailTemplateTypeConstant, Boolean includeDefaultsOnly) {
-
-        Search search = new Search();
-
-        if (emailTemplateTypeConstant != null) {
-            search.addRestriction( new Restriction("type", emailTemplateTypeConstant) );
-        }
-
-        // admin can see all
-        if (! commonLogic.isUserAdmin(userId) ) {
-            search.addRestriction( new Restriction("owner", userId) );
-        }
-
-        if (includeDefaultsOnly != null) {
-            search.addRestriction( new Restriction("defaultType", "", includeDefaultsOnly ? Restriction.NOT_NULL : Restriction.NULL) );
-        }
-
-        List<EvalEmailTemplate> templates = dao.findBySearch(EvalEmailTemplate.class, search);
-        return templates;
+        String ownerUserId = commonLogic.isUserAdmin(userId) ? null : userId;
+        return emailTemplateDao.getEmailTemplates(ownerUserId, emailTemplateTypeConstant, includeDefaultsOnly);
     }
 
     public EvalEmailTemplate getDefaultEmailTemplate(String emailTemplateTypeConstant) {
@@ -908,13 +785,12 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
             throw new IllegalArgumentException("Invalid emailTemplateTypeConstant, cannot be null");
         }
 
-        // fetch template by type
-        List<EvalEmailTemplate> l = dao.findBySearch(EvalEmailTemplate.class, new Search("defaultType", emailTemplateTypeConstant) );
-        if (l.isEmpty()) {
+        EvalEmailTemplate emailTemplate = emailTemplateDao.getDefaultEmailTemplate(emailTemplateTypeConstant);
+        if (emailTemplate == null) {
             throw new IllegalArgumentException("Could not find any default template for type constant: "
                     + emailTemplateTypeConstant);
         }
-        return (EvalEmailTemplate) l.get(0);
+        return emailTemplate;
     }
 
     public EvalEmailTemplate getEmailTemplate(Long evaluationId, String emailTemplateTypeConstant) {
@@ -943,7 +819,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
 
         EvalEmailTemplate emailTemplate = null;
         if (emailTemplateId != null) {
-            emailTemplate = (EvalEmailTemplate) dao.findById(EvalEmailTemplate.class, emailTemplateId);
+            emailTemplate = emailTemplateDao.getEmailTemplateById( emailTemplateId);
         }
 
         if (emailTemplate == null || emailTemplate.getMessage() == null) {
@@ -956,7 +832,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
      * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#getEmailTemplate(java.lang.Long)
      */
     public EvalEmailTemplate getEmailTemplate(Long emailTemplateId) {
-        EvalEmailTemplate emailTemplate = (EvalEmailTemplate) dao.findById(EvalEmailTemplate.class, emailTemplateId);
+        EvalEmailTemplate emailTemplate = emailTemplateDao.getEmailTemplateById( emailTemplateId);
         return emailTemplate;
     }
 
@@ -1023,7 +899,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
      * @return
      */
     private EvalEmailTemplate getEmailTemplateOrFail(Long emailTemplateId) {
-        EvalEmailTemplate emailTemplate = (EvalEmailTemplate) dao.findById(EvalEmailTemplate.class,
+        EvalEmailTemplate emailTemplate = emailTemplateDao.getEmailTemplateById(
                 emailTemplateId);
         if (emailTemplate == null) {
             throw new IllegalArgumentException("Cannot find email template with this id: " + emailTemplateId);
@@ -1058,16 +934,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
 	 * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#countEvaluations(java.lang.String)
 	 */
 	public int countEvaluations(String searchString) {
-		if(searchString == null || searchString.equals("")){
-			searchString = "%";
-		} else {
-			searchString = "%" + searchString + "%";
-}
-		Object[] values = new Object[]{searchString};
-		String[] props = new String[]{"title"};
-		int[] comparisons = new int[]{Restriction.LIKE};
-		Search search = new Search(props, values, comparisons);
-		return (int) this.dao.countBySearch(EvalEvaluation.class, search);
+		return this.authoringDao.countEvaluationsByTitle(makeEvaluationTitleSearchPattern(searchString));
 	}
 
 
@@ -1076,26 +943,21 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
 	 */
 	public List<EvalEvaluation> getEvaluations(String searchString,
 			String order, int startResult, int maxResults) {
-		if(searchString == null || searchString.equals("")){
-			searchString = "%";
-		} else {
-			searchString = "%" + searchString + "%";
+		return this.authoringDao.getEvaluationsByTitle(makeEvaluationTitleSearchPattern(searchString), order, startResult, maxResults);
+	}
+
+	private String makeEvaluationTitleSearchPattern(String searchString) {
+		if (searchString == null || searchString.equals("")) {
+			return "%";
 		}
-		Object[] values = new Object[]{searchString};
-		String[] props = new String[]{"title"};
-		int[] comparisons = new int[]{Restriction.LIKE};
-		Search search = new Search(props, values, comparisons);
-		search.addOrder(new Order(order));
-		search.setStart(startResult);
-		search.setLimit(maxResults);
-		return this.dao.findBySearch(EvalEvaluation.class, search );
+		return "%" + searchString + "%";
 	}
 
 
 	public EvalEmailTemplate getEmailTemplateByEid(String eid) {
 		EvalEmailTemplate template = null;
 		if(eid != null) {
-			template = dao.findOneBySearch(EvalEmailTemplate.class, new Search("eid", eid));
+			template = emailTemplateDao.getEmailTemplateByEid(eid);
 		}
 		return template;
 	}
@@ -1110,7 +972,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
      */
 	public List<Map<String,Object>> getConsolidatedEmailMapping(boolean sendingAvailableEmails, int pageSize, int page) {
 		
-		return this.dao.getConsolidatedEmailMapping(sendingAvailableEmails, pageSize, page);
+		return this.consolidatedEmailDao.getConsolidatedEmailMapping(sendingAvailableEmails, pageSize, page);
 	}
     
 	/*
@@ -1119,7 +981,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
 	 */
 	public int selectConsoliatedEmailRecipients(boolean useAvailableEmailSent,
 			Date availableEmailSent, boolean useReminderEmailSent, Date reminderEmailSent, String emailTemplateType) {
-		return this.dao.selectConsolidatedEmailRecipients(useAvailableEmailSent, availableEmailSent, useReminderEmailSent, reminderEmailSent, emailTemplateType);
+		return this.consolidatedEmailDao.selectConsolidatedEmailRecipients(useAvailableEmailSent, availableEmailSent, useReminderEmailSent, reminderEmailSent, emailTemplateType);
 	}
 	
 	/*
@@ -1127,12 +989,12 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
 	 * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#resetConsolidatedEmailRecipients()
 	 */
 	public int resetConsolidatedEmailRecipients() {
-		return this.dao.resetConsolidatedEmailRecipients();
+		return this.consolidatedEmailDao.resetConsolidatedEmailRecipients();
 	}
 	
  	public Set<String> getInProgressEvaluationOwners() {
  		boolean activeEvaluationsOnly = true;
- 		List<EvalResponse> responses = this.dao.getResponsesSavedInProgress(activeEvaluationsOnly);
+ 		List<EvalResponse> responses = this.responseDao.getResponsesSavedInProgress(activeEvaluationsOnly);
  		Set<String> results = new HashSet<>();
  		for (EvalResponse response : responses) {
  			results.add(response.getOwner());
@@ -1145,14 +1007,14 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
 	 * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#countDistinctGroupsInConsolidatedEmailMapping()
 	 */
 	public int countDistinctGroupsInConsolidatedEmailMapping() {
-		return this.dao.countDistinctGroupsInConsolidatedEmailMapping();
+		return this.consolidatedEmailDao.countDistinctGroupsInConsolidatedEmailMapping();
 	}
 
 
     
 	public List<EvalEvaluation> getEvaluationsForEvalGroups(String[] evalGroupIds, int startResult, int maxResults){
 		if( evalGroupIds.length > 0){
-			return  dao.getEvaluationsForOwnerAndGroups("", evalGroupIds, null, startResult, maxResults, Boolean.TRUE);
+			return  queryDao.getEvaluationsForOwnerAndGroups("", evalGroupIds, null, startResult, maxResults, Boolean.TRUE);
 		}else{
 			return new ArrayList<EvalEvaluation>();
 		}

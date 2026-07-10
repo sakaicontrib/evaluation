@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2005 Sakai Foundation Licensed under the
+    Educational Community License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may
+    obtain a copy of the License at
+
+    http://www.osedu.org/licenses/ECL-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the License for the specific language governing
+    permissions and limitations under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Evaluation service and email beans (SERVICES level) -->
+    <bean id="org.sakaiproject.evaluation.logic.EvalEvaluationService"
+        class="org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl">
+        <property name="queryDao" ref="org.sakaiproject.evaluation.dao.EvaluationQueryDao" />
+        <property name="assignmentDao" ref="org.sakaiproject.evaluation.dao.EvaluationAssignmentDao" />
+        <property name="responseDao" ref="org.sakaiproject.evaluation.dao.EvaluationResponseDao" />
+        <property name="emailTemplateDao" ref="org.sakaiproject.evaluation.dao.EvaluationEmailTemplateDao" />
+        <property name="consolidatedEmailDao" ref="org.sakaiproject.evaluation.dao.EvaluationConsolidatedEmailDao" />
+        <property name="authoringDao" ref="org.sakaiproject.evaluation.dao.EvaluationAuthoringDao" />
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="securityChecks"
+            ref="org.sakaiproject.evaluation.logic.externals.EvalSecurityChecks" />
+        <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+    </bean>
+
+    <bean id="org.sakaiproject.evaluation.logic.EvalEmailsLogic"
+        class="org.sakaiproject.evaluation.logic.EvalEmailsLogicImpl"
+        init-method="init">
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+        <property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+    </bean>
+
+    <bean id="org.sakaiproject.evaluation.logic.EvalAuthoringService"
+        class="org.sakaiproject.evaluation.logic.EvalAuthoringServiceImpl"
+        init-method="init">
+        <property name="authoringDao" ref="org.sakaiproject.evaluation.dao.EvaluationAuthoringDao" />
+        <property name="lockDao" ref="org.sakaiproject.evaluation.dao.EvaluationLockDao" />
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+        <property name="securityChecks"
+            ref="org.sakaiproject.evaluation.logic.externals.EvalSecurityChecks" />
+    </bean>
+
+    <bean id="org.sakaiproject.evaluation.logic.EvalEvaluationSetupService"
+        class="org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl"
+        init-method="init">
+        <property name="externalLogic"
+                  ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
+        <property name="queryDao" ref="org.sakaiproject.evaluation.dao.EvaluationQueryDao" />
+        <property name="assignmentDao" ref="org.sakaiproject.evaluation.dao.EvaluationAssignmentDao" />
+        <property name="responseDao" ref="org.sakaiproject.evaluation.dao.EvaluationResponseDao" />
+        <property name="emailTemplateDao" ref="org.sakaiproject.evaluation.dao.EvaluationEmailTemplateDao" />
+        <property name="lockDao" ref="org.sakaiproject.evaluation.dao.EvaluationLockDao" />
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="hierarchyLogic"
+            ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+        <property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+        <property name="securityChecks"
+            ref="org.sakaiproject.evaluation.logic.externals.EvalSecurityChecks" />
+        <property name="evalJobLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalJobLogic" />
+        <property name="emails" ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
+        <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+        <property name="authoringService"
+            ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+        <property name="evalBeanUtils"
+            ref="org.sakaiproject.evaluation.beans.EvalBeanUtils" />
+    </bean>
+
+    <bean id="org.sakaiproject.evaluation.logic.EvalDeliveryService"
+        class="org.sakaiproject.evaluation.logic.EvalDeliveryServiceImpl"
+        init-method="init">
+        <property name="queryDao" ref="org.sakaiproject.evaluation.dao.EvaluationQueryDao" />
+        <property name="responseDao" ref="org.sakaiproject.evaluation.dao.EvaluationResponseDao" />
+        <property name="lockDao" ref="org.sakaiproject.evaluation.dao.EvaluationLockDao" />
+        <property name="commonLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalCommonLogic" />
+        <property name="hierarchyLogic"
+            ref="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic" />
+        <property name="evaluationService"
+            ref="org.sakaiproject.evaluation.logic.EvalEvaluationService" />
+        <property name="settings" ref="org.sakaiproject.evaluation.logic.EvalSettings" />
+        <property name="authoringService"
+            ref="org.sakaiproject.evaluation.logic.EvalAuthoringService" />
+        <property name="emailsLogic"
+            ref="org.sakaiproject.evaluation.logic.EvalEmailsLogic" />
+    </bean>
+</beans>

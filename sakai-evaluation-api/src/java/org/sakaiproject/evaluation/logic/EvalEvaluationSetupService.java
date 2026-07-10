@@ -211,6 +211,25 @@ public interface EvalEvaluationSetupService {
      */
     public List<Long> synchronizeUserAssignments(Long evaluationId, String evalGroupId);
 
+    /**
+     * Synchronizes user assignments for an evaluation, optionally limiting to one group
+     * and optionally removing stale assignments.
+     *
+     * @param evaluation the evaluation to synchronize
+     * @param evalGroupId optional group id limiting the sync scope
+     * @param removeAllowed if true then stale assignments may be removed
+     * @return ids of {@link EvalAssignUser} records changed during synchronization
+     */
+    public List<Long> synchronizeUserAssignmentsForced(EvalEvaluation evaluation, String evalGroupId, boolean removeAllowed);
+
+    /**
+     * Ensures assignment view/approval defaults are populated from evaluation and system settings.
+     *
+     * @param eval the evaluation associated with the assignment
+     * @param assignment the assignment object to update
+     */
+    public void setAssignmentDefaults(EvalEvaluation eval, EvalAssignHierarchy assignment);
+
 
     // ASSIGNMENTS - HIERARCHY
 

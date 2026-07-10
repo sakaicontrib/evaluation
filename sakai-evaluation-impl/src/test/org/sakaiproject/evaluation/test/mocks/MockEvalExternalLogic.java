@@ -52,6 +52,9 @@ import org.sakaiproject.evaluation.utils.EvalUtils;
  */
 public class MockEvalExternalLogic implements EvalExternalLogic {
 
+    public static final String SITE2_SECTION_A_REF = EvalTestDataLoad.SITE2_REF + EvalConstants.GROUP_ID_SECTION_PREFIX + "A";
+    public static final String SITE2_SECTION_B_REF = EvalTestDataLoad.SITE2_REF + EvalConstants.GROUP_ID_SECTION_PREFIX + "B";
+
     /**
      * Note: Admin has all perms in all sites
      * 2 sites:<br/>
@@ -684,7 +687,12 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
 
     public List<EvalGroup> makeEvalGroupObjectsForSectionAwareness( String evalGroupId )
     {
-        return new ArrayList<>();
+        List<EvalGroup> groups = new ArrayList<>();
+        if (EvalTestDataLoad.SITE2_REF.equals(evalGroupId)) {
+            groups.add(new EvalGroup(SITE2_SECTION_A_REF, "Site 2 Section A", EvalConstants.GROUP_TYPE_SECTION));
+            groups.add(new EvalGroup(SITE2_SECTION_B_REF, "Site 2 Section B", EvalConstants.GROUP_TYPE_SECTION));
+        }
+        return groups;
     }
 
     public int countUserIdsForEvalGroup( String evalGroupID, String permission, Boolean sectionAware )
@@ -694,7 +702,22 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
 
     public Set<String> getUserIdsForEvalGroup( String evalGroupID, String permission, Boolean sectionAware )
     {
-        return new HashSet<>();
+        if (Boolean.TRUE.equals(sectionAware)) {
+            Set<String> s = new HashSet<>();
+            if (SITE2_SECTION_A_REF.equals(evalGroupID)) {
+                if (EvalConstants.PERM_BE_EVALUATED.equals(permission)) {
+                    s.add(EvalTestDataLoad.MAINT_USER_ID);
+                } else if (EvalConstants.PERM_TAKE_EVALUATION.equals(permission)) {
+                    s.add(EvalTestDataLoad.USER_ID);
+                }
+            } else if (SITE2_SECTION_B_REF.equals(evalGroupID)) {
+                if (EvalConstants.PERM_TAKE_EVALUATION.equals(permission)) {
+                    s.add(EvalTestDataLoad.STUDENT_USER_ID);
+                }
+            }
+            return s;
+        }
+        return getUserIdsForEvalGroup(evalGroupID, permission);
     }
 
     @Override

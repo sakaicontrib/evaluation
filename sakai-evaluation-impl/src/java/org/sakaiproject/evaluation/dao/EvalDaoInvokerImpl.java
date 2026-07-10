@@ -14,24 +14,44 @@
  */
 package org.sakaiproject.evaluation.dao;
 
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Impl
  * 
  * @author Aaron Zeckoski (aaron@caret.cam.ac.uk)
  */
+@Slf4j
 public class EvalDaoInvokerImpl implements EvalDaoInvoker {
 
-   public EvaluationDao dao;
-   public void setDao(EvaluationDao dao) {
-      this.dao = dao;
-   }
+   @Setter
+   private PlatformTransactionManager transactionManager;
 
    /* (non-Javadoc)
     * @see org.sakaiproject.evaluation.dao.EvalDaoInvoker#invokeTransactionalAccess(java.lang.Runnable)
     */
    public void invokeTransactionalAccess(Runnable toInvoke) {
-      dao.invokeTransactionalAccess(toInvoke);
+      if (transactionManager == null) {
+         log.warn("transactionManager is not configured; running DAO callback outside a transaction");
+         toInvoke.run();
+         return;
+      }
+
+      TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+      transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+      transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+         @Override
+         protected void doInTransactionWithoutResult(TransactionStatus status) {
+            toInvoke.run();
+         }
+      });
    }
 
 }

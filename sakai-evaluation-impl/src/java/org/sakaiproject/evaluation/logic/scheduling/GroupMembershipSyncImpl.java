@@ -22,7 +22,6 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalEvaluationSetupService;
-import org.sakaiproject.evaluation.logic.EvalEvaluationSetupServiceImpl;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.externals.EvalExternalLogic;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -84,39 +83,25 @@ public class GroupMembershipSyncImpl implements GroupMembershipSync {
 						log.info(buf1.toString());
 					}
 					for(EvalEvaluation eval : evals) {
-						if(this.evaluationSetupService instanceof EvalEvaluationSetupServiceImpl) {
-							if(log.isDebugEnabled()) {
-								StringBuilder buf = new StringBuilder();
-								buf.append("====> ");
-								buf.append(state);
-								buf.append("          ==> ");
-								buf.append(eval.getEid());
-								buf.append(" using impl");
-								log.debug(buf.toString());
-							}
-							try {
-								((EvalEvaluationSetupServiceImpl) this.evaluationSetupService).synchronizeUserAssignmentsForced(eval, null, true);
-							} catch(IllegalStateException e) {
-								StringBuilder buf = new StringBuilder();
-								buf.append("Unable to user assignments for eval (");
-								buf.append(eval.getId());
-								buf.append(") due to IllegalStateException: ");
-								buf.append(e.getMessage());
-								log.warn(buf.toString());
-								
-								// TODO: should update the state so it is not selected next time ??
-							}
-						} else {
-							if(log.isDebugEnabled()) {
-								StringBuilder buf = new StringBuilder();
-								buf.append("====> ");
-								buf.append(state);
-								buf.append("          ==> ");
-								buf.append(eval.getEid());
-								buf.append(" using api");
-								log.debug(buf.toString());
-							}
-							this.evaluationSetupService.synchronizeUserAssignments(eval.getId(), null);
+						if(log.isDebugEnabled()) {
+							StringBuilder buf = new StringBuilder();
+							buf.append("====> ");
+							buf.append(state);
+							buf.append("          ==> ");
+							buf.append(eval.getEid());
+							log.debug(buf.toString());
+						}
+						try {
+							evaluationSetupService.synchronizeUserAssignmentsForced(eval, null, true);
+						} catch(IllegalStateException e) {
+							StringBuilder buf = new StringBuilder();
+							buf.append("Unable to user assignments for eval (");
+							buf.append(eval.getId());
+							buf.append(") due to IllegalStateException: ");
+							buf.append(e.getMessage());
+							log.warn(buf.toString());
+
+							// TODO: should update the state so it is not selected next time ??
 						}
 					}
 				}
