@@ -66,6 +66,29 @@ Services use `External*` interfaces (in `logic.externals` package) to abstract S
 ### State Management
 Evaluations follow a defined lifecycle: Partial → InQueue → Active → GracePeriod → Closed → Viewable. State transitions are date-driven and determine permitted operations.
 
+## Sakai Development Discipline
+
+### Service boundaries
+- Put business rules, parsing, import/copy semantics, workflow decisions, and cross-object coordination in services, not controllers, entity providers, repositories, or UI glue.
+- Keep controllers and entity providers focused on request/response handling, navigation, model setup, and framework integration; delegate behavior to services.
+- Keep DAOs focused on persistence of mapped entities and explicit queries. Do not move DTO assembly, adapters, or tool workflow decisions into DAO implementations.
+- Prefer existing Sakai services and utilities before adding local helpers or infrastructure, including `ServerConfigurationService`, Sakai locale/timezone services, `SiteService`, `UserDirectoryService`, scheduler services, and standard Sakai XML/Jackson utilities.
+
+### State and context
+- Do not store request-specific state such as user id, site id, locale, timezone, or request parameters in singleton Spring beans/controllers.
+- Do not use `ThreadLocal`, static fields, or singleton bean fields to pass request/import/user/site-specific state through service calls. Sakai runs on pooled application-server threads, so thread-bound state can leak across requests if cleanup is missed.
+- Prefer explicit return values, operation-scoped helper objects, DTO/result objects, or method parameters.
+- For background work, verify session, user, site, and security-context assumptions explicitly. Prefer Sakai scheduler/executor services over creating new thread pools.
+
+### Locale, timezone, and formatting
+- Use Sakai's centrally resolved locale and timezone, not browser/request defaults such as `Accept-Language`, `HttpServletRequest#getLocale()`, browser timezone, or framework default resolvers.
+- Respect the effective locale for the current context, including site locale when configured and user preferences otherwise.
+- Format UI messages, numbers, dates, and times with the same Sakai-resolved locale; display dates/times in the site or user's preferred timezone.
+
+### Java and XML
+- Do not use Java local variable type inference (`var`); always declare explicit types.
+- For DOM XML parsing, use `org.sakaiproject.util.Xml.createSecureDocumentBuilderFactory()` rather than manually configuring `DocumentBuilderFactory`.
+
 ## Web UI Layer (Spring MVC + Thymeleaf)
 
 The tool UI was fully migrated from RSF to Spring MVC + Thymeleaf. There is no RSF code remaining.
@@ -145,6 +168,21 @@ Tests are located in `sakai-evaluation-impl/src/test/` and use:
 - Spring Test framework for integration testing
 - HSQLDB for in-memory testing
 - Mock implementations in `test.mocks` package
+
+### Test conventions
+- Test public behavior through the public service/API that production code uses; do not use reflection to reach private methods.
+- Prefer loading the real Spring wiring for this module instead of constructing a small mocked object graph by hand. The class or service under test should be the real Spring bean whenever practical.
+- Do not mock, spy, or partially mock the class, service, controller, or tool component whose behavior the test is meant to verify.
+- Mock boundaries, not internals. Mockito is appropriate for external systems, unavailable infrastructure, expensive integrations, or unavoidable Sakai boundary services; avoid mocking DAOs/services from this same module just to avoid wiring.
+- When behavior depends on persistence, transactions, Hibernate mappings, permissions, or Sakai component wiring, prefer a Spring/Hibernate service test over a tiny isolated unit test.
+- When changing user-visible UI flows, add or update a Playwright/e2e test where practical. If not practical, document why in the PR description.
+
+## Review Heuristics
+- Check links, entity providers, background jobs, imports, site copy, and user/site operations for explicit permissions and trustworthy user/site/session context.
+- Preserve established evaluation semantics around availability, state transitions, assignments, hierarchy, response locking, report visibility, and email behavior unless the requested change explicitly alters them.
+- Use parameterized logging with useful operation/object context. Do not include class or method names when the logger already supplies them. Use `debug` for routine trace, `warn` for recoverable unexpected state, and include the exception object when the stack trace matters.
+- Do not swallow exceptions silently. Collapse duplicate catch blocks, remove unreachable catches, and use try-with-resources for streams/files/resources.
+- Prefer small, concrete changes that fit existing Sakai/EVALSYS patterns. When an approach is unclear, ask which strategy is intended before adding more code.
 
 ## Key Configuration
 - System properties managed through `EvalSettings` service
