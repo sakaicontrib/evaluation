@@ -15,7 +15,6 @@
 package org.sakaiproject.evaluation.logic;
 
 import org.sakaiproject.evaluation.dao.EvaluationLockDao;
-import org.sakaiproject.evaluation.dao.EvaluationDaoBase;
 import org.sakaiproject.evaluation.dao.EvaluationQueryDao;
 import org.sakaiproject.evaluation.dao.EvaluationResponseDao;
 
@@ -56,11 +55,6 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
     // Event names cannot be over 32 chars long              // max-32:12345678901234567890123456789012
     protected final String EVENT_RESPONSE_CREATED =                   "eval.response.created";
     protected final String EVENT_RESPONSE_UPDATED =                   "eval.response.updated";
-
-    private EvaluationDaoBase persistence;
-    public void setPersistence(EvaluationDaoBase persistence) {
-        this.persistence = persistence;
-    }
 
     private EvaluationQueryDao queryDao;
     public void setQueryDao(EvaluationQueryDao queryDao) {
@@ -152,6 +146,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
             }
 
             // check to make sure answers are valid for this evaluation
+            Set<EvalAnswer> answersToDelete = new HashSet<>();
             if (response.getAnswers() == null) {
                 response.setAnswers( new HashSet<>(0) );
             } else {
@@ -174,7 +169,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                         // all parts are null so ignore this answer
                         it.remove();
                         if (answer.getId() != null) {
-                            persistence.delete(answer);
+                            answersToDelete.add(answer);
                         }
                     } else {
                         // some parts are not null so do the fixup and store the answer before saving
@@ -204,7 +199,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
             }
 
             try {
-                responseDao.saveResponseAndAnswers(response, response.getAnswers());
+                responseDao.saveResponseAndAnswers(response, response.getAnswers(), answersToDelete);
             } catch (Exception e) {
                 // failed to save so we should assume for now this is caused by the darn unique constraint
                 log.warn("Unable to save response ("+response.getId()+") and answers for this evaluation (" 
@@ -220,7 +215,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
                  * and not just creating the empty response so lock related evaluation
                  */
                 log.info("Locking evaluation (" + response.getEvaluation().getId() + ") and associated entities");
-                EvalEvaluation evaluation = (EvalEvaluation) persistence.findById(EvalEvaluation.class, response.getEvaluation().getId());
+                EvalEvaluation evaluation = queryDao.getEvaluationById(response.getEvaluation().getId());
                 lockDao.lockEvaluation(evaluation, true);
                 completeMessage = ", response is complete";
             }
@@ -262,7 +257,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
     public EvalResponse getResponseById(Long responseId) {
         log.debug("responseId: " + responseId);
         // get the response by passing in id
-        EvalResponse response = (EvalResponse) persistence.findById(EvalResponse.class, responseId);
+        EvalResponse response = responseDao.getResponseById(responseId);
         return response;
     }
 
@@ -270,7 +265,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
         if (evaluationId == null || userId == null || evalGroupId == null) {
             throw new IllegalArgumentException("inputs must all be set");
         }
-        EvalEvaluation evaluation = (EvalEvaluation) persistence.findById(EvalEvaluation.class, evaluationId);
+        EvalEvaluation evaluation = queryDao.getEvaluationById(evaluationId);
         if (evaluation == null) {
             throw new IllegalArgumentException("Invalid evaluation, cannot find evaluation: " + evaluationId);
         }
@@ -382,7 +377,7 @@ public class EvalDeliveryServiceImpl implements EvalDeliveryService {
     public boolean canModifyResponse(String userId, Long responseId) {
         log.debug("userId: " + userId + ", responseId: " + responseId);
         // get the response by id
-        EvalResponse response = (EvalResponse) persistence.findById(EvalResponse.class, responseId);
+        EvalResponse response = responseDao.getResponseById(responseId);
         if (response == null) {
             throw new IllegalArgumentException("Cannot find response with id: " + responseId);
         }

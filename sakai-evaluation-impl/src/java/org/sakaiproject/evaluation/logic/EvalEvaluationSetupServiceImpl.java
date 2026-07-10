@@ -18,7 +18,6 @@ import org.sakaiproject.evaluation.dao.EvaluationGroupQuery;
 import org.sakaiproject.evaluation.dao.EvaluationAssignmentDao;
 import org.sakaiproject.evaluation.dao.EvaluationEmailTemplateDao;
 import org.sakaiproject.evaluation.dao.EvaluationLockDao;
-import org.sakaiproject.evaluation.dao.EvaluationDaoBase;
 import org.sakaiproject.evaluation.dao.EvaluationQueryDao;
 import org.sakaiproject.evaluation.dao.EvaluationResponseDao;
 
@@ -83,11 +82,6 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
     private static final Boolean EVALSYS_SECTION_AWARE_DEFAULT = ServerConfigurationService.getBoolean( SAKAI_PROP_EVALSYS_SECTION_AWARE_DEFAULT, false );
     private static final String EVALSYS_RESULTS_SHARING_DEFAULT = ServerConfigurationService.getString( SAKAI_PROP_EVALSYS_RESULTS_SHARING_DEFAULT, EvalConstants.SHARING_VISIBLE );
     private static final boolean EVALSYS_INSTRUCTOR_VIEW_RESPONSES_DEFAULT = ServerConfigurationService.getBoolean( SAKAI_PROP_EVALSYS_INSTRUCTOR_VIEW_RESPONSES_DEFAULT, true );
-
-    private EvaluationDaoBase persistence;
-    public void setPersistence(EvaluationDaoBase persistence) {
-        this.persistence = persistence;
-    }
 
     private EvaluationQueryDao queryDao;
     public void setQueryDao(EvaluationQueryDao queryDao) {
@@ -501,7 +495,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         }
         
         // save the eval
-        persistence.save(evaluation);
+        queryDao.saveEvaluation(evaluation);
         log.info("User ("+userId+") saved evaluation ("+evaluation.getId()+"), state="+evaluation.getState()+", title: " + evaluation.getTitle());
 
         // initialize the scheduling for the eval jobs (only if state is not partial)
@@ -566,7 +560,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 evaluation.setAvailableEmailTemplate(null);
                 evaluation.setReminderEmailTemplate(null);
                 // save the new state
-                persistence.save(evaluation);
+                queryDao.saveEvaluation(evaluation);
 
                 // old method was to actually remove data
                 // responseDao.removeResponses( responseIds.toArray(new Long[responseIds.size()]) );
@@ -576,7 +570,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
                 // remove the evaluation and copied template since there are no responses
                 removeTemplate = true;
-                persistence.delete(evaluation);
+                queryDao.deleteEvaluation(evaluation);
             }
 
             // fire the evaluation deleted event
@@ -1600,7 +1594,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                             assignGroup.getEvalGroupId() + " to eval: " + eval.getId());
                 }
 
-                persistence.save(assignGroup);
+                assignmentDao.saveAssignGroup(assignGroup);
 
                 // if a late instructor opt-in, notify students in this group that an evaluation is available
                 if (EvalConstants.INSTRUCTOR_OPT_IN.equals(eval.getInstructorOpt())
@@ -1627,7 +1621,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             // updating an existing AG
 
             // fetch the existing AG out of the DB to compare it
-            EvalAssignGroup existingAG = (EvalAssignGroup) persistence.findById(EvalAssignGroup.class, assignGroup.getId());
+            EvalAssignGroup existingAG = assignmentDao.getAssignGroupById(assignGroup.getId());
 
             // check the user control permissions
             if (! securityChecks.checkControlAssignGroup(userId, assignGroup) ) {
@@ -1644,7 +1638,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             }
 
             // allow any other changes
-            persistence.save(assignGroup);
+            assignmentDao.saveAssignGroup(assignGroup);
             log.info("User ("+userId+") updated existing assignGroup ("+assignGroup.getId()+") properties");
             
             Boolean syncUserAssignmentsOnGroupUpdate = (Boolean) this.settings.get(EvalSettings.SYNC_USER_ASSIGNMENTS_ON_GROUP_UPDATE);
@@ -1693,12 +1687,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             throw new IllegalArgumentException("assignGroup to remove cannot be null");
         }
         String userId = commonLogic.getCurrentUserId();
-        Long assignGroupId = assignGroup.getId();
-        persistence.delete(assignGroup);
+        int removed = assignmentDao.deleteAssignGroupAndLinkedUsers(assignGroup, EvalAssignUser.STATUS_UNLINKED);
         log.info("User ("+userId+") deleted existing assign group ("+assignGroup.getId()+")");
-
-        // also need to remove any user assignments related to this group
-        int removed = assignmentDao.deleteAssignUsersByAssignGroupIdExcludingStatus(assignGroupId, EvalAssignUser.STATUS_UNLINKED);
         log.info("User assignments ("+removed+") related to deleted assign group ("+assignGroup.getId()+") were removed for user ("+userId+")");
     }
 
@@ -1766,7 +1756,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         // DO NOT do cleanup for XSS scripting and strings: EVALSYS-994
 
         // save the template if allowed
-        persistence.save(emailTemplate);
+        emailTemplateDao.saveEmailTemplate(emailTemplate);
         log.info("User (" + userId + ") saved email template (" + emailTemplate.getId() + ")");
     }
 
@@ -1790,12 +1780,12 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                     } else if ( EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplate.getType()) ) {
                         evaluation.setReminderEmailTemplate(null);
                     }
-                    persistence.save(evaluation); // save the new template
+                    queryDao.saveEvaluation(evaluation); // save the new template
                 }
             }
 
             // now go ahead and wipe out the template itself
-            persistence.delete(emailTemplate);
+            emailTemplateDao.deleteEmailTemplate(emailTemplate);
         }
     }
 
@@ -1989,7 +1979,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 } else if (EvalConstants.EMAIL_TEMPLATE_SUBMITTED.equals(emailTemplate.getType())) {
                     eval.setSubmissionConfirmationEmailTemplate(emailTemplate);
                 }
-                persistence.save(eval);
+                queryDao.saveEvaluation(eval);
             } else {
                 emailTemplateTypeConstant = emailTemplate.getType();
                 clearAssociation = true;
@@ -2015,7 +2005,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                 }
                 eval.setSubmissionConfirmationEmailTemplate(null);
             }
-            persistence.save(eval);
+            queryDao.saveEvaluation(eval);
 
             // also remove the unused template if possible
             if (checkEmailTemplateId != null) {
@@ -2026,7 +2016,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                     int evalsUsingTemplate = emailTemplateDao.countEvaluationsUsingEmailTemplate(checkEmailTemplateId, emailTemplateTypeConstant);
                     if ( evalsUsingTemplate <= 0 ) {
                         // template was only used in this evaluation
-                        persistence.delete(checkTemplate);
+                        emailTemplateDao.deleteEmailTemplate(checkTemplate);
                     }
                 }
             }

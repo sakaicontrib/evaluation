@@ -22,7 +22,6 @@
     <!-- Evaluation service and email beans (SERVICES level) -->
     <bean id="org.sakaiproject.evaluation.logic.EvalEvaluationService"
         class="org.sakaiproject.evaluation.logic.EvalEvaluationServiceImpl">
-        <property name="persistence" ref="org.sakaiproject.evaluation.dao.EvaluationDaoBase" />
         <property name="queryDao" ref="org.sakaiproject.evaluation.dao.EvaluationQueryDao" />
         <property name="assignmentDao" ref="org.sakaiproject.evaluation.dao.EvaluationAssignmentDao" />
         <property name="responseDao" ref="org.sakaiproject.evaluation.dao.EvaluationResponseDao" />
@@ -49,7 +48,6 @@
     <bean id="org.sakaiproject.evaluation.logic.EvalAuthoringService"
         class="org.sakaiproject.evaluation.logic.EvalAuthoringServiceImpl"
         init-method="init">
-        <property name="persistence" ref="org.sakaiproject.evaluation.dao.EvaluationDaoBase" />
         <property name="authoringDao" ref="org.sakaiproject.evaluation.dao.EvaluationAuthoringDao" />
         <property name="lockDao" ref="org.sakaiproject.evaluation.dao.EvaluationLockDao" />
         <property name="commonLogic"
@@ -64,7 +62,6 @@
         init-method="init">
         <property name="externalLogic"
                   ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
-        <property name="persistence" ref="org.sakaiproject.evaluation.dao.EvaluationDaoBase" />
         <property name="queryDao" ref="org.sakaiproject.evaluation.dao.EvaluationQueryDao" />
         <property name="assignmentDao" ref="org.sakaiproject.evaluation.dao.EvaluationAssignmentDao" />
         <property name="responseDao" ref="org.sakaiproject.evaluation.dao.EvaluationResponseDao" />
@@ -91,7 +88,6 @@
     <bean id="org.sakaiproject.evaluation.logic.EvalDeliveryService"
         class="org.sakaiproject.evaluation.logic.EvalDeliveryServiceImpl"
         init-method="init">
-        <property name="persistence" ref="org.sakaiproject.evaluation.dao.EvaluationDaoBase" />
         <property name="queryDao" ref="org.sakaiproject.evaluation.dao.EvaluationQueryDao" />
         <property name="responseDao" ref="org.sakaiproject.evaluation.dao.EvaluationResponseDao" />
         <property name="lockDao" ref="org.sakaiproject.evaluation.dao.EvaluationLockDao" />

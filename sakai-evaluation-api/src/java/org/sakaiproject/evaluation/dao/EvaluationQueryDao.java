@@ -50,4 +50,10 @@ public interface EvaluationQueryDao {
     public List<String> getEvalCategories(String userId);
 
     public String getNodeIdForEvalGroup(String evalGroupId);
+
+    public EvalEvaluation getEvaluationById(Long evaluationId);
+
+    public void saveEvaluation(EvalEvaluation evaluation);
+
+    public void deleteEvaluation(EvalEvaluation evaluation);
 }

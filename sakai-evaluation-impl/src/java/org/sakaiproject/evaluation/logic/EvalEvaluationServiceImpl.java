@@ -18,7 +18,6 @@ import org.sakaiproject.evaluation.dao.EvaluationAssignmentDao;
 import org.sakaiproject.evaluation.dao.EvaluationAuthoringDao;
 import org.sakaiproject.evaluation.dao.EvaluationConsolidatedEmailDao;
 import org.sakaiproject.evaluation.dao.EvaluationEmailTemplateDao;
-import org.sakaiproject.evaluation.dao.EvaluationDaoBase;
 import org.sakaiproject.evaluation.dao.EvaluationQueryDao;
 import org.sakaiproject.evaluation.dao.EvaluationResponseDao;
 
@@ -67,11 +66,6 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
     protected final String EVENT_EVAL_STATE_DUE =                     "eval.evaluation.state.due";
     protected final String EVENT_EVAL_STATE_STOP =                    "eval.evaluation.state.stop";
     protected final String EVENT_EVAL_STATE_VIEWABLE =                "eval.evaluation.state.viewable";
-
-    private EvaluationDaoBase persistence;
-    public void setPersistence(EvaluationDaoBase persistence) {
-        this.persistence = persistence;
-    }
 
     private EvaluationQueryDao queryDao;
     public void setQueryDao(EvaluationQueryDao queryDao) {
@@ -148,7 +142,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
      */
     public EvalEvaluation getEvaluationById(Long evaluationId) {
         log.debug("evalId: " + evaluationId);
-        EvalEvaluation eval = (EvalEvaluation) persistence.findById(EvalEvaluation.class, evaluationId);
+        EvalEvaluation eval = queryDao.getEvaluationById(evaluationId);
         fixupEvaluation(eval);
         return eval;
     }
@@ -238,7 +232,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
             EvalEvaluation eval = getEvaluationById(evaluationId);
             eval.setAvailableEmailSent(Boolean.TRUE);
             // use dao because evaluation is locked
-            persistence.save(eval);
+            queryDao.saveEvaluation(eval);
         }
 	}
 
@@ -260,7 +254,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
         log.debug("evalId: " + evaluationId);
         EvalEvaluation eval = getEvaluationOrFail(evaluationId);
         eval.setCurrentReminderStatus(reminderStatus);
-        persistence.update(eval);
+        queryDao.saveEvaluation(eval);
     }
 
     /* (non-Javadoc)
@@ -290,7 +284,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
                     } else if ( EvalConstants.EVALUATION_STATE_VIEWABLE.equals(trueState) ) {
                         commonLogic.registerEntityEvent(EVENT_EVAL_STATE_VIEWABLE, evaluation);
                     }
-                    persistence.update(evaluation);
+                    queryDao.saveEvaluation(evaluation);
                 }
             }
         }
@@ -320,7 +314,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
     }
 
     public EvalAssignUser getAssignUserById(Long assignUserId) {
-        EvalAssignUser eau = (EvalAssignUser) persistence.findById(EvalAssignUser.class, assignUserId);
+        EvalAssignUser eau = assignmentDao.getAssignUserById(assignUserId);
         return eau;
     }
 
@@ -380,7 +374,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
         log.debug("evalId: " + evaluationId);
         EvalEvaluation eval = getEvaluationOrFail(evaluationId);
         eval.setOwner(userId);
-        persistence.update(eval);
+        queryDao.saveEvaluation(eval);
         return eval;
     }
 
@@ -515,7 +509,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
     public boolean canBeginEvaluation(String userId) {
         log.debug("Checking begin eval for: " + userId);
         boolean isAdmin = commonLogic.isUserAdmin(userId);
-        if ( isAdmin && (persistence.countAll(EvalTemplate.class) > 0) ) {
+        if ( isAdmin && (authoringDao.countTemplates() > 0) ) {
             // admin can access all templates and create an evaluation if 
             // there is at least one template
             return true;
@@ -584,7 +578,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
 
     public EvalAssignGroup getAssignGroupById(Long assignGroupId) {
         log.debug("assignGroupId: " + assignGroupId);
-        EvalAssignGroup eag = (EvalAssignGroup) persistence.findById(EvalAssignGroup.class, assignGroupId);
+        EvalAssignGroup eag = assignmentDao.getAssignGroupById(assignGroupId);
         return eag;
     }
 
@@ -602,8 +596,8 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
 
 
     public EvalAssignHierarchy getAssignHierarchyById(Long assignHierarchyId) {
-        EvalAssignHierarchy eah = (EvalAssignHierarchy) persistence.findById(EvalAssignHierarchy.class, assignHierarchyId);
-        return eah;
+        List<EvalAssignHierarchy> assignHierarchies = assignmentDao.getAssignHierarchiesByIds(new Long[] { assignHierarchyId });
+        return assignHierarchies.isEmpty() ? null : assignHierarchies.get(0);
     }
 
 
@@ -695,7 +689,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
 
     public EvalResponse getResponseById(Long responseId) {
         log.debug("responseId: " + responseId);
-        EvalResponse response = (EvalResponse) persistence.findById(EvalResponse.class, responseId);
+        EvalResponse response = responseDao.getResponseById(responseId);
         return response;
     }
 
@@ -822,7 +816,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
 
         EvalEmailTemplate emailTemplate = null;
         if (emailTemplateId != null) {
-            emailTemplate = (EvalEmailTemplate) persistence.findById(EvalEmailTemplate.class, emailTemplateId);
+            emailTemplate = emailTemplateDao.getEmailTemplateById( emailTemplateId);
         }
 
         if (emailTemplate == null || emailTemplate.getMessage() == null) {
@@ -835,7 +829,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
      * @see org.sakaiproject.evaluation.logic.EvalEvaluationService#getEmailTemplate(java.lang.Long)
      */
     public EvalEmailTemplate getEmailTemplate(Long emailTemplateId) {
-        EvalEmailTemplate emailTemplate = (EvalEmailTemplate) persistence.findById(EvalEmailTemplate.class, emailTemplateId);
+        EvalEmailTemplate emailTemplate = emailTemplateDao.getEmailTemplateById( emailTemplateId);
         return emailTemplate;
     }
 
@@ -902,7 +896,7 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
      * @return
      */
     private EvalEmailTemplate getEmailTemplateOrFail(Long emailTemplateId) {
-        EvalEmailTemplate emailTemplate = (EvalEmailTemplate) persistence.findById(EvalEmailTemplate.class,
+        EvalEmailTemplate emailTemplate = emailTemplateDao.getEmailTemplateById(
                 emailTemplateId);
         if (emailTemplate == null) {
             throw new IllegalArgumentException("Cannot find email template with this id: " + emailTemplateId);

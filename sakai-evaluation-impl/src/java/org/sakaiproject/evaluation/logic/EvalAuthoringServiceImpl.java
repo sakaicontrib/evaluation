@@ -16,7 +16,6 @@ package org.sakaiproject.evaluation.logic;
 
 import org.sakaiproject.evaluation.dao.EvaluationAuthoringDao;
 import org.sakaiproject.evaluation.dao.EvaluationLockDao;
-import org.sakaiproject.evaluation.dao.EvaluationDaoBase;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -72,11 +71,6 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
     private final String EVENT_TEMPLATEITEM_CREATE =         "eval.templateitem.added";
     private final String EVENT_TEMPLATEITEM_UPDATE =         "eval.templateitem.updated";
     private final String EVENT_TEMPLATEITEM_DELETE =         "eval.templateitem.removed";
-
-    private EvaluationDaoBase persistence;
-    public void setPersistence(EvaluationDaoBase persistence) {
-        this.persistence = persistence;
-    }
 
     private EvaluationAuthoringDao authoringDao;
     public void setAuthoringDao(EvaluationAuthoringDao authoringDao) {
@@ -138,11 +132,10 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
         }
     }
 
-
     public EvalScale getScaleById(Long scaleId) {
         log.debug("scaleId: " + scaleId );
         // get the scale by passing in id
-        EvalScale scale = (EvalScale) persistence.findById(EvalScale.class, scaleId);
+        EvalScale scale = authoringDao.getScaleById(scaleId);
         return scale;
     }
 
@@ -220,7 +213,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
             }
 
             // now save the scale
-            persistence.save(scale);
+            authoringDao.saveScale(scale);
             if (newScale) {
                 commonLogic.registerEntityEvent(EVENT_SCALE_CREATE, scale);
             } else {
@@ -248,7 +241,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
         // check perms and remove
         if (securityChecks.checkUserControlScale(userId, scale)) {
-            persistence.delete(scale);
+            authoringDao.deleteScale(scale);
             commonLogic.registerEntityEvent(EVENT_SCALE_DELETE, scale);
             log.debug("User ("+userId+") deleted scale ("+scale.getId()+"), title: " + scale.getTitle());
             return;
@@ -336,7 +329,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
     public EvalItem getItemById(Long itemId) {
         log.debug("itemId:" + itemId);
-        EvalItem item = (EvalItem) persistence.findById(EvalItem.class, itemId);
+        EvalItem item = authoringDao.getItemById(itemId);
         return item;
     }
 
@@ -419,7 +412,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
             item.setExpertDescription( commonLogic.cleanupUserStrings(item.getExpertDescription()) );
  
             // save the item
-            persistence.save(item);
+            authoringDao.saveItem(item);
 
             // ensure expert items have a category set
             if (EvalUtils.safeBool(item.getExpert())) {
@@ -437,7 +430,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
                     }
                     if (! items.contains(item)) {
                         items.add(item);
-                        persistence.save(eig);
+                        authoringDao.saveItemGroup(eig);
                         log.debug("Added expert item ("+item.getId()+") to default item group: " + EvalConstants.EXPERT_ITEM_CATEGORY_TITLE);
                     }
                 }
@@ -480,7 +473,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
             EvalScale scale = item.getScale(); // LAZY LOAD
             String itemClassification = item.getClassification();
-            persistence.delete(item);
+            authoringDao.deleteItem(item);
             commonLogic.registerEntityEvent(EVENT_ITEM_DELETE, item);
             log.debug("User ("+userId+") removed item ("+item.getId()+"), title: " + item.getItemText());
 
@@ -493,7 +486,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
             // now we remove the scale if this is MC or MA
             if ( EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(itemClassification) ||
                     EvalConstants.ITEM_TYPE_MULTIPLECHOICE.equals(itemClassification) ) {
-                persistence.delete(scale); // NOTE: does not use the main scale removal method since these are not really scales
+                authoringDao.deleteScale(scale); // NOTE: does not use the main scale removal method since these are not really scales
             }
 
             return;
@@ -539,7 +532,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
     public EvalTemplateItem getTemplateItemById(Long templateItemId) {
         log.debug("templateItemId:" + templateItemId);
-        EvalTemplateItem templateItem = (EvalTemplateItem) persistence.findById(EvalTemplateItem.class, templateItemId);
+        EvalTemplateItem templateItem = authoringDao.getTemplateItemById(templateItemId);
         if (templateItem != null) {
             if (TemplateItemUtils.isBlockParent(templateItem)) {
                 // get the children
@@ -634,9 +627,9 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
                 // existing item so just save it
                 // TODO - make sure the item and template do not change for existing templateItems
 
-                persistence.save(templateItem);
+                authoringDao.saveTemplateItem(templateItem);
                 template.setLastModified(new Date());
-                persistence.save(template);
+                authoringDao.saveTemplate(template);
                 commonLogic.registerEntityEvent(EVENT_TEMPLATEITEM_UPDATE, templateItem);
             }
 
@@ -852,7 +845,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
     public List<EvalTemplateItem> getBlockChildTemplateItemsForBlockParent(Long parentId, boolean includeParent) {
 
         // get the templateItem by id to verify parent exists
-        EvalTemplateItem templateItem = (EvalTemplateItem) persistence.findById(EvalTemplateItem.class, parentId);
+        EvalTemplateItem templateItem = authoringDao.getTemplateItemById(parentId);
         if (templateItem == null) {
             throw new IllegalArgumentException("Cannot find block parent templateItem with id: " + parentId);
         }
@@ -982,7 +975,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
     public EvalItemGroup getItemGroupById(Long itemGroupId) {
         log.debug("itemGroupId:" + itemGroupId );
-        EvalItemGroup ig = (EvalItemGroup) persistence.findById(EvalItemGroup.class, itemGroupId);
+        EvalItemGroup ig = authoringDao.getItemGroupById(itemGroupId);
         return ig;
     }
 
@@ -1065,7 +1058,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
 
         // check user can create or update item group
         if (securityChecks.checkUserControlItemGroup(userId, itemGroup)) {
-            persistence.save(itemGroup);
+            authoringDao.saveItemGroup(itemGroup);
 
             log.debug("User ("+userId+") saved itemGroup ("+itemGroup.getId()+"), " + " of type ("+ itemGroup.getType()+")");
             return;     
@@ -1093,7 +1086,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
                 }
             }
 
-            persistence.delete(itemGroup);
+            authoringDao.deleteItemGroup(itemGroup);
 
             log.debug("User ("+userId+") removed itemGroup ("+itemGroup.getId()+"), " + " of type ("+ itemGroup.getType()+")");
             return;     
@@ -1170,7 +1163,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
     public EvalTemplate getTemplateById(Long templateId) {
         log.debug("templateId: " + templateId);
         // get the template by id
-        EvalTemplate template = (EvalTemplate) persistence.findById(EvalTemplate.class, templateId);
+        EvalTemplate template = authoringDao.getTemplateById(templateId);
         return template;
     }
 
@@ -1237,7 +1230,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
             template.setDescription( commonLogic.cleanupUserStrings(template.getDescription()) );
             template.setExpertDescription( commonLogic.cleanupUserStrings(template.getExpertDescription()) );
 
-            persistence.save(template);
+            authoringDao.saveTemplate(template);
             log.debug("User ("+userId+") saved template ("+template.getId()+"), title: " + template.getTitle());
 
             if (newTemplate) {
@@ -1329,7 +1322,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
                 authoringDao.deleteScales(scaleSet);
             }
 
-            persistence.delete(template);
+            authoringDao.deleteTemplate(template);
             // fire the template deleted event
             commonLogic.registerEntityEvent(EVENT_TEMPLATE_DELETE, template);
             return;
@@ -1702,7 +1695,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
                     copyParent.setDisplayOrder(itemCount + displayOrder); // fix up display order
                     copyParent.setBlockId(null);
                     copyParent.setBlockParent(true);
-                    //persistence.save(copyParent);
+                    //authoringDao.saveTemplate(copyParent);
                     copiedTemplateItems.add(copyParent);
                     Long blockParentId = copyParent.getId();
 
@@ -1716,7 +1709,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
                         copy.setDisplayOrder(j); // fix up display order
                         copy.setBlockId(blockParentId);
                         copy.setBlockParent(false);
-                        //persistence.save(copy);
+                        //authoringDao.saveTemplate(copy);
                         copiedTemplateItems.add(copy);
                     }
                 }
@@ -1724,7 +1717,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
                 // not a block parent
                 EvalTemplateItem copy = copyTemplateItem(original, toTemplate, ownerId, hidden);
                 copy.setDisplayOrder(itemCount + displayOrder); // fix up display order
-                //persistence.save(copy);
+                //authoringDao.saveTemplate(copy);
                 copiedTemplateItems.add(copy);
             }
             displayOrder++;
@@ -1735,7 +1728,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
             displayOrder++;
             EvalTemplateItem copy = copyTemplateItem(original, toTemplate, ownerId, hidden);
             copy.setDisplayOrder(itemCount + displayOrder); // fix up display order
-            //persistence.save(copy);
+            //authoringDao.saveTemplate(copy);
             copiedTemplateItems.add(copy);
         }
 
@@ -1820,7 +1813,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
         copy.setCopyOf(original.getId());
         copy.setHidden(hidden);
 
-        persistence.save(copy);
+        authoringDao.saveTemplate(copy);
 
         if (original.getTemplateItems() != null 
                 && original.getTemplateItems().size() > 0) {
@@ -1830,7 +1823,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
             Long[] templateItemIds = copyTemplateItems(originalTIIds, ownerId, true, copy.getId(), includeChildren);
             List<EvalTemplateItem> templateItemsList = authoringDao.getTemplateItemsByIds(templateItemIds);
             copy.setTemplateItems( new HashSet<>(templateItemsList) );
-            persistence.save(copy);
+            authoringDao.saveTemplate(copy);
         }
 
         return copy.getId();
@@ -2012,7 +2005,7 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
                 authoringDao.saveTemplateItems( allItems );
                 // add the full list to the template and save it
                 template.setTemplateItems( allItems );
-                persistence.save(template);
+                authoringDao.saveTemplate(template);
                 log.debug("Saved and inserted "+autoUseItems.size()+" autoUse items for tag (" + autoUseTag + ") into template (id="+templateId+")");
             }
         } else {

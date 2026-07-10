@@ -37,4 +37,10 @@ public interface EvaluationEmailTemplateDao {
     public int countEvaluationsUsingEmailTemplate(Long emailTemplateId, String emailTemplateType);
 
     public void deleteEmailTemplates(Set<EvalEmailTemplate> emailTemplates);
+
+    public EvalEmailTemplate getEmailTemplateById(Long emailTemplateId);
+
+    public void saveEmailTemplate(EvalEmailTemplate emailTemplate);
+
+    public void deleteEmailTemplate(EvalEmailTemplate emailTemplate);
 }

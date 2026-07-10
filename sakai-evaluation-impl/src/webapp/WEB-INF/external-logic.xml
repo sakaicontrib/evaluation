@@ -52,8 +52,8 @@
    <bean id="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogic"
 	      class="org.sakaiproject.evaluation.logic.externals.ExternalHierarchyLogicImpl"
 	      init-method="init">
-      <property name="persistence" ref="org.sakaiproject.evaluation.dao.EvaluationDaoBase" />
       <property name="authoringDao" ref="org.sakaiproject.evaluation.dao.EvaluationAuthoringDao" />
+      <property name="groupNodeDao" ref="org.sakaiproject.evaluation.dao.EvaluationGroupNodeDao" />
       <property name="consolidatedEmailDao" ref="org.sakaiproject.evaluation.dao.EvaluationConsolidatedEmailDao" />
       <property name="assignmentDao" ref="org.sakaiproject.evaluation.dao.EvaluationAssignmentDao" />
       <property name="queryDao" ref="org.sakaiproject.evaluation.dao.EvaluationQueryDao" />

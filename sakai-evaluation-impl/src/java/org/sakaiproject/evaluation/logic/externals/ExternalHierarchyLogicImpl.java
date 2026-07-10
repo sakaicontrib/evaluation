@@ -17,13 +17,12 @@ package org.sakaiproject.evaluation.logic.externals;
 import org.sakaiproject.evaluation.dao.EvaluationAssignmentDao;
 import org.sakaiproject.evaluation.dao.EvaluationAuthoringDao;
 import org.sakaiproject.evaluation.dao.EvaluationConsolidatedEmailDao;
-import org.sakaiproject.evaluation.dao.EvaluationDaoBase;
+import org.sakaiproject.evaluation.dao.EvaluationGroupNodeDao;
 import org.sakaiproject.evaluation.dao.EvaluationQueryDao;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -67,14 +66,14 @@ import lombok.extern.slf4j.Slf4j;
 public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
 
 
-    private EvaluationDaoBase persistence;
-    public void setPersistence(EvaluationDaoBase persistence) {
-        this.persistence = persistence;
-    }
-
     private EvaluationAuthoringDao authoringDao;
     public void setAuthoringDao(EvaluationAuthoringDao authoringDao) {
         this.authoringDao = authoringDao;
+    }
+
+    private EvaluationGroupNodeDao groupNodeDao;
+    public void setGroupNodeDao(EvaluationGroupNodeDao groupNodeDao) {
+        this.groupNodeDao = groupNodeDao;
     }
 
     private EvaluationConsolidatedEmailDao consolidatedEmailDao;
@@ -538,19 +537,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
         if (hierarchyService.getNodeById(nodeId) == null) {
             throw new IllegalArgumentException("Invalid node id, this node does not exist: " + nodeId);
         }
-        EvalGroupNodes egn = getEvalGroupNodeByNodeId(nodeId);
-        if (evalGroupIds == null || evalGroupIds.isEmpty()) {
-            if (egn != null) {
-                // clean up the object if we are removing all the attached eval groups
-                persistence.delete(egn);
-            }
-        } else {
-            if (egn == null) {
-                egn = new EvalGroupNodes(new Date(), nodeId);
-            }
-            egn.setEvalGroups(new ArrayList<String>(evalGroupIds));
-            persistence.save(egn);         
-        }
+        groupNodeDao.setEvalGroupsForNode(nodeId, evalGroupIds);
     }
 
     public Set<String> getEvalGroupsForNode(String nodeId) {
@@ -923,7 +910,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
      * @return a list of egn or empty list if none found
      */
     private List<EvalGroupNodes> getEvalGroupNodesByNodeId(String[] nodeIds) {
-        return authoringDao.getEvalGroupNodesByNodeIds(nodeIds);
+        return groupNodeDao.getEvalGroupNodesByNodeIds(nodeIds);
     }
 
 }

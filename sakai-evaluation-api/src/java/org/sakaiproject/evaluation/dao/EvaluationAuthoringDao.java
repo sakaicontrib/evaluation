@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.model.EvalGroupNodes;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.EvalScale;
@@ -99,8 +98,6 @@ public interface EvaluationAuthoringDao {
 
     public List<EvalEvaluation> getEvaluationsByTitle(String titlePattern, String orderProperty, int startResult, int maxResults);
 
-    public List<EvalGroupNodes> getEvalGroupNodesByNodeIds(String[] nodeIds);
-
     public void removeTemplateItems(EvalTemplateItem[] templateItems);
 
     public List<EvalItemGroup> getItemGroups(Long parentItemGroupId, String userId, boolean includeEmpty, boolean includeExpert);
@@ -110,4 +107,34 @@ public interface EvaluationAuthoringDao {
     public List<EvalTemplateItem> getTemplateItemsByTemplate(Long templateId, String[] nodeIds, String[] instructorIds, String[] groupIds);
 
     public List<EvalTemplateItem> getTemplateItemsByEvaluation(Long evalId, String[] nodeIds, String[] instructorIds, String[] groupIds);
+
+    public EvalScale getScaleById(Long scaleId);
+
+    public void saveScale(EvalScale scale);
+
+    public void deleteScale(EvalScale scale);
+
+    public EvalItem getItemById(Long itemId);
+
+    public void saveItem(EvalItem item);
+
+    public void deleteItem(EvalItem item);
+
+    public EvalItemGroup getItemGroupById(Long itemGroupId);
+
+    public void saveItemGroup(EvalItemGroup itemGroup);
+
+    public void deleteItemGroup(EvalItemGroup itemGroup);
+
+    public EvalTemplate getTemplateById(Long templateId);
+
+    public void saveTemplate(EvalTemplate template);
+
+    public void deleteTemplate(EvalTemplate template);
+
+    public EvalTemplateItem getTemplateItemById(Long templateItemId);
+
+    public void saveTemplateItem(EvalTemplateItem templateItem);
+
+    public int countTemplates();
 }

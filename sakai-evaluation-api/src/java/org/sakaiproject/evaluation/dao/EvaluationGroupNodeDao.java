@@ -15,18 +15,13 @@
 package org.sakaiproject.evaluation.dao;
 
 import java.util.List;
+import java.util.Set;
 
-import org.sakaiproject.evaluation.model.EvalConfig;
+import org.sakaiproject.evaluation.model.EvalGroupNodes;
 
-public interface EvaluationSettingsDao {
+public interface EvaluationGroupNodeDao {
 
-    public int countEvalConfigs();
+    public List<EvalGroupNodes> getEvalGroupNodesByNodeIds(String[] nodeIds);
 
-    public EvalConfig getEvalConfigByName(String name);
-
-    public List<EvalConfig> getAllEvalConfigs();
-
-    public int countEvalConfigsByNames(String[] names);
-
-    public void saveEvalConfig(EvalConfig config);
+    public void setEvalGroupsForNode(String nodeId, Set<String> evalGroupIds);
 }

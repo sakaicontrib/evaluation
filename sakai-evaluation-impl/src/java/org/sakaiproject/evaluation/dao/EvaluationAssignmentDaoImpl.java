@@ -312,7 +312,7 @@ public class EvaluationAssignmentDaoImpl extends EvaluationDaoHibernateSupport i
         }
     }
 
-    public int deleteAssignUsersByAssignGroupIdExcludingStatus(Long assignGroupId, String excludedStatus) {
+    private int deleteAssignUsersByAssignGroupIdExcludingStatus(Long assignGroupId, String excludedStatus) {
         if (assignGroupId == null) {
             throw new IllegalArgumentException("assignGroupId cannot be null");
         }
@@ -515,5 +515,25 @@ public class EvaluationAssignmentDaoImpl extends EvaluationDaoHibernateSupport i
         return viewableEvalGroupIds;
     }
 
+    public EvalAssignGroup getAssignGroupById(Long assignGroupId) {
+        return findById(EvalAssignGroup.class, assignGroupId);
+    }
+
+    public EvalAssignUser getAssignUserById(Long assignUserId) {
+        return findById(EvalAssignUser.class, assignUserId);
+    }
+
+    public void saveAssignGroup(EvalAssignGroup assignGroup) {
+        save(assignGroup);
+    }
+
+    public int deleteAssignGroupAndLinkedUsers(EvalAssignGroup assignGroup, String excludedUserStatus) {
+        if (assignGroup == null) {
+            throw new IllegalArgumentException("assignGroup cannot be null");
+        }
+        Long assignGroupId = assignGroup.getId();
+        delete(assignGroup);
+        return deleteAssignUsersByAssignGroupIdExcludingStatus(assignGroupId, excludedUserStatus);
+    }
 
 }

@@ -64,4 +64,8 @@ public class EvaluationSettingsDaoImpl extends EvaluationDaoHibernateSupport imp
                 .uniqueResult();
         return count == null ? 0 : count.intValue();
     }
+
+    public void saveEvalConfig(EvalConfig config) {
+        save(config);
+    }
 }

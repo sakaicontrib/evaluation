@@ -71,6 +71,11 @@
         <property name="sessionFactory"
             ref="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
     </bean>
+    <bean id="org.sakaiproject.evaluation.dao.EvaluationGroupNodeDao"
+        class="org.sakaiproject.evaluation.dao.EvaluationGroupNodeDaoImpl">
+        <property name="sessionFactory"
+            ref="org.sakaiproject.springframework.orm.hibernate.GlobalSessionFactory" />
+    </bean>
     <bean id="org.sakaiproject.evaluation.dao.EvaluationAdminSupportDao"
         class="org.sakaiproject.evaluation.dao.EvaluationAdminSupportDaoImpl">
         <property name="sessionFactory"
@@ -138,7 +143,6 @@
         this is in here because adhoc-dao-support needs it -->
     <bean id="org.sakaiproject.evaluation.logic.EvalSettings"
         class="org.sakaiproject.evaluation.logic.EvalSettingsImpl" init-method="init">
-        <property name="persistence" ref="org.sakaiproject.evaluation.dao.EvaluationDaoBase" />
         <property name="settingsDao" ref="org.sakaiproject.evaluation.dao.EvaluationSettingsDao" />
         <property name="externalLogic"
             ref="org.sakaiproject.evaluation.logic.externals.EvalExternalLogic" />
@@ -188,6 +192,7 @@
                 <value>org.sakaiproject.evaluation.dao.EvaluationSettingsDao</value>
                 <value>org.sakaiproject.evaluation.dao.EvaluationEmailTemplateDao</value>
                 <value>org.sakaiproject.evaluation.dao.EvaluationAuthoringDao</value>
+                <value>org.sakaiproject.evaluation.dao.EvaluationGroupNodeDao</value>
                 <value>org.sakaiproject.evaluation.dao.EvaluationAdminSupportDao</value>
                 <value>org.sakaiproject.evaluation.dao.EvaluationResponseDao</value>
                 <value>org.sakaiproject.evaluation.dao.EvaluationAssignmentDao</value>

@@ -34,7 +34,7 @@ public interface EvaluationResponseDao {
 
     public int countEvaluationResponses(Long[] evaluationIds, String ownerUserId, String[] evalGroupIds, Boolean completed);
 
-    public void saveResponseAndAnswers(EvalResponse response, Set<EvalAnswer> answers);
+    public void saveResponseAndAnswers(EvalResponse response, Set<EvalAnswer> answers, Set<EvalAnswer> answersToDelete);
 
     public List<EvalAnswer> getAnswers(Long evalId, String[] evalGroupIds, Long[] templateItemIds);
 
@@ -45,4 +45,7 @@ public interface EvaluationResponseDao {
     public Set<String> getResponseUserIds(Long evaluationId, String[] evalGroupIds, Boolean completed);
 
     public List<EvalResponse> getResponsesSavedInProgress(boolean activeEvaluationsOnly);
+
+    public EvalResponse getResponseById(Long responseId);
+
 }

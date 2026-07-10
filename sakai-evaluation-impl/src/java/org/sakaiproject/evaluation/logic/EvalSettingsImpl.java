@@ -14,7 +14,6 @@
  */
 package org.sakaiproject.evaluation.logic;
 
-import org.sakaiproject.evaluation.dao.EvaluationDaoBase;
 import org.sakaiproject.evaluation.dao.EvaluationSettingsDao;
 
 import java.util.Arrays;
@@ -36,11 +35,6 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class EvalSettingsImpl implements EvalSettings {
-
-    private EvaluationDaoBase persistence;
-    public void setPersistence(EvaluationDaoBase persistence) {
-        this.persistence = persistence;
-    }
 
     private EvaluationSettingsDao settingsDao;
     public void setSettingsDao(EvaluationSettingsDao settingsDao) {
@@ -154,7 +148,7 @@ public class EvalSettingsImpl implements EvalSettings {
         }
 
         try {
-            persistence.save(c); // now save in the database
+            settingsDao.saveEvalConfig(c); // now save in the database
             externalLogic.registerEntityEvent(EVENT_SET_ONE_CONFIG, EvalConfig.class, settingConstant); // register event
             configCache.put(name, c); // update the cache
         } catch (Exception e) {

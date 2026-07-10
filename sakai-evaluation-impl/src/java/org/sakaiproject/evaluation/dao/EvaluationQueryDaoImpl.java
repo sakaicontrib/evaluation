@@ -455,4 +455,16 @@ public class EvaluationQueryDaoImpl extends EvaluationDaoHibernateSupport implem
         return null;
     }
 
+    public EvalEvaluation getEvaluationById(Long evaluationId) {
+        return findById(EvalEvaluation.class, evaluationId);
+    }
+
+    public void saveEvaluation(EvalEvaluation evaluation) {
+        save(evaluation);
+    }
+
+    public void deleteEvaluation(EvalEvaluation evaluation) {
+        delete(evaluation);
+    }
+
 }

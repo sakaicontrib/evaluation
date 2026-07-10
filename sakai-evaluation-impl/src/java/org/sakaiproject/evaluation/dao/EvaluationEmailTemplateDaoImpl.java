@@ -112,6 +112,18 @@ public class EvaluationEmailTemplateDaoImpl extends EvaluationDaoHibernateSuppor
         deleteAll(emailTemplates);
     }
 
+    public EvalEmailTemplate getEmailTemplateById(Long emailTemplateId) {
+        return findById(EvalEmailTemplate.class, emailTemplateId);
+    }
+
+    public void saveEmailTemplate(EvalEmailTemplate emailTemplate) {
+        save(emailTemplate);
+    }
+
+    public void deleteEmailTemplate(EvalEmailTemplate emailTemplate) {
+        delete(emailTemplate);
+    }
+
     private String getEvaluationEmailTemplateProperty(String emailTemplateType) {
         if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateType)
                 || EvalConstants.EMAIL_TEMPLATE_CONSOLIDATED_AVAILABLE.equals(emailTemplateType)

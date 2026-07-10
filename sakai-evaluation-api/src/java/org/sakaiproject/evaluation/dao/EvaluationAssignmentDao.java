@@ -59,12 +59,18 @@ public interface EvaluationAssignmentDao {
 
     public void deleteAssignUsersByIds(Long[] assignUserIds);
 
-    public int deleteAssignUsersByAssignGroupIdExcludingStatus(Long assignGroupId, String excludedStatus);
-
     public List<EvalEvaluation> getEvalsWithoutUserAssignments();
 
     public List<EvalAssignUser> getParticipantsForEval(Long evaluationId, String userId, String[] evalGroupIds,
             String assignTypeConstant, String assignStatusConstant, String includeConstant, String evalStateConstant);
 
     public Set<String> getViewableEvalGroupIds(Long evaluationId, String permissionConstant, String[] evalGroupIds);
+
+    public EvalAssignGroup getAssignGroupById(Long assignGroupId);
+
+    public EvalAssignUser getAssignUserById(Long assignUserId);
+
+    public void saveAssignGroup(EvalAssignGroup assignGroup);
+
+    public int deleteAssignGroupAndLinkedUsers(EvalAssignGroup assignGroup, String excludedUserStatus);
 }

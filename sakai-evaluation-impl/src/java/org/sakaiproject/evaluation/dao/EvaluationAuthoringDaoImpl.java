@@ -24,7 +24,6 @@ import java.util.Set;
 import org.hibernate.query.Query;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
-import org.sakaiproject.evaluation.model.EvalGroupNodes;
 import org.sakaiproject.evaluation.model.EvalItem;
 import org.sakaiproject.evaluation.model.EvalItemGroup;
 import org.sakaiproject.evaluation.model.EvalScale;
@@ -436,21 +435,6 @@ public class EvaluationAuthoringDaoImpl extends EvaluationDaoHibernateSupport im
         deleteAll(templateItems);
     }
 
-    public List<EvalGroupNodes> getEvalGroupNodesByNodeIds(String[] nodeIds) {
-        if (nodeIds == null) {
-            throw new IllegalArgumentException("nodeIds cannot be null");
-        }
-        if (nodeIds.length == 0) {
-            return new ArrayList<>(0);
-        }
-        return currentSession().createQuery(
-                "select groupNode from EvalGroupNodes groupNode where groupNode.nodeId in (:nodeIds) order by groupNode.id",
-                EvalGroupNodes.class)
-                .setParameterList("nodeIds", nodeIds)
-                .list();
-    }
-
-
     public void removeTemplateItems(EvalTemplateItem[] templateItems) {
         log.debug("Removing " + templateItems.length + " template items");
         Set<EvalTemplateItem> deleteTemplateItems = new HashSet<>();
@@ -684,17 +668,63 @@ public class EvaluationAuthoringDaoImpl extends EvaluationDaoHibernateSupport im
         return null;
     }
 
+    public EvalScale getScaleById(Long scaleId) {
+        return findById(EvalScale.class, scaleId);
+    }
 
-    /**
-     * Get all the users who have responded to an evaluation (completely or partly)
-     * and optionally within group(s) assigned to that evaluation
-     * 
-     * @param evaluationId a unique id for an {@link EvalEvaluation}
-     * @param evalGroupIds [OPTIONAL] the unique eval group ids associated with this evaluation, 
-     * can be null or empty to get all responses for this evaluation
-     * @param completed [OPTIONAL] if true then only completed (submitted) responses, 
-     *      if false, then only incomplete (saved) responses,
-     *      if null, then retrieve all responses (incomplete and complete)
-     * @return a set of internal userIds
-     */
+    public void saveScale(EvalScale scale) {
+        save(scale);
+    }
+
+    public void deleteScale(EvalScale scale) {
+        delete(scale);
+    }
+
+    public EvalItem getItemById(Long itemId) {
+        return findById(EvalItem.class, itemId);
+    }
+
+    public void saveItem(EvalItem item) {
+        save(item);
+    }
+
+    public void deleteItem(EvalItem item) {
+        delete(item);
+    }
+
+    public EvalItemGroup getItemGroupById(Long itemGroupId) {
+        return findById(EvalItemGroup.class, itemGroupId);
+    }
+
+    public void saveItemGroup(EvalItemGroup itemGroup) {
+        save(itemGroup);
+    }
+
+    public void deleteItemGroup(EvalItemGroup itemGroup) {
+        delete(itemGroup);
+    }
+
+    public EvalTemplate getTemplateById(Long templateId) {
+        return findById(EvalTemplate.class, templateId);
+    }
+
+    public void saveTemplate(EvalTemplate template) {
+        save(template);
+    }
+
+    public void deleteTemplate(EvalTemplate template) {
+        delete(template);
+    }
+
+    public EvalTemplateItem getTemplateItemById(Long templateItemId) {
+        return findById(EvalTemplateItem.class, templateItemId);
+    }
+
+    public void saveTemplateItem(EvalTemplateItem templateItem) {
+        save(templateItem);
+    }
+
+    public int countTemplates() {
+        return countAll(EvalTemplate.class);
+    }
 }

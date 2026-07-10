@@ -162,9 +162,16 @@ public class EvaluationResponseDaoImpl extends EvaluationDaoHibernateSupport imp
      * Persist a response and its answers in the current Hibernate session.
      * Callers must run this inside a transaction so partial saves roll back together.
      */
-    public void saveResponseAndAnswers(EvalResponse response, Set<EvalAnswer> answers) {
+    public void saveResponseAndAnswers(EvalResponse response, Set<EvalAnswer> answers, Set<EvalAnswer> answersToDelete) {
         if (response == null) {
             throw new IllegalArgumentException("response cannot be null");
+        }
+        if (answersToDelete != null && !answersToDelete.isEmpty()) {
+            for (EvalAnswer answer : answersToDelete) {
+                if (answer != null) {
+                    currentSession().delete(answer);
+                }
+            }
         }
         currentSession().saveOrUpdate(response);
         if (answers != null && !answers.isEmpty()) {
@@ -312,5 +319,9 @@ public class EvaluationResponseDaoImpl extends EvaluationDaoHibernateSupport imp
         Query<EvalResponse> query = currentSession().createQuery(hql.toString(), EvalResponse.class);
         bindQueryParameters(query, params);
         return query.list();
+    }
+
+    public EvalResponse getResponseById(Long responseId) {
+        return findById(EvalResponse.class, responseId);
     }
 }
