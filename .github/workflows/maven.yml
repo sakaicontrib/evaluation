@@ -2,6 +2,9 @@ name: Sakai Tomcat Smoke Test
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - 25.x-thymeleaf
   pull_request:
 
 jobs:
@@ -21,11 +24,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Checkout latest Sakai
+      - name: Checkout Sakai 25.x
         uses: actions/checkout@v7
         with:
           repository: sakaiproject/sakai
-          ref: master
+          ref: 25.x
           path: sakai
           fetch-depth: 1
           fetch-tags: false

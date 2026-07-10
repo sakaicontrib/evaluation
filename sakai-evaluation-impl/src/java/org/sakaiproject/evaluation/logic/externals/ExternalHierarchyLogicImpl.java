@@ -186,7 +186,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
 
     private void createHierarchyRoot() {
         HierarchyNode root = hierarchyService.createHierarchy(HIERARCHY_ID);
-        hierarchyService.saveNodeMetaData(root.getId().toString(), HIERARCHY_ROOT_TITLE, null, null);
+        hierarchyService.saveNodeMetaData(root.id, HIERARCHY_ROOT_TITLE, null, null);
         log.info("Created the root node for the eval hierarchy: " + HIERARCHY_ID);
     }
 
@@ -845,14 +845,14 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
             return null;
         }
         EvalHierarchyNode eNode = new EvalHierarchyNode();
-        String nodeId = node.getId().toString();
+        String nodeId = node.id;
         eNode.id = nodeId;
-        eNode.title = node.getTitle();
-        eNode.description = node.getDescription();
-        eNode.directChildNodeIds = getNodeIds(hierarchyService.getDirectChildNodeIds(new String[] {nodeId}), nodeId);
-        eNode.childNodeIds = getNodeIds(hierarchyService.getChildNodeIds(new String[] {nodeId}), nodeId);
-        eNode.directParentNodeIds = getNodeIds(hierarchyService.getDirectParentNodeIds(new String[] {nodeId}), nodeId);
-        eNode.parentNodeIds = getNodeIds(hierarchyService.getParentNodeIds(new String[] {nodeId}), nodeId);
+        eNode.title = node.title;
+        eNode.description = node.description;
+        eNode.directChildNodeIds = copyNodeIds(node.directChildNodeIds);
+        eNode.childNodeIds = copyNodeIds(node.childNodeIds);
+        eNode.directParentNodeIds = copyNodeIds(node.directParentNodeIds);
+        eNode.parentNodeIds = copyNodeIds(node.parentNodeIds);
         return eNode;
     }
 
@@ -864,30 +864,21 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
      */
     private HierarchyNode makeHierarchyNode(EvalHierarchyNode evalNode) {
         HierarchyNode node = new HierarchyNode();
-        node.setId(Long.valueOf(evalNode.id));
-        node.setTitle(evalNode.title);
-        node.setDescription(evalNode.description);
-        node.setChildren(getHierarchyNodesByIds(evalNode.directChildNodeIds));
-        node.setParents(getHierarchyNodesByIds(evalNode.directParentNodeIds));
+        node.id = evalNode.id;
+        node.title = evalNode.title;
+        node.description = evalNode.description;
+        node.directChildNodeIds = copyNodeIds(evalNode.directChildNodeIds);
+        node.childNodeIds = copyNodeIds(evalNode.childNodeIds);
+        node.directParentNodeIds = copyNodeIds(evalNode.directParentNodeIds);
+        node.parentNodeIds = copyNodeIds(evalNode.parentNodeIds);
         return node;
     }
 
-    private Set<String> getNodeIds(Map<String, Set<String>> nodeIdsByNodeId, String nodeId) {
-        if (nodeIdsByNodeId == null || nodeIdsByNodeId.get(nodeId) == null) {
-            return new HashSet<>();
-        }
-        return new HashSet<>(nodeIdsByNodeId.get(nodeId));
-    }
-
-    private Set<HierarchyNode> getHierarchyNodesByIds(Set<String> nodeIds) {
+    private Set<String> copyNodeIds(Set<String> nodeIds) {
         if (nodeIds == null || nodeIds.isEmpty()) {
             return Collections.emptySet();
         }
-        Map<String, HierarchyNode> nodesById = hierarchyService.getNodesByIds(nodeIds.toArray(new String[nodeIds.size()]));
-        if (nodesById == null || nodesById.isEmpty()) {
-            return Collections.emptySet();
-        }
-        return new HashSet<>(nodesById.values());
+        return new HashSet<>(nodeIds);
     }
 
     /**
