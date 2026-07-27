@@ -1891,11 +1891,7 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         if (eah.getInstructorsViewAllResults() == null) {
             Boolean instViewAllResults = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_ALL_RESULTS);
             if (instViewAllResults == null) {
-                if (Boolean.TRUE.equals(eval.getInstructorViewAllResults())) {
-                    eah.setInstructorsViewAllResults( Boolean.TRUE );
-                } else {
-                    eah.setInstructorsViewAllResults( Boolean.FALSE );
-                }
+                eah.setInstructorsViewAllResults(eval.isInstructorViewAllResultsEnabled());
             } else {
                 eah.setInstructorsViewAllResults(instViewAllResults);
             }

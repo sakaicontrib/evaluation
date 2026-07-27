@@ -32,7 +32,6 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.entity.EvaluationEntityProvider;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
-import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.springframework.context.MessageSource;
@@ -414,30 +413,11 @@ public class ControlEvaluationsController extends EvalControllerSupport {
         }
 
         if (!viewResultsEval) {
-            // Check if this user (instructor/evaluatee) has special permission
-            Boolean instructorAllowedViewResults = (Boolean) settings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
-            boolean instructorViewResults = (instructorAllowedViewResults == null || instructorAllowedViewResults);
-
-            if (instructorViewResults) {
-                List<EvalAssignUser> userAssignments = evaluationService.getParticipantsForEval(
-                        eval.getId(), currentUserId, null, null, null, null, null);
-                boolean isEvaluatee = false;
-                for (EvalAssignUser eau : userAssignments) {
-                    if (EvalAssignUser.TYPE_EVALUATEE.equals(eau.getType())) {
-                        isEvaluatee = true;
-                        break;
-                    }
-                }
-                if (isEvaluatee || isUserAdmin) {
-                    if ((eval.getInstructorViewResults() &&
-                            (eval.getOwner().equals(currentUserId) || isUserAdmin)) ||
-                            eval.getInstructorViewAllResults()) {
-                        viewResultsEval = true;
-                        if (eval.getInstructorsDate() != null) {
-                            viewDate = eval.getInstructorsDate();
-                            viewableDate = df.format(viewDate);
-                        }
-                    }
+            if (reportingPermissions.canViewResultsAsInstructorIgnoringDates(eval, currentUserId)) {
+                viewResultsEval = true;
+                if (eval.getInstructorsDate() != null) {
+                    viewDate = eval.getInstructorsDate();
+                    viewableDate = df.format(viewDate);
                 }
             }
         }

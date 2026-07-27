@@ -190,6 +190,74 @@ public class ReportingPermissionsImplTest extends BaseTestEvalLogic {
    }
 
    @Test
+   public void testInstructorResultsView_nullInstructorViewAllResults() {
+      settings.set(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS, null);
+      settings.set(EvalSettings.STUDENT_ALLOWED_VIEW_RESULTS, null);
+
+      EvalEvaluation eval = evaluationService.getEvaluationById(etdl.evaluationClosed.getId());
+      eval.setState(EvalConstants.EVALUATION_STATE_VIEWABLE);
+      eval.setInstructorViewResults(false);
+      eval.setInstructorViewAllResults(null);
+      eval.setStudentViewResults(false);
+
+      Assert.assertFalse(eval.isInstructorViewAllResultsEnabled());
+      Assert.assertFalse(reportingPermissions.canViewResultsAsInstructorIgnoringDates(
+              eval, EvalTestDataLoad.MAINT_USER_ID));
+
+      Set<String> evalGroupIds = reportingPermissions.getViewableGroupsForEvalAndUserByRole(
+              eval, EvalTestDataLoad.MAINT_USER_ID, null);
+      Assert.assertNotNull(evalGroupIds);
+      Assert.assertEquals(0, evalGroupIds.size());
+
+      eval.setInstructorViewAllResults(true);
+      Assert.assertTrue(eval.isInstructorViewAllResultsEnabled());
+      Assert.assertTrue(reportingPermissions.canViewResultsAsInstructorIgnoringDates(
+              eval, EvalTestDataLoad.MAINT_USER_ID));
+
+      evalGroupIds = reportingPermissions.getViewableGroupsForEvalAndUserByRole(
+              eval, EvalTestDataLoad.MAINT_USER_ID, null);
+      Assert.assertNotNull(evalGroupIds);
+      Assert.assertEquals(1, evalGroupIds.size());
+   }
+
+   @Test
+   public void testInstructorResultsView_systemSettingDisabled() {
+      settings.set(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS, Boolean.FALSE);
+
+      EvalEvaluation eval = evaluationService.getEvaluationById(etdl.evaluationClosed.getId());
+      eval.setState(EvalConstants.EVALUATION_STATE_VIEWABLE);
+      eval.setInstructorViewResults(true);
+      eval.setInstructorViewAllResults(true);
+      eval.setStudentViewResults(false);
+
+      Assert.assertFalse(reportingPermissions.canViewResultsAsInstructorIgnoringDates(
+              eval, EvalTestDataLoad.MAINT_USER_ID));
+      Assert.assertFalse(reportingPermissions.canViewResultsAsInstructorIgnoringDates(
+              eval, EvalTestDataLoad.ADMIN_USER_ID));
+   }
+
+   @Test
+   public void testInstructorResultsView_ownerAndAdmin() {
+      settings.set(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS, null);
+
+      EvalEvaluation eval = evaluationService.getEvaluationById(etdl.evaluationClosed.getId());
+      eval.setState(EvalConstants.EVALUATION_STATE_VIEWABLE);
+      eval.setInstructorViewResults(true);
+      eval.setInstructorViewAllResults(false);
+      eval.setStudentViewResults(false);
+      eval.setOwner(EvalTestDataLoad.MAINT_USER_ID);
+
+      Assert.assertTrue(reportingPermissions.canViewResultsAsInstructorIgnoringDates(
+              eval, EvalTestDataLoad.MAINT_USER_ID));
+      Assert.assertTrue(reportingPermissions.canViewResultsAsInstructorIgnoringDates(
+              eval, EvalTestDataLoad.ADMIN_USER_ID));
+
+      // Non-owner without view-all is not enabled by flags alone
+      Assert.assertFalse(reportingPermissions.canViewResultsAsInstructorIgnoringDates(
+              eval, EvalTestDataLoad.USER_ID));
+   }
+
+   @Test
    public void testGetViewableGroupsForEvalAndUserByRole_activeIgnoreViewDates() {
 	  Set<String> evalGroupIds;
 	  EvalEvaluation eval;

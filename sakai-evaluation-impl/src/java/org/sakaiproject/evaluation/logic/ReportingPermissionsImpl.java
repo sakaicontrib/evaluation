@@ -274,18 +274,13 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
         
         boolean allowedInstructor = false;
         if ( typeToEvalGroupId.containsKey(EvalAssignUser.TYPE_EVALUATEE) ) {
-            Boolean instructorAllowedViewResults = (Boolean) evalSettings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
-            if (instructorAllowedViewResults == null || instructorAllowedViewResults) {
-                boolean instructorViewResults = eval.getInstructorViewResults();
-                boolean instructorViewAllResults = Boolean.TRUE.equals(eval.getInstructorViewAllResults());
-                if ((instructorViewResults && (userId.equals(eval.getOwner()) || isUserAdmin)) || instructorViewAllResults) {
-                    Date checkDate = eval.getInstructorsDate();
-                    if ( (checkDate == null && EvalUtils.checkStateAfter(eval.getState(), EvalConstants.EVALUATION_STATE_VIEWABLE, true))
-                            || (checkDate != null && (new Date()).after(checkDate)) 
-                            || (viewSurveyResultsIgnoreDates != null && viewSurveyResultsIgnoreDates)) {
-                        // user is allowed to view based on state and settings so check the groups below
-                        allowedInstructor = true;
-                    }
+            if (isInstructorResultsViewEnabled(eval, userId, isUserAdmin)) {
+                Date checkDate = eval.getInstructorsDate();
+                if ( (checkDate == null && EvalUtils.checkStateAfter(eval.getState(), EvalConstants.EVALUATION_STATE_VIEWABLE, true))
+                        || (checkDate != null && (new Date()).after(checkDate))
+                        || (viewSurveyResultsIgnoreDates != null && viewSurveyResultsIgnoreDates)) {
+                    // user is allowed to view based on state and settings so check the groups below
+                    allowedInstructor = true;
                 }
             }
 
@@ -328,6 +323,36 @@ public class ReportingPermissionsImpl implements ReportingPermissions {
         return viewableGroupIds;
     }
 
+    private boolean isInstructorResultsViewEnabled(EvalEvaluation eval, String userId, boolean isUserAdmin) {
+        Boolean instructorAllowedViewResults = (Boolean) evalSettings.get(EvalSettings.INSTRUCTOR_ALLOWED_VIEW_RESULTS);
+        if (instructorAllowedViewResults != null && !instructorAllowedViewResults) {
+            return false;
+        }
+        return (eval.getInstructorViewResults() && (userId.equals(eval.getOwner()) || isUserAdmin))
+                || eval.isInstructorViewAllResultsEnabled();
+    }
+
+    @Override
+    public boolean canViewResultsAsInstructorIgnoringDates(EvalEvaluation eval, String userId) {
+        if (eval == null || userId == null || "".equals(userId)) {
+            return false;
+        }
+        boolean isUserAdmin = commonLogic.isUserAdmin(userId);
+        if (!isInstructorResultsViewEnabled(eval, userId, isUserAdmin)) {
+            return false;
+        }
+        if (isUserAdmin) {
+            return true;
+        }
+        List<EvalAssignUser> userAssignments = evaluationService.getParticipantsForEval(
+                eval.getId(), userId, null, null, null, null, null);
+        for (EvalAssignUser eau : userAssignments) {
+            if (EvalAssignUser.TYPE_EVALUATEE.equals(eau.getType())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Gets the set of all evalGroupIds that are viewable by this user in this subset of groupIds for this evaluation

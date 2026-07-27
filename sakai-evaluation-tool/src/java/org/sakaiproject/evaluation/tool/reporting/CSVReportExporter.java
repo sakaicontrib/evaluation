@@ -120,9 +120,8 @@ public class CSVReportExporter implements ReportExporter {
             String evalTitle = evaluation.getTitle().replaceAll( " ", "_" );
 
             // Get permission to view, current user and eval owner
-            boolean instructorViewAllResults = Boolean.TRUE.equals(evaluation.getInstructorViewAllResults());
             String currentUserID = commonLogic.getCurrentUserId();
-            String evalOwner = evaluation.getOwner();
+            boolean isCurrentUserAdmin = commonLogic.isUserAdmin(currentUserID);
 
             // Get the TIDL and DTIs for this evaluation
             TemplateItemDataList tidl = responseAggregator.prepareTemplateItemDataStructure( evaluation.getId(), groupIDs );
@@ -155,7 +154,8 @@ public class CSVReportExporter implements ReportExporter {
             for( DataTemplateItem dti : dtiList )
             {
                 // Skip items that aren't for the current user
-                if( isItemNotForCurrentUser( instructorViewAllResults, currentUserID, evalOwner, dti ) )
+                if (!ReportItemVisibility.isVisibleToViewer(evaluation, isCurrentUserAdmin,
+                        currentUserID, dti.associateType, dti.associateId))
                 {
                     continue;
                 }
@@ -211,7 +211,8 @@ public class CSVReportExporter implements ReportExporter {
                 for( DataTemplateItem dti : dtiList )
                 {
                     // Skip items that aren't for the current user
-                    if( isItemNotForCurrentUser( instructorViewAllResults, currentUserID, evalOwner, dti ) )
+                    if (!ReportItemVisibility.isVisibleToViewer(evaluation, isCurrentUserAdmin,
+                            currentUserID, dti.associateType, dti.associateId))
                     {
                         continue;
                     }
@@ -362,23 +363,6 @@ public class CSVReportExporter implements ReportExporter {
         catch( IOException ex ) { throw new RuntimeException("Could not close the ZipOutputStream" ,  ex); }
     }
 
-    /**
-     * Determine if the current DataTemplateItem should be included in the report (for the current user)
-     * @param instructorViewAllResults
-     * @param currentUserID
-     * @param evalOwner
-     * @param dti
-     * @return true if the item is for the current user; false otherwise
-     */
-    private boolean isItemNotForCurrentUser( boolean instructorViewAllResults, String currentUserID, String evalOwner, DataTemplateItem dti )
-    {
-        return !instructorViewAllResults                                                       // If the eval is so configured,
-                && !commonLogic.isUserAdmin( currentUserID )                                  // and currentUser is not an admin
-                && !currentUserID.equals( evalOwner )                                         // and currentUser is not the eval creator
-                && !EvalConstants.ITEM_CATEGORY_COURSE.equals( dti.associateType )            // and the associate type is not 'course'
-                && !currentUserID.equals( commonLogic.getEvalUserById( dti.associateId ).userId );
-    }
-
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.tool.reporting.ReportExporter#buildReport(org.sakaiproject.evaluation.model.EvalEvaluation, java.lang.String[], java.io.OutputStream)
      */
@@ -406,9 +390,7 @@ public class CSVReportExporter implements ReportExporter {
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
             CSVWriter writer = new CSVWriter(outputStreamWriter, COMMA, CSVWriter.DEFAULT_QUOTE_CHARACTER, CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
 
-            boolean instructorViewAllResults = Boolean.TRUE.equals(evaluation.getInstructorViewAllResults());
             String currentUserId = commonLogic.getCurrentUserId();
-            String evalOwner = evaluation.getOwner();
 
             boolean isCurrentUserAdmin = commonLogic.isUserAdmin(currentUserId);
 
@@ -424,11 +406,8 @@ public class CSVReportExporter implements ReportExporter {
             List<String> questionTextRow = new ArrayList<>();
             for (DataTemplateItem dti : dtiList) {
 
-                if (!instructorViewAllResults // If the eval is so configured,
-                  && !isCurrentUserAdmin // and currentUser is not an admin
-                  && !currentUserId.equals(evalOwner) // and currentUser is not the eval creator
-                  && !EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType)
-                  && !currentUserId.equals(commonLogic.getEvalUserById(dti.associateId).userId) ) {
+                if (!ReportItemVisibility.isVisibleToViewer(evaluation, isCurrentUserAdmin,
+                        currentUserId, dti.associateType, dti.associateId)) {
                     //skip instructor items that aren't for the current user
                     continue;
                 }
@@ -474,11 +453,8 @@ public class CSVReportExporter implements ReportExporter {
                 List<String> nextResponseRow = new ArrayList<>();
                 for (DataTemplateItem dti : dtiList) {
 
-                    if (!instructorViewAllResults // If the eval is so configured,
-                      && !isCurrentUserAdmin // and currentUser is not an admin
-                      && !currentUserId.equals(evalOwner) // and currentUser is not the eval creator
-                      && !EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType)
-                      && !currentUserId.equals(commonLogic.getEvalUserById(dti.associateId).userId) ) {
+                    if (!ReportItemVisibility.isVisibleToViewer(evaluation, isCurrentUserAdmin,
+                            currentUserId, dti.associateType, dti.associateId)) {
                         //skip instructor items that aren't for the current user
                         continue;
                     }

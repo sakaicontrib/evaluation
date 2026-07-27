@@ -108,9 +108,8 @@ public class XLSReportExporter implements ReportExporter {
     private void buildReportSectionAware( EvalEvaluation evaluation, String[] groupIDs, OutputStream outputStream )
     {
         // Get permission to view, current user and eval owner
-        boolean instructorViewAllResults = Boolean.TRUE.equals(evaluation.getInstructorViewAllResults());
         String currentUserId = commonLogic.getCurrentUserId();
-        String evalOwner = evaluation.getOwner();
+        boolean isCurrentUserAdmin = commonLogic.isUserAdmin(currentUserId);
 
         TemplateItemDataList tidl = getEvalTIDL( evaluation, groupIDs );
         List<DataTemplateItem> dtiList = tidl.getFlatListOfDataTemplateItems( true );
@@ -238,7 +237,8 @@ public class XLSReportExporter implements ReportExporter {
         for( DataTemplateItem dti : dtiList )
         {
             // Skip items that aren't for the current user
-            if( isItemNotForCurrentUser( instructorViewAllResults, currentUserId, evalOwner, dti ) )
+            if (!ReportItemVisibility.isVisibleToViewer(evaluation, isCurrentUserAdmin,
+                    currentUserId, dti.associateType, dti.associateId))
             {
                 continue;
             }
@@ -301,7 +301,8 @@ public class XLSReportExporter implements ReportExporter {
             for( DataTemplateItem dti : dtiList )
             {
                 // Skip items that aren't for the current user
-                if( isItemNotForCurrentUser( instructorViewAllResults, currentUserId, evalOwner, dti ) )
+                if (!ReportItemVisibility.isVisibleToViewer(evaluation, isCurrentUserAdmin,
+                        currentUserId, dti.associateType, dti.associateId))
                 {
                     continue;
                 }
@@ -470,23 +471,6 @@ public class XLSReportExporter implements ReportExporter {
 
     }
 
-    /**
-     * Determine if the current DataTemplateItem should be included in the report (for the current user)
-     * @param instructorViewAllResults
-     * @param currentUserID
-     * @param evalOwner
-     * @param dti
-     * @return true if the item is for the current user; false otherwise
-     */
-    private boolean isItemNotForCurrentUser( boolean instructorViewAllResults, String currentUserID, String evalOwner, DataTemplateItem dti )
-    {
-        return !instructorViewAllResults                                                       // If the eval is so configured,
-                && !commonLogic.isUserAdmin( currentUserID )                                  // and currentUser is not an admin
-                && !currentUserID.equals( evalOwner )                                         // and currentUser is not the eval creator
-                && !EvalConstants.ITEM_CATEGORY_COURSE.equals( dti.associateType )            // and the associate type is not 'course'
-                && !currentUserID.equals( commonLogic.getEvalUserById( dti.associateId ).userId );
-    }
-
     /*
      * (non-Javadoc)
      *
@@ -525,9 +509,7 @@ public class XLSReportExporter implements ReportExporter {
         }
         else
         {
-            boolean instructorViewAllResults = Boolean.TRUE.equals(evaluation.getInstructorViewAllResults());
             String currentUserId = commonLogic.getCurrentUserId();
-            String evalOwner = evaluation.getOwner();
 
             boolean isCurrentUserAdmin = commonLogic.isUserAdmin(currentUserId);
 
@@ -612,11 +594,8 @@ public class XLSReportExporter implements ReportExporter {
            short headerCount = 1;
            for (DataTemplateItem dti : dtiList) {
 
-               if (!instructorViewAllResults // If the eval is so configured,
-                 && !isCurrentUserAdmin // and currentUser is not an admin
-                 && !currentUserId.equals(evalOwner) // and currentUser is not the eval creator
-                 && !EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType)
-                 && !currentUserId.equals(commonLogic.getEvalUserById(dti.associateId).userId) ) {
+               if (!ReportItemVisibility.isVisibleToViewer(evaluation, isCurrentUserAdmin,
+                       currentUserId, dti.associateType, dti.associateId)) {
                    // skip items that aren't for the current user
                    continue;
                }
@@ -675,11 +654,8 @@ public class XLSReportExporter implements ReportExporter {
                short dtiCounter = 1;
                for (DataTemplateItem dti : dtiList) {
 
-                   if (!instructorViewAllResults // If the eval is so configured,
-                     && !isCurrentUserAdmin // and currentUser is not an admin
-                     && !currentUserId.equals(evalOwner) // and currentUser is not the eval creator
-                     && !EvalConstants.ITEM_CATEGORY_COURSE.equals(dti.associateType)
-                     && !currentUserId.equals(commonLogic.getEvalUserById(dti.associateId).userId) ) {
+                   if (!ReportItemVisibility.isVisibleToViewer(evaluation, isCurrentUserAdmin,
+                           currentUserId, dti.associateType, dti.associateId)) {
                        //skip instructor items that aren't for the current user
                        continue;
                    }
