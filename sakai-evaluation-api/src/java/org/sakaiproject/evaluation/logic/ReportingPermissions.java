@@ -91,4 +91,15 @@ public interface ReportingPermissions {
     */
    public Set<String> getEvalGroupIdsForUserRole(Long evaluationId, String userId, String[] groupIds, boolean isUserInstructor);
 
+   /**
+    * Whether an admin or evaluatee may view instructor results based on settings and
+    * evaluation flags, without applying instructor view-date rules.
+    * Used by evaluation-list UI that shows report affordances before date checks.
+    *
+    * @param eval the evaluation
+    * @param userId internal user id
+    * @return true when the user may view as instructor ignoring dates
+    */
+   public boolean canViewResultsAsInstructorIgnoringDates(EvalEvaluation eval, String userId);
+
 }

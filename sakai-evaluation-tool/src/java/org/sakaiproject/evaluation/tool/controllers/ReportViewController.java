@@ -35,6 +35,7 @@ import org.sakaiproject.evaluation.model.EvalEvaluation;
 import org.sakaiproject.evaluation.model.EvalScale;
 import org.sakaiproject.evaluation.model.EvalTemplateItem;
 import org.sakaiproject.evaluation.tool.EvalToolConstants;
+import org.sakaiproject.evaluation.tool.reporting.ReportItemVisibility;
 import org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil;
 import org.sakaiproject.evaluation.tool.utils.RenderingUtils;
 import org.sakaiproject.evaluation.tool.utils.RenderingUtils.AnswersMean;
@@ -206,26 +207,27 @@ public class ReportViewController extends EvalControllerSupport {
         int totalTextResponses = 0;
         int renderedItemCount = 0;
 
-        Boolean instructorViewAllResults = evaluation.getInstructorViewAllResults() == null
-                ? Boolean.FALSE : evaluation.getInstructorViewAllResults();
         boolean useCourseOnly = !Boolean.FALSE.equals(settings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY));
+        boolean isCurrentUserAdmin = commonLogic.isUserAdmin(currentUserId);
 
         for (TemplateItemGroup tig : tidl.getTemplateItemGroups()) {
-            if (!renderAnyForUser(tig.getTemplateItems(), commonLogic.getEvalUserById(tig.associateId),
-                    evaluation.getOwner(), instructorViewAllResults, currentUserId)) {
+            if (!ReportItemVisibility.isVisibleToViewer(evaluation, isCurrentUserAdmin,
+                    currentUserId, tig.associateType, tig.associateId)
+                    || !renderAny(tig.getTemplateItems(), false)) {
                 continue;
             }
 
+            EvalUser associatedUser = commonLogic.getEvalUserById(tig.associateId);
             String headerKey = null;
             String headerArg = null;
             if (EvalConstants.ITEM_CATEGORY_COURSE.equals(tig.associateType) && !useCourseOnly) {
                 headerKey = "viewreport.itemlist.course";
             } else if (EvalConstants.ITEM_CATEGORY_INSTRUCTOR.equals(tig.associateType)) {
                 headerKey = "viewreport.itemlist.instructor";
-                headerArg = commonLogic.getEvalUserById(tig.associateId).displayName;
+                headerArg = associatedUser.displayName;
             } else if (EvalConstants.ITEM_CATEGORY_ASSISTANT.equals(tig.associateType)) {
                 headerKey = "viewreport.itemlist.ta";
-                headerArg = commonLogic.getEvalUserById(tig.associateId).displayName;
+                headerArg = associatedUser.displayName;
             }
 
             List<ItemResult> sectionItems = new ArrayList<>();
@@ -505,18 +507,6 @@ public class ReportViewController extends EvalControllerSupport {
             title = title.substring(0, EvalToolConstants.EVAL_REPORTING_MAX_NAME_LENGTH);
         }
         return Validator.escapeZipEntry(title);
-    }
-
-    private boolean renderAnyForUser(List<EvalTemplateItem> items, EvalUser associatedUser,
-                                     String owner, Boolean instructorViewAll, String currentUserId) {
-        if (!"invalid:null".equals(associatedUser.userId)
-                && !commonLogic.isUserAdmin(currentUserId)
-                && !currentUserId.equals(owner)
-                && !Boolean.TRUE.equals(instructorViewAll)
-                && !currentUserId.equals(associatedUser.userId)) {
-            return false;
-        }
-        return renderAny(items, false);
     }
 
     private boolean renderAny(List<EvalTemplateItem> items, boolean allEssays) {

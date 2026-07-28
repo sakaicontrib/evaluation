@@ -96,6 +96,10 @@ public class EvalEvaluation implements java.io.Serializable {
      */
     private boolean instructorViewResults;
 
+    /**
+     * Three-state authoring flag: {@code null} means unset (defaults may still apply).
+     * Decision paths must use {@link #isInstructorViewAllResultsEnabled()}, which treats null as false.
+     */
     private Boolean instructorViewAllResults;
 
     /**
@@ -1163,8 +1167,19 @@ public class EvalEvaluation implements java.io.Serializable {
         this.instructorViewResults = instructorViewResults;
     }
 
+    /**
+     * Three-state authoring value: {@code null} means unset (defaults may still apply).
+     * For permission and reporting decisions use {@link #isInstructorViewAllResultsEnabled()}.
+     */
     public Boolean getInstructorViewAllResults() {
         return instructorViewAllResults;
+    }
+
+    /**
+     * Whether instructors may view all results. Unset/{@code null} is treated as false.
+     */
+    public boolean isInstructorViewAllResultsEnabled() {
+        return Boolean.TRUE.equals(instructorViewAllResults);
     }
 
     public void setInstructorViewAllResults(Boolean instructorViewAllResults) {
