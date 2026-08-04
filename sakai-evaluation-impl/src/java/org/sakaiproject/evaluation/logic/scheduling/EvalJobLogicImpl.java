@@ -470,10 +470,7 @@ public class EvalJobLogicImpl implements EvalJobLogic {
             // skipped by an early manual close) -- create one so the eval and its schedule
             // stay in sync instead of silently never notifying anyone
             String newJobId = commonLogic.createScheduledJob(correctDate, eval.getId(), jobType);
-            if (log.isDebugEnabled()) {
-                log.debug("EvalJobLogicImpl.checkInvocationDate created a new invocation: "
-                        + newJobId + ", date=" + correctDate + "," + eval.getId() + "," + jobType + ")");
-            }
+            log.debug("New invocation: jobId={}, date={}, evalId={}, type={}", newJobId, correctDate, eval.getId(), jobType);
         } else {
             // we expect one delayed invocation matching componentId and opaqueContext so remove any extras
             cleanupExtraJobs(jobs);
