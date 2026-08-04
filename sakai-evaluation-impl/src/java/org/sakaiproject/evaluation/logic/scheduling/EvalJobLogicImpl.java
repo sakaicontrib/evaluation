@@ -367,6 +367,13 @@ public class EvalJobLogicImpl implements EvalJobLogic {
             checkInvocationDate(eval, EvalConstants.JOB_TYPE_CLOSED, eval.getStopDate());
 
         } else if (EvalConstants.EVALUATION_STATE_CLOSED.equals(eval.getState())) {
+            // Reaching CLOSED (e.g. via an early manual close) can leave stale DUE/CLOSED
+            // jobs behind from the normal state cascade (ACTIVE -> DUE -> CLOSED -> VIEWABLE).
+            // If left in place, they fire later using an out-of-date schedule and re-derive
+            // the VIEWABLE job from the original due date instead of the actual close time.
+            deleteInvocation(eval.getId(), EvalConstants.JOB_TYPE_DUE);
+            deleteInvocation(eval.getId(), EvalConstants.JOB_TYPE_CLOSED);
+
             // make sure scheduleView job invocation start date matches EvalEvaluation view date
             checkInvocationDate(eval, EvalConstants.JOB_TYPE_VIEWABLE, eval.getViewDate());
 
@@ -458,9 +465,15 @@ public class EvalJobLogicImpl implements EvalJobLogic {
         // get the jobs for this eval
         EvalScheduledJob[] jobs = commonLogic.findScheduledJobs(eval.getId(), jobType);
 
-        // if there are no invocations, return
         if (jobs.length == 0) {
-            // FIXME why return here? if no job was found should we not create one? -AZ
+            // no invocation exists yet for this jobType (e.g. the normal state cascade was
+            // skipped by an early manual close) -- create one so the eval and its schedule
+            // stay in sync instead of silently never notifying anyone
+            String newJobId = commonLogic.createScheduledJob(correctDate, eval.getId(), jobType);
+            if (log.isDebugEnabled()) {
+                log.debug("EvalJobLogicImpl.checkInvocationDate created a new invocation: "
+                        + newJobId + ", date=" + correctDate + "," + eval.getId() + "," + jobType + ")");
+            }
         } else {
             // we expect one delayed invocation matching componentId and opaqueContext so remove any extras
             cleanupExtraJobs(jobs);
