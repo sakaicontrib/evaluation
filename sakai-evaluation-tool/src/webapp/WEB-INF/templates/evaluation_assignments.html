@@ -76,10 +76,11 @@
         <tr th:each="row : ${groupRows}">
             <td width="60%">
                 <span th:text="${row.title}" th:classappend="${!row.published} ? 'elementAlertFront' : ''">Group title</span>
-                &nbsp;(<a th:href="${row.directLink}"
-                          th:text="#{evaluationassignconfirm.direct.link}"
-                          title="Direct URL to the evaluation for this group"
-                          target="_blank">link</a>)
+                <th:block th:if="${row.directLink != null}">
+                    &nbsp;(<a th:href="${row.directLink}"
+                              th:text="#{evaluationassignconfirm.direct.link}"
+                              title="Direct URL to manage this group's members">link</a>)
+                </th:block>
             </td>
             <td th:if="${hasInstructors}" width="10%" th:text="${row.enrollmentInstructors}">0</td>
             <td th:if="${hasAssistants}" width="10%" th:text="${row.enrollmentAssistants}">0</td>
@@ -125,9 +126,11 @@
                             <tr th:each="g : ${node.groups}">
                                 <td>
                                     <span th:text="${g.title}">Group title</span>
-                                    &nbsp;(<a th:href="${g.directLink}"
-                                              th:text="#{evaluationassignconfirm.direct.link}"
-                                              target="_blank">link</a>)
+                                    <th:block th:if="${g.directLink != null}">
+                                        &nbsp;(<a th:href="${g.directLink}"
+                                                  th:text="#{evaluationassignconfirm.direct.link}"
+                                                  title="Direct URL to manage this group's members">link</a>)
+                                    </th:block>
                                 </td>
                                 <td align="center" th:text="${g.enrollmentCount}">0</td>
                                 <td align="center" th:text="${g.type}">type</td>
@@ -142,7 +145,9 @@
     </th:block>
 
     <br/>
-    <input type="button" th:value="#{general.back.button}" accesskey="x"
+    <a th:if="${backUrl != null}" th:href="${backUrl}" accesskey="x"
+       onclick="SPNR.disableControlsAndSpin(this, null);" th:text="#{general.back.button}">Back</a>
+    <input th:unless="${backUrl != null}" type="button" th:value="#{general.back.button}" accesskey="x"
            onclick="SPNR.disableControlsAndSpin(this, null); history.go(-1);"/>
 
 </div>

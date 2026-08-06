@@ -99,9 +99,9 @@ public class EvalBeanUtils {
      */
     public boolean checkUserPermission(String userId, String ownerId) {
         boolean allowed = false;
-        if ( commonLogic.isUserAdmin(userId) ) {
+        if ( ownerId.equals(userId) ) {
             allowed = true;
-        } else if ( ownerId.equals(userId) ) {
+        } else if ( commonLogic.isUserAdmin(userId) ) {
             allowed = true;
         }
         return allowed;

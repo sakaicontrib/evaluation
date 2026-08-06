@@ -135,7 +135,7 @@ public class EvaluationSettingsController extends EvalControllerSupport {
         model.addAttribute("userAdmin",         userAdmin);
         model.addAttribute("currentDate",       dtf.format(new Date()));
 
-        addEditabilityModel(model, displayState.currentEvalState);
+        addEditabilityModel(model, displayState.currentEvalState, displayState.reOpening);
         addSystemSettingsModel(model, userAdmin);
         addSelectConstantsModel(model);
         addDateModel(model, eval, displayState);
@@ -162,7 +162,7 @@ public class EvaluationSettingsController extends EvalControllerSupport {
         if (reopen) {
             Boolean enableReOpen = (Boolean) settings.get(EvalSettings.ENABLE_EVAL_REOPEN);
             if (Boolean.TRUE.equals(enableReOpen) &&
-                    EvalUtils.checkStateAfter(state.currentEvalState, EvalConstants.EVALUATION_STATE_CLOSED, false)) {
+                    EvalUtils.checkStateAfter(state.currentEvalState, EvalConstants.EVALUATION_STATE_CLOSED, true)) {
                 state.currentEvalState = EvalConstants.EVALUATION_STATE_ACTIVE;
                 state.reOpening = true;
                 Calendar cal = Calendar.getInstance();
@@ -174,7 +174,7 @@ public class EvaluationSettingsController extends EvalControllerSupport {
         return state;
     }
 
-    private void addEditabilityModel(Model model, String currentEvalState) {
+    private void addEditabilityModel(Model model, String currentEvalState, boolean reOpening) {
         Boolean useStopDate = (Boolean) settings.get(EvalSettings.EVAL_USE_STOP_DATE);
         Boolean useViewDate = (Boolean) settings.get(EvalSettings.EVAL_USE_VIEW_DATE);
 
@@ -195,7 +195,7 @@ public class EvaluationSettingsController extends EvalControllerSupport {
         model.addAttribute("instrOptDisabled",
                 EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_INQUEUE, true));
         model.addAttribute("reminderDisabled",
-                EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_GRACEPERIOD, true));
+                !reOpening && EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_GRACEPERIOD, true));
         model.addAttribute("respondentSettingsDisabled",
                 EvalUtils.checkStateAfter(currentEvalState, EvalConstants.EVALUATION_STATE_ACTIVE, true));
         model.addAttribute("viewSettingsDisabled",
