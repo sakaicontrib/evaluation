@@ -606,8 +606,10 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
             if (removeTemplate) {
                 // remove template if it is a copy
-                if (EvalUtils.checkStateAfter(evaluation.getState(), EvalConstants.EVALUATION_STATE_PARTIAL, false)) {
-                    // this is not partial (partials do not have copies made yet)
+                if (EvalUtils.checkStateAfter(evaluation.getState(), EvalConstants.EVALUATION_STATE_PARTIAL, true)) {
+                    // saveEvaluation() copies the template on the very first save (isNew),
+                    // which happens while the eval is still Partial - so a copy can exist
+                    // even for a Partial eval, contrary to what this used to assume.
                     // remove the associated template if it is a copy (it should be)
                     EvalTemplate template;
                     if (evaluation.getTemplate() != null 
