@@ -29,6 +29,7 @@ import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
+import org.sakaiproject.evaluation.model.EvalAdhocGroup;
 import org.sakaiproject.evaluation.model.EvalAssignGroup;
 import org.sakaiproject.evaluation.model.EvalAssignHierarchy;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
@@ -68,11 +69,45 @@ public class EvaluationAssignmentsController extends EvalControllerSupport {
         private final List<GroupRow> groups;
     }
 
+    /**
+     * Direct link for a group row: for adhoc groups (managed entirely within evalsys,
+     * not backed by a real Sakai site group) this goes to their member editor - but only
+     * if the current user owns the adhoc group, since modify_adhoc_group rejects anyone
+     * else. Regular Sakai groups have no evalsys-side page to link to (their membership
+     * is managed in Site Info), so no link is offered for them.
+     */
+    private String buildDirectLink(HttpServletRequest request, String gid, String groupType,
+            String currentUserId, Long evaluationId, String backUrl) {
+        if (EvalConstants.GROUP_TYPE_ADHOC.equals(groupType) && gid.startsWith(EvalAdhocGroup.ADHOC_ID_PREFIX)) {
+            Long adhocGroupId = Long.valueOf(gid.substring(EvalAdhocGroup.ADHOC_ID_PREFIX.length()));
+            EvalAdhocGroup adhocGroup = commonLogic.getAdhocGroupById(adhocGroupId);
+            if (adhocGroup != null && currentUserId.equals(adhocGroup.getOwner())) {
+                // Carry our own backUrl along so that when the user lands back here (via
+                // Cancel/Save on modify_adhoc_group), the "Back" button below still points
+                // at the page evaluation_assignments was originally opened from, instead of
+                // at modify_adhoc_group itself (which is what plain history.go(-1) would do
+                // after this extra round trip).
+                String returnUrl = request.getContextPath() + "/evaluation_assignments?evaluationId=" + evaluationId
+                        + (backUrl != null ? "&backUrl=" + URLEncoder.encode(backUrl, StandardCharsets.UTF_8) : "");
+                return request.getContextPath() + "/modify_adhoc_group?adhocGroupId=" + adhocGroupId
+                        + "&returnUrl=" + URLEncoder.encode(returnUrl, StandardCharsets.UTF_8);
+            }
+        }
+        return null;
+    }
+
     @GetMapping
-    public String show(@RequestParam Long evaluationId, Model model, HttpServletRequest request) {
+    public String show(@RequestParam Long evaluationId,
+                       @RequestParam(required = false) String backUrl,
+                       Model model, HttpServletRequest request) {
         if (evaluationId == null)
             throw new IllegalArgumentException("evaluationId is required");
 
+        String currentUserId = currentUserId();
+        if (backUrl == null) {
+            backUrl = request.getHeader("Referer");
+        }
+        model.addAttribute("backUrl", backUrl);
         DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM);
         EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
         model.addAttribute("evaluationId", evaluationId);
@@ -122,8 +157,7 @@ public class EvaluationAssignmentsController extends EvalControllerSupport {
             boolean published = commonLogic.isEvalGroupPublished(gid);
             if (!published) unpublishedCount++;
 
-            String directLink = request.getContextPath() + "/preview_eval?evaluationId=" + evaluationId
-                    + "&evalGroupId=" + URLEncoder.encode(gid, StandardCharsets.UTF_8);
+            String directLink = buildDirectLink(request, gid, group.type, currentUserId, evaluationId, backUrl);
 
             int instructorCount = 0, assistantCount = 0;
             if (hasInstructors) {
@@ -164,8 +198,7 @@ public class EvaluationAssignmentsController extends EvalControllerSupport {
                     if (ah.getNodeId().equals(ag.getNodeId())) {
                         String gid = ag.getEvalGroupId();
                         EvalGroup g = commonLogic.makeEvalGroupObject(gid);
-                        String dl = request.getContextPath() + "/preview_eval?evaluationId=" + evaluationId
-                                + "&evalGroupId=" + URLEncoder.encode(gid, StandardCharsets.UTF_8);
+                        String dl = buildDirectLink(request, gid, g.type, currentUserId, evaluationId, backUrl);
                         nodeGroups.add(new GroupRow(g.title, g.type, dl,
                                 evaluatorCount.getOrDefault(gid, 0), 0, 0, true));
                     }

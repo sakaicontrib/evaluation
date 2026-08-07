@@ -90,7 +90,9 @@
                            class="left-separator"
                            th:text="#{general.command.preview}">Preview</a>
                         <!-- Copiar -->
-                        <form th:action="@{/control_templates/copy}" method="post" class="inlineForm left-separator">
+                        <form th:action="@{/control_templates/copy}" method="post" class="inlineForm left-separator"
+                              onsubmit="return confirm(this.dataset.confirm)"
+                              th:data-confirm="#{controltemplates.copy.confirm}">
                             <input type="hidden" name="templateId" th:value="${row.templateId}"/>
                             <input type="submit" th:value="#{general.copy}" class="makeLink"/>
                         </form>

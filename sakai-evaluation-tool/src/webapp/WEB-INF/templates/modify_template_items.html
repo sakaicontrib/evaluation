@@ -348,6 +348,10 @@
                 <div class="cleaner">&nbsp;</div>
             </div>
 
+            <br/>
+            <a th:href="${backUrl != null} ? ${backUrl} : @{/control_templates}" accesskey="x"
+               onclick="SPNR.disableControlsAndSpin(this, null);" th:text="#{general.back.button}">Back</a>
+
         </div>
         <!-- end padding div -->
 

@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -113,9 +114,10 @@ public class ControlItemsController extends EvalControllerSupport {
     }
 
     @PostMapping("/copy")
-    public String copyItem(@RequestParam Long itemId) {
+    public String copyItem(@RequestParam Long itemId, RedirectAttributes redirectAttrs) {
         String currentUserId = currentUserId();
         authoringService.copyItems(new Long[]{itemId}, currentUserId, false, true);
+        redirectAttrs.addFlashAttribute("successMessage", "controlitems.copy.user.message");
         return "redirect:/control_items";
     }
 }

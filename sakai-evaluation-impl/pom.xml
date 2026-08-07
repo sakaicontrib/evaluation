@@ -68,7 +68,7 @@
         <dependency>
             <groupId>org.sakaiproject</groupId>
             <artifactId>sakai-coursemanagement-authz-provider-impl</artifactId>
-            <version>${project.version}</version>
+            <version>${sakai.version}</version>
         </dependency>
 
         <!-- Evaluation dependencies -->

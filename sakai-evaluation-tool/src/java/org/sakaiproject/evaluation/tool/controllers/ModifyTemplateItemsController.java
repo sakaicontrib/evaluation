@@ -17,6 +17,9 @@ package org.sakaiproject.evaluation.tool.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.sakaiproject.evaluation.logic.model.EvalHierarchyNode;
@@ -41,6 +44,45 @@ import lombok.Data;
 @RequestMapping("/modify_template_items")
 public class ModifyTemplateItemsController extends EvalControllerSupport {
 
+    private static final String BACK_URL_SESSION_KEY = "modifyTemplateItemsBackUrl";
+
+    // Item-editing sub-screens that redirect back here on their own (not real origins):
+    // their Referer must never overwrite the backUrl captured from the real entry point.
+    private static final String[] CHILD_SCREEN_PATHS = {
+        "/modify_item", "/remove_item", "/unblock_item", "/modify_block",
+        "/choose_existing_items", "/choose_expert_items",
+        "/choose_expert_objective", "/choose_expert_category",
+        // "/modify_template" also matches "/modify_template_items" itself (substring),
+        // covering both the template-info edit screen and self-referencing reloads
+        // (e.g. the partial item-row refresh, EVALSYS-878) - neither is a real origin.
+        "/modify_template"
+    };
+
+    /**
+     * Resolves where the "Back" button should go: the page modify_template_items was
+     * originally opened from (My Templates, or Evaluation Settings while building an
+     * eval), not the item sub-screen that just redirected back here. Stored in the
+     * session because each item add/edit/remove/unblock action is its own full-page
+     * redirect back to this URL, so browser history (history.go(-1)) would land on that
+     * sub-screen instead.
+     */
+    private String resolveBackUrl(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        String referer = request.getHeader("Referer");
+        boolean refererIsChildScreen = false;
+        if (referer != null) {
+            for (String childPath : CHILD_SCREEN_PATHS) {
+                if (referer.contains(childPath)) {
+                    refererIsChildScreen = true;
+                    break;
+                }
+            }
+        }
+        if (referer != null && !refererIsChildScreen) {
+            session.setAttribute(BACK_URL_SESSION_KEY, referer);
+        }
+        return (String) session.getAttribute(BACK_URL_SESSION_KEY);
+    }
 
     @Data
     public static class TemplateItemRow {
@@ -79,7 +121,9 @@ public class ModifyTemplateItemsController extends EvalControllerSupport {
     @GetMapping
     public String show(@RequestParam Long templateId,
                        @RequestParam(required = false) Long templateItemId,
-                       Model model) {
+                       Model model, HttpServletRequest request) {
+
+        model.addAttribute("backUrl", resolveBackUrl(request));
 
         String currentUserId = currentUserId();
         EvalTemplate template = localTemplateLogic.fetchTemplate(templateId);

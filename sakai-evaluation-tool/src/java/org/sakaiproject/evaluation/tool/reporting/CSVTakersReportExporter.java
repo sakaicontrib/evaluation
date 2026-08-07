@@ -76,9 +76,11 @@ public class CSVTakersReportExporter implements ReportExporter {
     }
 
     public void buildReport(EvalEvaluation evaluation, String[] groupIds, String evaluateeId, OutputStream outputStream, String exportType) {
+        List<EvalResponse> responses = deliveryService.getEvaluationResponses(evaluation.getId(), groupIds, null);
+
         if (EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(evaluation.getAuthControl())) {
             try (OutputStreamWriter osw = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8)) {
-                osw.write(messages.getMessage("reporting.respondents.nologin"));
+                osw.write(messages.getMessage("reporting.respondents.nologin", responses.size()));
             } catch (IOException e) {
                 throw new RuntimeException("IO Exception writing CSV takers", e);
             }
@@ -87,8 +89,7 @@ public class CSVTakersReportExporter implements ReportExporter {
 
         boolean multiGroup = groupIds != null && groupIds.length > 1;
 
-        // Load responses indexed by groupId → (userId → response)
-        List<EvalResponse> responses = deliveryService.getEvaluationResponses(evaluation.getId(), groupIds, null);
+        // Index responses by groupId → (userId → response)
         Map<String, Map<String, EvalResponse>> groupUserResponses = new HashMap<>();
         for (EvalResponse r : responses) {
             groupUserResponses.computeIfAbsent(r.getEvalGroupId(), k -> new HashMap<>())

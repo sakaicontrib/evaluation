@@ -7,6 +7,23 @@
 // Only layout related styles should be included here:
 // height, width, margin, padding, position, etc.
 
+/* ===== portletBody bottom margin =====
+   The Sakai skin's tool.css sets ".portletBody { margin-bottom: 3rem !important; }"
+   (this rule is present in both the Sakai 25 and Sakai/master skin sources) and tries
+   to cancel it for tools whose body's direct child is .portletBody via
+   "body > .portletBody { margin-bottom: 0; }" — but that override has no !important, so
+   it can never win against the rule above. The leftover 42px collapses through the
+   (border/padding-less) <body> into <html>, inflating its scrollHeight past its
+   clientHeight and producing a spurious inner scrollbar on short pages (e.g. the
+   dashboard/summary view when there are no evaluations to show). Every evalsys template
+   wraps its content in this exact element, so re-assert the intended override here with
+   matching specificity (two classes) and !important. Kept outside sakai25-compat.scss
+   on purpose: the bug also affects the Sakai/master skin, so this must not disappear
+   when that compat file is retired for Sakai 26. */
+.portletBody.evaluation,
+.Mrphs-sakai-rsf-evaluation {
+  margin-bottom: 0 !important;
+}
 
 /////////////////////////
 // Evaluation

@@ -44,6 +44,11 @@
         <li class="lastCrumbNoFloat" th:text="#{controlitems.page.title}">My Items</li>
     </ul>
 
+    <!-- Flash success message -->
+    <div th:if="${successMessage}" class="alertMessage successMessage">
+        <ul><li th:text="#{__${successMessage}__}">OK</li></ul>
+    </div>
+
     <!-- Link to expert items (if enabled) -->
     <p th:if="${useExpertItems}">
         <a th:href="@{/control_expert_items}"
