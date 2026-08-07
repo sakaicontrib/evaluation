@@ -352,13 +352,25 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         evaluationSetupService.deleteEvaluation( EvalTestDataLoad.INVALID_LONG_ID, EvalTestDataLoad.MAINT_USER_ID);
 
         // http://jira.sakaiproject.org/jira/browse/EVALSYS-545 - removing partial eval will remove copied template as well
-        // test that removing an eval with a copied template does not remove the template if still partial
+        // Original 2008 fix made deleteEvaluation() skip the copied-template cleanup entirely while
+        // the eval is still Partial. That was broader than the actual EVALSYS-545 scenario required:
+        // saveEvaluation()'s isNew auto-copy logic already re-copies (into a *hidden* template) any
+        // template that is not itself hidden, so a user's own visible, deliberately-copied template
+        // (the real EVALSYS-545 concern) is never directly assigned to an evaluation and was never at
+        // risk from this cleanup in the first place. The 2008 test constructed a *hidden* template
+        // directly and asserted it survived - that is exactly the auto-generated, disposable copy
+        // that deleteEvaluation() should clean up, and was the source of orphaned copies for
+        // evaluations deleted while still Partial (confirmed against production data: 811 orphaned
+        // items out of 2669 copies). Split into two cases below: the hidden auto-copy case (must be
+        // cleaned up) and the real EVALSYS-545 case with a visible user-copied template (must survive).
+
+        // Hidden auto-copy directly assigned to a Partial eval: must be cleaned up on delete.
         Long templateId545 = authoringService.copyTemplate(etdl.templatePublic.getId(), "copy 545", EvalTestDataLoad.MAINT_USER_ID, true, false);
         EvalTemplate template545 = authoringService.getTemplateById(templateId545);
-        EvalEvaluation evalTest545 = new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION, 
-                EvalTestDataLoad.MAINT_USER_ID, "Eval valid title", 
-                etdl.today, etdl.tomorrow, etdl.threeDaysFuture, etdl.fourDaysFuture, 
-                EvalConstants.EVALUATION_STATE_PARTIAL, 
+        EvalEvaluation evalTest545 = new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION,
+                EvalTestDataLoad.MAINT_USER_ID, "Eval valid title",
+                etdl.today, etdl.tomorrow, etdl.threeDaysFuture, etdl.fourDaysFuture,
+                EvalConstants.EVALUATION_STATE_PARTIAL,
                 EvalConstants.SHARING_VISIBLE, 1, template545);
         evaluationSetupService.saveEvaluation( evalTest545, EvalTestDataLoad.MAINT_USER_ID, false ); // partial
         EvalEvaluation checkEval545 = evaluationService.getEvaluationById(evalTest545.getId());
@@ -369,7 +381,32 @@ public class EvalEvaluationSetupServiceImplTest extends BaseTestEvalLogic {
         evalIdToRemove = evalTest545.getId();
         evaluationSetupService.deleteEvaluation(evalIdToRemove, EvalTestDataLoad.ADMIN_USER_ID);
         Assert.assertNull( evaluationService.getEvaluationById(evalIdToRemove) );
-        Assert.assertNotNull( persistence.findById(EvalTemplate.class, checkEval545templateId) );
+        Assert.assertNull( persistence.findById(EvalTemplate.class, checkEval545templateId) );
+
+        // Real EVALSYS-545 case: a visible template the user deliberately copied for reuse. Assigning
+        // it to a new evaluation makes saveEvaluation() re-copy it into a separate hidden template, so
+        // the user's original visible template must never be touched by deleteEvaluation().
+        Long userTemplateId = authoringService.copyTemplate(etdl.templatePublic.getId(), "user's own copy", EvalTestDataLoad.MAINT_USER_ID, false, false);
+        EvalTemplate userTemplate = authoringService.getTemplateById(userTemplateId);
+        EvalEvaluation evalTestUserTemplate = new EvalEvaluation( EvalConstants.EVALUATION_TYPE_EVALUATION,
+                EvalTestDataLoad.MAINT_USER_ID, "Eval valid title",
+                etdl.today, etdl.tomorrow, etdl.threeDaysFuture, etdl.fourDaysFuture,
+                EvalConstants.EVALUATION_STATE_PARTIAL,
+                EvalConstants.SHARING_VISIBLE, 1, userTemplate);
+        evaluationSetupService.saveEvaluation( evalTestUserTemplate, EvalTestDataLoad.MAINT_USER_ID, false ); // partial
+        EvalEvaluation checkEvalUserTemplate = evaluationService.getEvaluationById(evalTestUserTemplate.getId());
+        Assert.assertNotNull(checkEvalUserTemplate);
+        Long assignedTemplateId = checkEvalUserTemplate.getTemplate().getId();
+        // confirms the auto-copy protection: the eval was NOT assigned the visible template directly
+        Assert.assertNotEquals(userTemplateId, assignedTemplateId);
+
+        evalIdToRemove = evalTestUserTemplate.getId();
+        evaluationSetupService.deleteEvaluation(evalIdToRemove, EvalTestDataLoad.ADMIN_USER_ID);
+        Assert.assertNull( evaluationService.getEvaluationById(evalIdToRemove) );
+        // the user's own visible template must survive
+        Assert.assertNotNull( persistence.findById(EvalTemplate.class, userTemplateId) );
+        // the disposable hidden auto-copy that was actually assigned must be cleaned up
+        Assert.assertNull( persistence.findById(EvalTemplate.class, assignedTemplateId) );
 
     }
 
