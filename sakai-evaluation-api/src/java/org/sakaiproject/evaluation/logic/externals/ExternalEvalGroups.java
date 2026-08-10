@@ -99,6 +99,24 @@ public interface ExternalEvalGroups {
 	public Map<String, Integer> countUserIdsForEvalGroups(Collection<String> evalGroupIds, String permission, Boolean sectionAware);
 
 	/**
+	 * Check, for a batch of eval groups at once, whether each one has at least one user with a specific
+	 * permission. Use this instead of {@link #countUserIdsForEvalGroups(Collection, String, Boolean)}
+	 * when only the yes/no answer is needed (e.g. "does this group have anyone eligible to evaluate").
+	 * <p>
+	 * The admin user is always excluded (present in every group) with no lookup needed. Role-view
+	 * ("View Site As") accounts are resolved one candidate at a time per group, stopping as soon as a
+	 * real (non role-view) user is found - so it never resolves more users per group than strictly
+	 * necessary to answer yes/no, unlike {@link #countUserIdsForEvalGroups(Collection, String, Boolean)}
+	 * which must resolve every candidate to return an exact count.
+	 *
+	 * @param evalGroupIds the internal unique IDs for the evalGroups
+	 * @param permission a permission string constant
+	 * @param sectionAware if checking users for one section of a site/group or all sections
+	 * @return a Map (evalGroupId -&gt; true if at least one eligible user was found) with one entry per input evalGroupId
+	 */
+	public Map<String, Boolean> hasUserIdsForEvalGroups(Collection<String> evalGroupIds, String permission, Boolean sectionAware);
+
+	/**
 	 * Get a list of all eval groups that a user has a specific permission in
 	 * (use {@link #countEvalGroupsForUser(String, String)} if you just need the number)
 	 * 

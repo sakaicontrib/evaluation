@@ -818,13 +818,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 
         if ( !azGroupToEvalGroupId.isEmpty() )
         {
-            // Single round trip for every group instead of one authzGroupService call per group
-            Set<String[]> usersByGroup = authzGroupService.getUsersIsAllowedByGroup( permission, azGroupToEvalGroupId.keySet() );
-            Map<String, Set<String>> userIdsByAzGroup = new HashMap<>();
-            for ( String[] userAndGroup : usersByGroup )
-            {
-                userIdsByAzGroup.computeIfAbsent( userAndGroup[1], k -> new HashSet<>() ).add( userAndGroup[0] );
-            }
+            Map<String, Set<String>> userIdsByAzGroup = fetchUserIdsByAzGroupBatched( azGroupToEvalGroupId.keySet(), permission );
 
             // Same cleanup the per-group path applies: drop the admin user and role-view ("View Site As") fake users
             Set<String> allUserIds = new HashSet<>();
@@ -843,6 +837,95 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
 
         return counts;
     }
+
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#hasUserIdsForEvalGroups(java.util.Collection, java.lang.String, java.lang.Boolean)
+     */
+    public Map<String, Boolean> hasUserIdsForEvalGroups( Collection<String> evalGroupIDs, String permission, Boolean sectionAware )
+    {
+        Map<String, Boolean> result = new HashMap<>();
+        if ( evalGroupIDs.isEmpty() )
+        {
+            return result;
+        }
+
+        Map<String, String> azGroupToEvalGroupId = new HashMap<>();
+        for ( String evalGroupID : evalGroupIDs )
+        {
+            if ( BooleanUtils.isFalse( sectionAware ) )
+            {
+                ParsedEvalGroupID groupID = new ParsedEvalGroupID( evalGroupID );
+                String azGroup = EvalConstants.GROUP_ID_SITE_PREFIX + groupID.getSiteID();
+                if ( groupID.hasGroup() )
+                {
+                    azGroup += EvalConstants.GROUP_ID_GROUP_PREFIX + groupID.getGroupID();
+                }
+                azGroupToEvalGroupId.put( azGroup, evalGroupID );
+                result.put( evalGroupID, false );
+            }
+            else
+            {
+                result.put( evalGroupID, countUserIdsForEvalGroup( evalGroupID, permission, sectionAware ) > 0 );
+            }
+        }
+
+        if ( !azGroupToEvalGroupId.isEmpty() )
+        {
+            Map<String, Set<String>> userIdsByAzGroup = fetchUserIdsByAzGroupBatched( azGroupToEvalGroupId.keySet(), permission );
+
+            // For each group, check candidates one at a time (skipping the admin user - no DB lookup
+            // needed for that) and stop as soon as a real (non role-view) user is found. This never
+            // resolves more users per group than strictly necessary to answer yes/no, and - unlike a
+            // size-based shortcut - does not depend on any assumption about how many role-view accounts
+            // a group could have.
+            for ( Entry<String, String> entry : azGroupToEvalGroupId.entrySet() )
+            {
+                Set<String> candidates = userIdsByAzGroup.getOrDefault( entry.getKey(), Collections.emptySet() );
+                boolean hasEvaluators = false;
+                for ( String candidateId : candidates )
+                {
+                    if ( ADMIN_USER_ID.equals( candidateId ) )
+                    {
+                        continue;
+                    }
+                    if ( !userDirectoryService.isRoleViewType( candidateId ) )
+                    {
+                        hasEvaluators = true;
+                        break;
+                    }
+                }
+                result.put( entry.getValue(), hasEvaluators );
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Resolves, in batches, which users are allowed to perform the given permission in each of the given
+     * azGroups. Shared by {@link #countUserIdsForEvalGroups(Collection, String, Boolean)} and
+     * {@link #hasUserIdsForEvalGroups(Collection, String, Boolean)}.
+     */
+    private Map<String, Set<String>> fetchUserIdsByAzGroupBatched( Collection<String> azGroups, String permission )
+    {
+        // A single query with a huge REALM_ID IN (...) list across hundreds of groups can be considerably
+        // slower than the same lookups split into smaller batches (EVALSYS-1615). Batching keeps the
+        // round-trip count low while giving the query planner a much smaller IN-list per query.
+        Map<String, Set<String>> userIdsByAzGroup = new HashMap<>();
+        List<String> allAzGroups = new ArrayList<>( azGroups );
+        for ( int start = 0; start < allAzGroups.size(); start += BULK_LOOKUP_BATCH_SIZE )
+        {
+            List<String> batch = allAzGroups.subList( start, Math.min( start + BULK_LOOKUP_BATCH_SIZE, allAzGroups.size() ) );
+            Set<String[]> usersByGroup = authzGroupService.getUsersIsAllowedByGroup( permission, batch );
+            for ( String[] userAndGroup : usersByGroup )
+            {
+                userIdsByAzGroup.computeIfAbsent( userAndGroup[1], k -> new HashSet<>() ).add( userAndGroup[0] );
+            }
+        }
+        return userIdsByAzGroup;
+    }
+
+    private static final int BULK_LOOKUP_BATCH_SIZE = 25;
 
     /**
      * Utility class to parse out section, site and group IDs into their own separate variables.
@@ -967,10 +1050,18 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
      * Need to help remove the fake users from Sakai 23+ View Site As
      */
     protected Set<String> getRoleViewTypeUserIds(Set<String> userIDs) {
+        // EVALSYS-1615 follow-up: isRoleViewType(id) resolves the full user record one at a time
+        // (userDirectoryService.getOptionalUser). For the group-assign bulk lookup this method can be
+        // called with thousands of distinct user ids at once, and checking them one by one dominated the
+        // total time (109s/18s of the ~110ms actually spent on the batched SQL). getUsers(Collection) is
+        // a real bulk fetch at the storage layer, so resolve everyone in one round trip and check locally.
+        if (userIDs.isEmpty()) {
+            return Collections.emptySet();
+        }
         Set<String> roleViewTypeUserIds = new HashSet<>();
-        for (String userId : userIDs) {
-            if (userDirectoryService.isRoleViewType(userId)) {
-                roleViewTypeUserIds.add(userId);
+        for (User user : userDirectoryService.getUsers(userIDs)) {
+            if (UserDirectoryService.ROLEVIEW_USER_TYPE.equals(user.getType())) {
+                roleViewTypeUserIds.add(user.getId());
             }
         }
         return roleViewTypeUserIds;

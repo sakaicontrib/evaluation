@@ -711,6 +711,16 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
         return counts;
     }
 
+    public Map<String, Boolean> hasUserIdsForEvalGroups( Collection<String> evalGroupIDs, String permission, Boolean sectionAware )
+    {
+        Map<String, Boolean> result = new HashMap<>();
+        for ( String evalGroupID : evalGroupIDs )
+        {
+            result.put( evalGroupID, countUserIdsForEvalGroup( evalGroupID, permission, sectionAware ) > 0 );
+        }
+        return result;
+    }
+
     public Set<String> getUserIdsForEvalGroup( String evalGroupID, String permission, Boolean sectionAware )
     {
         if (Boolean.TRUE.equals(sectionAware)) {

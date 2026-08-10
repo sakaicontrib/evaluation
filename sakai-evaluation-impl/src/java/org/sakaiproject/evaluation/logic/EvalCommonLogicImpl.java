@@ -522,6 +522,25 @@ public class EvalCommonLogicImpl implements EvalCommonLogic {
 
     /* (non-Javadoc)
      *
+     * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#hasUserIdsForEvalGroups(java.util.Collection, java.lang.String, java.lang.Boolean)
+     */
+    public Map<String, Boolean> hasUserIdsForEvalGroups( Collection<String> evalGroupIDs, String permission, Boolean sectionAware )
+    {
+        // Same fallback order as countUserIdsForEvalGroups() above: bulk-resolve the common case, fall back
+        // to the per-group path (adhoc groups, external providers) only for the ones that came back false.
+        Map<String, Boolean> result = new HashMap<>( externalLogic.hasUserIdsForEvalGroups( evalGroupIDs, permission, sectionAware ) );
+        for ( String evalGroupID : evalGroupIDs )
+        {
+            if ( !result.getOrDefault( evalGroupID, false ) )
+            {
+                result.put( evalGroupID, countUserIdsForEvalGroup( evalGroupID, permission, sectionAware ) > 0 );
+            }
+        }
+        return result;
+    }
+
+    /* (non-Javadoc)
+     *
      * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#getUserIdsForEvalGroup(java.lang.String, java.lang.String, java.lang.Boolean)
      */
     public Set<String> getUserIdsForEvalGroup( String evalGroupID, String permission, Boolean sectionAware )
