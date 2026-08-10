@@ -21,6 +21,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -781,6 +782,66 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
     public int countUserIdsForEvalGroup( String evalGroupID, String permission, Boolean sectionAware )
     {
         return getUserIdsForEvalGroup( evalGroupID, permission, sectionAware ).size();
+    }
+
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.externals.ExternalEvalGroups#countUserIdsForEvalGroups(java.util.Collection, java.lang.String, java.lang.Boolean)
+     */
+    public Map<String, Integer> countUserIdsForEvalGroups( Collection<String> evalGroupIDs, String permission, Boolean sectionAware )
+    {
+        Map<String, Integer> counts = new HashMap<>();
+        if ( evalGroupIDs.isEmpty() )
+        {
+            return counts;
+        }
+
+        // Section-aware groups aren't covered by the bulk azGroup lookup below, keep the original per-group resolution for those
+        Map<String, String> azGroupToEvalGroupId = new HashMap<>();
+        for ( String evalGroupID : evalGroupIDs )
+        {
+            if ( BooleanUtils.isFalse( sectionAware ) )
+            {
+                ParsedEvalGroupID groupID = new ParsedEvalGroupID( evalGroupID );
+                String azGroup = EvalConstants.GROUP_ID_SITE_PREFIX + groupID.getSiteID();
+                if ( groupID.hasGroup() )
+                {
+                    azGroup += EvalConstants.GROUP_ID_GROUP_PREFIX + groupID.getGroupID();
+                }
+                azGroupToEvalGroupId.put( azGroup, evalGroupID );
+                counts.put( evalGroupID, 0 );
+            }
+            else
+            {
+                counts.put( evalGroupID, countUserIdsForEvalGroup( evalGroupID, permission, sectionAware ) );
+            }
+        }
+
+        if ( !azGroupToEvalGroupId.isEmpty() )
+        {
+            // Single round trip for every group instead of one authzGroupService call per group
+            Set<String[]> usersByGroup = authzGroupService.getUsersIsAllowedByGroup( permission, azGroupToEvalGroupId.keySet() );
+            Map<String, Set<String>> userIdsByAzGroup = new HashMap<>();
+            for ( String[] userAndGroup : usersByGroup )
+            {
+                userIdsByAzGroup.computeIfAbsent( userAndGroup[1], k -> new HashSet<>() ).add( userAndGroup[0] );
+            }
+
+            // Same cleanup the per-group path applies: drop the admin user and role-view ("View Site As") fake users
+            Set<String> allUserIds = new HashSet<>();
+            userIdsByAzGroup.values().forEach( allUserIds::addAll );
+            Set<String> roleViewTypeUserIds = getRoleViewTypeUserIds( allUserIds );
+
+            for ( Entry<String, String> entry : azGroupToEvalGroupId.entrySet() )
+            {
+                Set<String> userIds = userIdsByAzGroup.getOrDefault( entry.getKey(), Collections.emptySet() );
+                long count = userIds.stream()
+                        .filter( id -> !ADMIN_USER_ID.equals( id ) && !roleViewTypeUserIds.contains( id ) )
+                        .count();
+                counts.put( entry.getValue(), (int) count );
+            }
+        }
+
+        return counts;
     }
 
     /**

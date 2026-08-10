@@ -128,6 +128,18 @@ public class EvaluationAssignController extends EvalControllerSupport {
         }
 
         // Build rows
+        boolean checkEvaluators = !EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(eval.getAuthControl());
+        Map<String, Integer> evaluatorCounts = Collections.emptyMap();
+        if (checkEvaluators) {
+            List<String> groupIds = new ArrayList<>();
+            for (EvalGroup g : evalGroups) {
+                groupIds.add(g.evalGroupId);
+            }
+            // EVALSYS-1615: single bulk lookup instead of one countUserIdsForEvalGroup() call per group,
+            // which does not scale to users with hundreds of assignable groups
+            evaluatorCounts = commonLogic.countUserIdsForEvalGroups(
+                groupIds, EvalConstants.PERM_TAKE_EVALUATION, eval.getSectionAwareness());
+        }
         List<GroupRow> groupRows = new ArrayList<>();
         for (EvalGroup g : evalGroups) {
             GroupRow row = new GroupRow();
@@ -135,13 +147,7 @@ public class EvaluationAssignController extends EvalControllerSupport {
             row.setTitle(g.title);
             row.setPublished(commonLogic.isEvalGroupPublished(g.evalGroupId));
             row.setPreSelected(alreadyAssignedGroupIds.contains(g.evalGroupId));
-
-            boolean hasEvaluators = true;
-            if (!EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(eval.getAuthControl())) {
-                int num = commonLogic.countUserIdsForEvalGroup(
-                    g.evalGroupId, EvalConstants.PERM_TAKE_EVALUATION, eval.getSectionAwareness());
-                hasEvaluators = num > 0;
-            }
+            boolean hasEvaluators = !checkEvaluators || evaluatorCounts.getOrDefault(g.evalGroupId, 0) > 0;
             row.setHasEvaluators(hasEvaluators);
             groupRows.add(row);
         }
