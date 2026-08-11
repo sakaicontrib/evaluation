@@ -16,6 +16,7 @@ package org.sakaiproject.evaluation.test.mocks;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -698,6 +699,26 @@ public class MockEvalExternalLogic implements EvalExternalLogic {
     public int countUserIdsForEvalGroup( String evalGroupID, String permission, Boolean sectionAware )
     {
         return getUserIdsForEvalGroup( evalGroupID, permission, sectionAware ).size();
+    }
+
+    public Map<String, Integer> countUserIdsForEvalGroups( Collection<String> evalGroupIDs, String permission, Boolean sectionAware )
+    {
+        Map<String, Integer> counts = new HashMap<>();
+        for ( String evalGroupID : evalGroupIDs )
+        {
+            counts.put( evalGroupID, countUserIdsForEvalGroup( evalGroupID, permission, sectionAware ) );
+        }
+        return counts;
+    }
+
+    public Map<String, Boolean> hasUserIdsForEvalGroups( Collection<String> evalGroupIDs, String permission, Boolean sectionAware )
+    {
+        Map<String, Boolean> result = new HashMap<>();
+        for ( String evalGroupID : evalGroupIDs )
+        {
+            result.put( evalGroupID, countUserIdsForEvalGroup( evalGroupID, permission, sectionAware ) > 0 );
+        }
+        return result;
     }
 
     public Set<String> getUserIdsForEvalGroup( String evalGroupID, String permission, Boolean sectionAware )

@@ -128,6 +128,20 @@ public class EvaluationAssignController extends EvalControllerSupport {
         }
 
         // Build rows
+        boolean checkEvaluators = !EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(eval.getAuthControl());
+        Map<String, Boolean> hasEvaluatorsMap = Collections.emptyMap();
+        if (checkEvaluators) {
+            List<String> groupIds = new ArrayList<>();
+            for (EvalGroup g : evalGroups) {
+                groupIds.add(g.evalGroupId);
+            }
+            // EVALSYS-1615: single bulk lookup instead of one countUserIdsForEvalGroup() call per group,
+            // which does not scale to users with hundreds of assignable groups. Only the yes/no answer is
+            // needed here, so hasUserIdsForEvalGroups() also stops resolving a group's users as soon as it
+            // finds one real evaluator, instead of resolving every user in the group.
+            hasEvaluatorsMap = commonLogic.hasUserIdsForEvalGroups(
+                groupIds, EvalConstants.PERM_TAKE_EVALUATION, eval.getSectionAwareness());
+        }
         List<GroupRow> groupRows = new ArrayList<>();
         for (EvalGroup g : evalGroups) {
             GroupRow row = new GroupRow();
@@ -135,13 +149,7 @@ public class EvaluationAssignController extends EvalControllerSupport {
             row.setTitle(g.title);
             row.setPublished(commonLogic.isEvalGroupPublished(g.evalGroupId));
             row.setPreSelected(alreadyAssignedGroupIds.contains(g.evalGroupId));
-
-            boolean hasEvaluators = true;
-            if (!EvalConstants.EVALUATION_AUTHCONTROL_NONE.equals(eval.getAuthControl())) {
-                int num = commonLogic.countUserIdsForEvalGroup(
-                    g.evalGroupId, EvalConstants.PERM_TAKE_EVALUATION, eval.getSectionAwareness());
-                hasEvaluators = num > 0;
-            }
+            boolean hasEvaluators = !checkEvaluators || hasEvaluatorsMap.getOrDefault(g.evalGroupId, false);
             row.setHasEvaluators(hasEvaluators);
             groupRows.add(row);
         }
