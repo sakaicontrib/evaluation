@@ -133,6 +133,13 @@
             <a th:if="${hasPrev}"
                th:href="@{/control_email_templates(switcher=${switcher}, page=${prevPage})}">&lt;</a>
             <span th:unless="${hasPrev}">&lt;</span>
+            <th:block th:each="pn : ${pageNumbers}">
+                <span th:if="${pn == -1}" class="listPagerGap">&hellip;</span>
+                <span th:if="${pn != -1 and pn == page}" class="listPagerCurrent" th:text="${pn + 1}">1</span>
+                <a th:if="${pn != -1 and pn != page}"
+                   th:href="@{/control_email_templates(switcher=${switcher}, page=${pn})}"
+                   th:text="${pn + 1}">1</a>
+            </th:block>
             <a th:if="${hasNext}"
                th:href="@{/control_email_templates(switcher=${switcher}, page=${nextPage})}">&gt;</a>
             <span th:unless="${hasNext}">&gt;</span>

@@ -328,6 +328,17 @@ a.less { background: none; padding-right: 0; padding-left: 0; }
   font-size: .8em;
 }
 
+.listPager span.listPagerGap {
+  border: 0;
+  background: transparent;
+  padding: 0 0.3em;
+}
+
+.listPager span.listPagerCurrent {
+  border: 1px solid var(--bs-primary-border-subtle, rgba(13, 110, 253, 0.4));
+  background: var(--bs-primary-bg-subtle, rgba(13, 110, 253, 0.15)) !important;
+}
+
 /* for fullDisplayHorizontal (adjustable) support - default sizes, styles of blocks that 
 	have heigth adjusted via jquery. Waiting on a opinions from Hattie see:
 	http://bugs.sakaiproject.org/jira/browse/EVALSYS-426*/

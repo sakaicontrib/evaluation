@@ -139,14 +139,42 @@ public class ControlEmailTemplatesController extends EvalControllerSupport {
         if (totalCount > PAGE_SIZE) {
             int actualStart = totalCount == 0 ? 0 : startResult + 1;
             int actualEnd = Math.min(startResult + PAGE_SIZE, totalCount);
+            int totalPages = (totalCount + PAGE_SIZE - 1) / PAGE_SIZE;
             model.addAttribute("pagerMsg", new Object[]{ actualStart, actualEnd, totalCount });
             model.addAttribute("hasPrev", page > 0);
             model.addAttribute("hasNext", totalCount > startResult + PAGE_SIZE);
             model.addAttribute("prevPage", page - 1);
             model.addAttribute("nextPage", page + 1);
+            model.addAttribute("pageNumbers", buildPageNumbers(page, totalPages));
         }
 
         return "control_email_templates";
+    }
+
+    /**
+     * Builds the list of page numbers (0-based) to link to in the pager: always the first and
+     * last page, plus a window of pages around the current one; -1 marks a gap ("...") between
+     * non-consecutive numbers so the pager stays a fixed width even with hundreds of pages.
+     */
+    private List<Integer> buildPageNumbers(int currentPage, int totalPages) {
+        List<Integer> pages = new ArrayList<>();
+        int windowStart = Math.max(1, currentPage - 2);
+        int windowEnd = Math.min(totalPages - 2, currentPage + 2);
+
+        pages.add(0);
+        if (windowStart > 1) {
+            pages.add(-1);
+        }
+        for (int p = windowStart; p <= windowEnd; p++) {
+            pages.add(p);
+        }
+        if (windowEnd < totalPages - 2) {
+            pages.add(-1);
+        }
+        if (totalPages > 1) {
+            pages.add(totalPages - 1);
+        }
+        return pages;
     }
 
     /**
