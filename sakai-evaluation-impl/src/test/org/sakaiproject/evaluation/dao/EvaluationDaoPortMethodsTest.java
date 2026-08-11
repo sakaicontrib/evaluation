@@ -26,6 +26,7 @@ import org.sakaiproject.evaluation.dao.EvaluationSettingsDao;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -224,6 +225,14 @@ public class EvaluationDaoPortMethodsTest extends AbstractEvaluationDaoTest {
         Assert.assertNotNull(templates);
         Assert.assertEquals(2, templates.size());
 
+        // paginated variant: same filters, ordered by lastModified desc, page size smaller than total
+        Assert.assertEquals(2, emailTemplateDao.countEmailTemplates(null, templateType, false));
+        List<EvalEmailTemplate> firstPage = emailTemplateDao.getEmailTemplates(null, templateType, false, 0, 1);
+        Assert.assertEquals(1, firstPage.size());
+        List<EvalEmailTemplate> secondPage = emailTemplateDao.getEmailTemplates(null, templateType, false, 1, 1);
+        Assert.assertEquals(1, secondPage.size());
+        Assert.assertNotEquals(firstPage.get(0).getId(), secondPage.get(0).getId());
+
         EvalEmailTemplate foundDefault = emailTemplateDao.getDefaultEmailTemplate(defaultType);
         Assert.assertNotNull(foundDefault);
         Assert.assertEquals(defaultTemplate.getId(), foundDefault.getId());
@@ -255,6 +264,17 @@ public class EvaluationDaoPortMethodsTest extends AbstractEvaluationDaoTest {
         Assert.assertEquals(etdl.evaluationActive.getId(), evaluations.get(0).getId());
         Assert.assertEquals(1, emailTemplateDao.countEvaluationsUsingEmailTemplate(
                 etdl.emailTemplate6.getId(), EvalConstants.EMAIL_TEMPLATE_SUBMITTED));
+
+        // batch variant: resolves several templates of the same type in a single query
+        Map<Long, List<EvalEvaluation>> usingAvailable = emailTemplateDao.getEvaluationsUsingEmailTemplates(
+                Arrays.asList(etdl.emailTemplate1.getId(), ownerTemplate.getId()), EvalConstants.EMAIL_TEMPLATE_AVAILABLE);
+        Assert.assertEquals(1, usingAvailable.size()); // ownerTemplate is not assigned to any evaluation, so it is absent
+        Assert.assertEquals(1, usingAvailable.get(etdl.emailTemplate1.getId()).size());
+        Assert.assertEquals(etdl.evaluationNew.getId(), usingAvailable.get(etdl.emailTemplate1.getId()).get(0).getId());
+        Assert.assertFalse(usingAvailable.containsKey(ownerTemplate.getId()));
+
+        Assert.assertTrue(emailTemplateDao.getEvaluationsUsingEmailTemplates(
+                Collections.emptyList(), EvalConstants.EMAIL_TEMPLATE_AVAILABLE).isEmpty());
 
         Set<EvalEmailTemplate> templatesToDelete = new HashSet<>();
         templatesToDelete.add(ownerTemplate);

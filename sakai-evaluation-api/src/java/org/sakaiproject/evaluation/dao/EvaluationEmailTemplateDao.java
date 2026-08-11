@@ -14,7 +14,9 @@
  */
 package org.sakaiproject.evaluation.dao;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
@@ -28,11 +30,28 @@ public interface EvaluationEmailTemplateDao {
 
     public List<EvalEmailTemplate> getEmailTemplates(String ownerUserId, String emailTemplateType, Boolean includeDefaultsOnly);
 
+    /**
+     * Same as {@link #getEmailTemplates(String, String, Boolean)} but paginated, ordered by most
+     * recently modified first.
+     */
+    public List<EvalEmailTemplate> getEmailTemplates(String ownerUserId, String emailTemplateType, Boolean includeDefaultsOnly,
+            int firstResult, int maxResults);
+
+    public int countEmailTemplates(String ownerUserId, String emailTemplateType, Boolean includeDefaultsOnly);
+
     public EvalEmailTemplate getDefaultEmailTemplate(String emailTemplateType);
 
     public EvalEmailTemplate getEmailTemplateByEid(String eid);
 
     public List<EvalEvaluation> getEvaluationsUsingEmailTemplate(Long emailTemplateId, String emailTemplateType);
+
+    /**
+     * Batch version of {@link #getEvaluationsUsingEmailTemplate(Long, String)}: resolves, in a single
+     * query, which evaluations use each of the given email template ids (all must be of the same type).
+     *
+     * @return a Map (emailTemplateId -&gt; evaluations using it); ids with no evaluations using them are absent
+     */
+    public Map<Long, List<EvalEvaluation>> getEvaluationsUsingEmailTemplates(Collection<Long> emailTemplateIds, String emailTemplateType);
 
     public int countEvaluationsUsingEmailTemplate(Long emailTemplateId, String emailTemplateType);
 

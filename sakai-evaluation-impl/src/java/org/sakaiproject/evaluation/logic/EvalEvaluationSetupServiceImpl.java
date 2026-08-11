@@ -1750,6 +1750,14 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                     // check eval/template permissions
                     securityChecks.checkEvalTemplateControl(userId, eval, emailTemplate);
                 }
+
+                // check submitted (confirmation) templates
+                l = emailTemplateDao.getEvaluationsUsingEmailTemplate(emailTemplate.getId(), EvalConstants.EMAIL_TEMPLATE_SUBMITTED);
+                for (int i = 0; i < l.size(); i++) {
+                    EvalEvaluation eval = (EvalEvaluation) l.get(i);
+                    // check eval/template permissions
+                    securityChecks.checkEvalTemplateControl(userId, eval, emailTemplate);
+                }
             } else {
                 // admin can modify any templates that they like
             }
@@ -1772,7 +1780,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             String emailTemplateType = emailTemplate.getType();
 
             if (EvalConstants.EMAIL_TEMPLATE_AVAILABLE.equals(emailTemplateType)
-                    || EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplateType) ) {
+                    || EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplateType)
+                    || EvalConstants.EMAIL_TEMPLATE_SUBMITTED.equals(emailTemplateType) ) {
                 // get the evals that this template is used in
                 List<EvalEvaluation> evals = emailTemplateDao.getEvaluationsUsingEmailTemplate(emailTemplateId, emailTemplateType);
                 for (EvalEvaluation evaluation : evals) {
@@ -1781,6 +1790,8 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
                         evaluation.setAvailableEmailTemplate(null);
                     } else if ( EvalConstants.EMAIL_TEMPLATE_REMINDER.equals(emailTemplate.getType()) ) {
                         evaluation.setReminderEmailTemplate(null);
+                    } else if ( EvalConstants.EMAIL_TEMPLATE_SUBMITTED.equals(emailTemplate.getType()) ) {
+                        evaluation.setSubmissionConfirmationEmailTemplate(null);
                     }
                     queryDao.saveEvaluation(evaluation); // save the new template
                 }

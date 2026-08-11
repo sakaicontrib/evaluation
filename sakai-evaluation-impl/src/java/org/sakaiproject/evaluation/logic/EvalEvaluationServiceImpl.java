@@ -23,6 +23,7 @@ import org.sakaiproject.evaluation.dao.EvaluationResponseDao;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -776,6 +777,21 @@ public class EvalEvaluationServiceImpl implements EvalEvaluationService, Evaluat
     public List<EvalEmailTemplate> getEmailTemplatesForUser(String userId, String emailTemplateTypeConstant, Boolean includeDefaultsOnly) {
         String ownerUserId = commonLogic.isUserAdmin(userId) ? null : userId;
         return emailTemplateDao.getEmailTemplates(ownerUserId, emailTemplateTypeConstant, includeDefaultsOnly);
+    }
+
+    public List<EvalEmailTemplate> getEmailTemplatesForUser(String userId, String emailTemplateTypeConstant, Boolean includeDefaultsOnly,
+            int firstResult, int maxResults) {
+        String ownerUserId = commonLogic.isUserAdmin(userId) ? null : userId;
+        return emailTemplateDao.getEmailTemplates(ownerUserId, emailTemplateTypeConstant, includeDefaultsOnly, firstResult, maxResults);
+    }
+
+    public int countEmailTemplatesForUser(String userId, String emailTemplateTypeConstant, Boolean includeDefaultsOnly) {
+        String ownerUserId = commonLogic.isUserAdmin(userId) ? null : userId;
+        return emailTemplateDao.countEmailTemplates(ownerUserId, emailTemplateTypeConstant, includeDefaultsOnly);
+    }
+
+    public Map<Long, List<EvalEvaluation>> getEvaluationsUsingEmailTemplates(Collection<Long> emailTemplateIds, String emailTemplateTypeConstant) {
+        return emailTemplateDao.getEvaluationsUsingEmailTemplates(emailTemplateIds, emailTemplateTypeConstant);
     }
 
     public EvalEmailTemplate getDefaultEmailTemplate(String emailTemplateTypeConstant) {

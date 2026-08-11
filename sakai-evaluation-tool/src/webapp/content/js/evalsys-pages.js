@@ -83,6 +83,31 @@ evalsys.initControlScales = function() {
     modalEl.addEventListener('hidden.bs.modal', function() { $body.html(''); });
 };
 
+evalsys.initControlEmailTemplates = function() {
+    var modalEl = document.getElementById('emailTemplatePreviewModal');
+    var modal = new bootstrap.Modal(modalEl);
+    var $title = jQuery('#emailTemplatePreviewModalTitle');
+    var $body = jQuery('#emailTemplatePreviewModalBody');
+
+    modalEl.addEventListener('show.bs.modal', function() {
+        evalsys.positionModalInViewport(modalEl);
+    });
+
+    jQuery(document).on('click', 'a.preview_email_template', function(e) {
+        e.preventDefault();
+        var $source = jQuery(document.getElementById(this.dataset.target));
+        $title.text(this.dataset.subject);
+        $body.html($source.html());
+        modal.show();
+    });
+
+    modalEl.addEventListener('shown.bs.modal', function() {
+        jQuery(modalEl).find('.modal-dialog').draggable({ handle: '.modal-header' });
+    });
+
+    modalEl.addEventListener('hidden.bs.modal', function() { $body.html(''); });
+};
+
 evalsys.initModifyScales = function() {
     var $textboxes = $("div.labelindnt input:text");
     $textboxes.attr("maxlength", "250"); // force the existing ones first
