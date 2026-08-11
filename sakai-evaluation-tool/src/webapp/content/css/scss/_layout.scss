@@ -544,6 +544,34 @@
     }
   }
 
+  /* .evalsysTable has no styling of its own anywhere in this stylesheet - fine for single-line
+     rows (My Items, My Templates) but with multi-line content (My Email Templates previews) rows
+     blend into each other with nothing marking where one ends and the next begins.
+     Selector combines both classes (rather than just .emailTemplatesTable) so its specificity
+     beats the .evalsysTable rules in _sakai25-compat.scss, which would otherwise win the
+     nth-child(even)/td tie and silently swallow the rules below. */
+  .emailTemplatesTable.evalsysTable {
+    border-collapse: collapse;
+    width: 100%;
+
+    td, th {
+      vertical-align: top;
+      padding: 0.5em;
+    }
+
+    /* Each template spans two rows: a sub-header row with its type, then its content row.
+       The sub-header carries the visual separation between templates, so no zebra striping
+       is needed on top of it. */
+    tbody tr.emailTemplateTypeRow {
+      border-top: 2px solid var(--bs-border-color, #ccc);
+
+      th {
+        background-color: var(--bs-tertiary-bg, #e9ecef);
+        text-align: left;
+      }
+    }
+  }
+
 } //end namespace
 
 /////////////////////////

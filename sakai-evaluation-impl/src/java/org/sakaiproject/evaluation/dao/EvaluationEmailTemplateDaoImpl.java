@@ -14,7 +14,11 @@
  */
 package org.sakaiproject.evaluation.dao;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.query.Query;
@@ -45,7 +49,39 @@ public class EvaluationEmailTemplateDaoImpl extends EvaluationDaoHibernateSuppor
     }
 
     public List<EvalEmailTemplate> getEmailTemplates(String ownerUserId, String emailTemplateType, Boolean includeDefaultsOnly) {
-        StringBuilder hql = new StringBuilder("select emailTemplate from EvalEmailTemplate emailTemplate where 1 = 1");
+        Query<EvalEmailTemplate> query = currentSession().createQuery(
+                "select emailTemplate from EvalEmailTemplate emailTemplate "
+                + emailTemplatesWhereClause(ownerUserId, emailTemplateType, includeDefaultsOnly),
+                EvalEmailTemplate.class);
+        bindEmailTemplatesWhereParams(query, ownerUserId, emailTemplateType);
+        return query.list();
+    }
+
+    public List<EvalEmailTemplate> getEmailTemplates(String ownerUserId, String emailTemplateType, Boolean includeDefaultsOnly,
+            int firstResult, int maxResults) {
+        Query<EvalEmailTemplate> query = currentSession().createQuery(
+                "select emailTemplate from EvalEmailTemplate emailTemplate "
+                + emailTemplatesWhereClause(ownerUserId, emailTemplateType, includeDefaultsOnly)
+                + " order by emailTemplate.lastModified desc",
+                EvalEmailTemplate.class);
+        bindEmailTemplatesWhereParams(query, ownerUserId, emailTemplateType);
+        query.setFirstResult(firstResult);
+        query.setMaxResults(maxResults);
+        return query.list();
+    }
+
+    public int countEmailTemplates(String ownerUserId, String emailTemplateType, Boolean includeDefaultsOnly) {
+        Query<Long> query = currentSession().createQuery(
+                "select count(emailTemplate) from EvalEmailTemplate emailTemplate "
+                + emailTemplatesWhereClause(ownerUserId, emailTemplateType, includeDefaultsOnly),
+                Long.class);
+        bindEmailTemplatesWhereParams(query, ownerUserId, emailTemplateType);
+        Long count = query.uniqueResult();
+        return count == null ? 0 : count.intValue();
+    }
+
+    private String emailTemplatesWhereClause(String ownerUserId, String emailTemplateType, Boolean includeDefaultsOnly) {
+        StringBuilder hql = new StringBuilder("where 1 = 1");
         if (emailTemplateType != null) {
             hql.append(" and emailTemplate.type = :emailTemplateType");
         }
@@ -55,15 +91,16 @@ public class EvaluationEmailTemplateDaoImpl extends EvaluationDaoHibernateSuppor
         if (includeDefaultsOnly != null) {
             hql.append(includeDefaultsOnly ? " and emailTemplate.defaultType is not null" : " and emailTemplate.defaultType is null");
         }
+        return hql.toString();
+    }
 
-        Query<EvalEmailTemplate> query = currentSession().createQuery(hql.toString(), EvalEmailTemplate.class);
+    private void bindEmailTemplatesWhereParams(Query<?> query, String ownerUserId, String emailTemplateType) {
         if (emailTemplateType != null) {
             query.setParameter("emailTemplateType", emailTemplateType);
         }
         if (ownerUserId != null) {
             query.setParameter("ownerUserId", ownerUserId);
         }
-        return query.list();
     }
 
     public EvalEmailTemplate getDefaultEmailTemplate(String emailTemplateType) {
@@ -93,6 +130,45 @@ public class EvaluationEmailTemplateDaoImpl extends EvaluationDaoHibernateSuppor
                 EvalEvaluation.class)
                 .setParameter("emailTemplateId", emailTemplateId)
                 .list();
+    }
+
+    public Map<Long, List<EvalEvaluation>> getEvaluationsUsingEmailTemplates(Collection<Long> emailTemplateIds, String emailTemplateType) {
+        Map<Long, List<EvalEvaluation>> result = new HashMap<>();
+        if (emailTemplateIds == null || emailTemplateIds.isEmpty()) {
+            return result;
+        }
+        String property = getEvaluationEmailTemplateProperty(emailTemplateType);
+        // Single query for the whole batch of ids instead of one round trip per template
+        List<EvalEvaluation> evals = currentSession().createQuery(
+                "select evaluation from EvalEvaluation evaluation where evaluation." + property + ".id in (:emailTemplateIds)",
+                EvalEvaluation.class)
+                .setParameterList("emailTemplateIds", emailTemplateIds)
+                .list();
+        for (EvalEvaluation eval : evals) {
+            Long templateId = extractAssignedTemplateId(eval, property);
+            if (templateId != null) {
+                result.computeIfAbsent(templateId, k -> new ArrayList<>()).add(eval);
+            }
+        }
+        return result;
+    }
+
+    private Long extractAssignedTemplateId(EvalEvaluation eval, String property) {
+        EvalEmailTemplate template;
+        switch (property) {
+            case "availableEmailTemplate":
+                template = eval.getAvailableEmailTemplate();
+                break;
+            case "reminderEmailTemplate":
+                template = eval.getReminderEmailTemplate();
+                break;
+            case "submissionConfirmationEmailTemplate":
+                template = eval.getSubmissionConfirmationEmailTemplate();
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported email template property: " + property);
+        }
+        return template != null ? template.getId() : null;
     }
 
     public int countEvaluationsUsingEmailTemplate(Long emailTemplateId, String emailTemplateType) {

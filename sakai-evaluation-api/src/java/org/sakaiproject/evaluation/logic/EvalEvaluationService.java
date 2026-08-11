@@ -613,6 +613,29 @@ public interface EvalEvaluationService {
      */
     public List<EvalEmailTemplate> getEmailTemplatesForUser(String userId, String emailTemplateTypeConstant, Boolean includeDefaultsOnly);
 
+    /**
+     * Same as {@link #getEmailTemplatesForUser(String, String, Boolean)} but paginated, ordered by most
+     * recently modified first.
+     */
+    public List<EvalEmailTemplate> getEmailTemplatesForUser(String userId, String emailTemplateTypeConstant, Boolean includeDefaultsOnly,
+            int firstResult, int maxResults);
+
+    /**
+     * @return the total count matching {@link #getEmailTemplatesForUser(String, String, Boolean, int, int)}, for pagination
+     */
+    public int countEmailTemplatesForUser(String userId, String emailTemplateTypeConstant, Boolean includeDefaultsOnly);
+
+    /**
+     * Batch version of finding which evaluations use a set of email templates (all of the same type),
+     * for display purposes - e.g. showing which evaluation a personal template belongs to in a list.
+     *
+     * @param emailTemplateIds the ids to check, all of the same emailTemplateType
+     * @param emailTemplateTypeConstant a constant, use the EMAIL_TEMPLATE constants from
+     * {@link org.sakaiproject.evaluation.constant.EvalConstants} to indicate the type
+     * @return a Map (emailTemplateId -&gt; evaluations using it); ids with no evaluations using them are absent
+     */
+    public Map<Long, List<EvalEvaluation>> getEvaluationsUsingEmailTemplates(Collection<Long> emailTemplateIds, String emailTemplateTypeConstant);
+
     // PERMISSIONS
 
     /**
