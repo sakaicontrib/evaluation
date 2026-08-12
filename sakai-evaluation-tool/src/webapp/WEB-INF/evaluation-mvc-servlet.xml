@@ -29,6 +29,11 @@
 
     <mvc:annotation-driven/>
 
+    <!-- Resolves the display locale from the user's saved Sakai preference instead of the
+         browser's Accept-Language header. Bean id must be exactly "localeResolver" -
+         DispatcherServlet looks it up by that name. -->
+    <bean id="localeResolver" class="org.sakaiproject.evaluation.tool.controllers.SakaiLocaleResolver"/>
+
     <!-- Interceptor that adds skinRepo and skinDefault to the model of every view -->
     <mvc:interceptors>
         <bean class="org.sakaiproject.evaluation.tool.controllers.SakaiSkinInterceptor"/>
