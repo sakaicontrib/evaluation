@@ -89,6 +89,13 @@
         <p th:if="${group.users.isEmpty()}" th:text="#{evalresponders.no.responses}">No responses yet</p>
     </div>
 
+    <p class="act">
+        <a th:if="${backUrl != null}" th:href="${backUrl}" accesskey="x"
+           th:text="#{general.back.button}">Back</a>
+        <input th:unless="${backUrl != null}" type="button" th:value="#{general.back.button}" accesskey="x"
+               onclick="history.go(-1);"/>
+    </p>
+
 </div>
 
 <th:block th:if="${mainFrameId != ''}">

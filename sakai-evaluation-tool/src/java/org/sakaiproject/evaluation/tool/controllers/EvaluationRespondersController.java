@@ -212,6 +212,7 @@ public class EvaluationRespondersController extends EvalControllerSupport {
         model.addAttribute("evalAnonymous", evalAnonymous);
         model.addAttribute("groupRows", groupRows);
         model.addAttribute("takersDownloadUrl", takersUrl.toString());
+        model.addAttribute("backUrl", request.getHeader("Referer"));
         return "evaluation_responders";
     }
 }
