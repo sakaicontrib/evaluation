@@ -14,6 +14,7 @@
  */
 package org.sakaiproject.evaluation.logic;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -189,7 +190,26 @@ public interface EvalAuthoringService {
    public List<EvalItem> getItemsForUser(String userId, String sharingConstant, String filter, boolean includeExpert);
 
    /**
-    * Get a list of items in a template that are visible to a user, 
+    * Same as {@link #getItemsForUser(String, String, String, boolean)} but paginated, most
+    * recently created items first.
+    */
+   public List<EvalItem> getItemsForUser(String userId, String sharingConstant, String filter, boolean includeExpert,
+           int firstResult, int maxResults);
+
+   /**
+    * @return the total count matching {@link #getItemsForUser(String, String, String, boolean, int, int)}, for pagination
+    */
+   public int countItemsForUser(String userId, String sharingConstant, String filter, boolean includeExpert);
+
+   /**
+    * Batch-resolves which templates use each of the given items, in a single query.
+    * @param itemIds the ids of the items to look up
+    * @return a map of itemId to the (possibly empty) list of templates using that item; items with no entry are unused by any template
+    */
+   public Map<Long, List<EvalTemplate>> getTemplatesUsingItems(Collection<Long> itemIds);
+
+   /**
+    * Get a list of items in a template that are visible to a user,
     * most of the time you will want to get the items by getting the 
     * templateItems from the template and then
     * using that to get the items themselves or 

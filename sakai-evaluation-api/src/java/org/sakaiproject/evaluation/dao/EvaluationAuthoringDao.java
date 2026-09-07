@@ -14,7 +14,9 @@
  */
 package org.sakaiproject.evaluation.dao;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -47,6 +49,24 @@ public interface EvaluationAuthoringDao {
     public List<EvalItem> getItemsByAutoUseTag(String autoUseTag);
 
     public List<EvalItem> getItemsForUser(String userId, String[] sharingConstants, String filter, boolean includeExpert);
+
+    /**
+     * Same as {@link #getItemsForUser(String, String[], String, boolean)} but paginated, most
+     * recently created items first.
+     */
+    public List<EvalItem> getItemsForUser(String userId, String[] sharingConstants, String filter, boolean includeExpert,
+            int firstResult, int maxResults);
+
+    /**
+     * @return the total count matching {@link #getItemsForUser(String, String[], String, boolean, int, int)}, for pagination
+     */
+    public int countItemsForUser(String userId, String[] sharingConstants, String filter, boolean includeExpert);
+
+    /**
+     * Batch-resolves which templates use each of the given items, in a single query.
+     * @return a map of itemId to the (possibly empty) list of templates using that item; items with no entry are unused by any template
+     */
+    public Map<Long, List<EvalTemplate>> getTemplatesUsingItems(Collection<Long> itemIds);
 
     public List<EvalItem> getItemsByIds(Long[] itemIds);
 

@@ -18,6 +18,7 @@ import org.sakaiproject.evaluation.dao.EvaluationAuthoringDao;
 import org.sakaiproject.evaluation.dao.EvaluationLockDao;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -512,6 +513,33 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
         String[] sharingConstants = makeSharingConstantsArray(sharingConstant);
 
         return authoringDao.getItemsForUser(userId, sharingConstants, filter, includeExpert);
+    }
+
+    public List<EvalItem> getItemsForUser(String userId, String sharingConstant, String filter, boolean includeExpert,
+            int firstResult, int maxResults) {
+        if (userId == null) {
+            throw new IllegalArgumentException("Must include a userId");
+        }
+        if (commonLogic.isUserAdmin(userId)) {
+            userId = null;
+        }
+        String[] sharingConstants = makeSharingConstantsArray(sharingConstant);
+        return authoringDao.getItemsForUser(userId, sharingConstants, filter, includeExpert, firstResult, maxResults);
+    }
+
+    public int countItemsForUser(String userId, String sharingConstant, String filter, boolean includeExpert) {
+        if (userId == null) {
+            throw new IllegalArgumentException("Must include a userId");
+        }
+        if (commonLogic.isUserAdmin(userId)) {
+            userId = null;
+        }
+        String[] sharingConstants = makeSharingConstantsArray(sharingConstant);
+        return authoringDao.countItemsForUser(userId, sharingConstants, filter, includeExpert);
+    }
+
+    public Map<Long, List<EvalTemplate>> getTemplatesUsingItems(Collection<Long> itemIds) {
+        return authoringDao.getTemplatesUsingItems(itemIds);
     }
 
 

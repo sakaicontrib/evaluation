@@ -15,8 +15,10 @@
 package org.sakaiproject.evaluation.dao;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -103,10 +105,47 @@ public class EvaluationAuthoringDaoImpl extends EvaluationDaoHibernateSupport im
     }
 
     public List<EvalItem> getItemsForUser(String userId, String[] sharingConstants, String filter, boolean includeExpert) {
-        StringBuilder hql = new StringBuilder(
-                "select item from EvalItem item where item.hidden = false "
-                + "and item.classification <> :blockParentType ");
         Map<String, Object> params = new HashMap<>();
+        StringBuilder hql = itemsForUserWhereClause(userId, sharingConstants, filter, includeExpert, params);
+        hql.append("order by item.id");
+
+        Query<EvalItem> query = currentSession().createQuery(
+                "select item from EvalItem item " + hql, EvalItem.class);
+        bindItemsForUserParams(query, params);
+        return query.list();
+    }
+
+    public List<EvalItem> getItemsForUser(String userId, String[] sharingConstants, String filter, boolean includeExpert,
+            int firstResult, int maxResults) {
+        Map<String, Object> params = new HashMap<>();
+        StringBuilder hql = itemsForUserWhereClause(userId, sharingConstants, filter, includeExpert, params);
+        // Most recently created items first - the paginated caller (My Items) is used to review
+        // and clean up recent items, not older ones already in active use.
+        hql.append("order by item.id desc");
+
+        Query<EvalItem> query = currentSession().createQuery(
+                "select item from EvalItem item " + hql, EvalItem.class);
+        bindItemsForUserParams(query, params);
+        query.setFirstResult(firstResult);
+        query.setMaxResults(maxResults);
+        return query.list();
+    }
+
+    public int countItemsForUser(String userId, String[] sharingConstants, String filter, boolean includeExpert) {
+        Map<String, Object> params = new HashMap<>();
+        StringBuilder hql = itemsForUserWhereClause(userId, sharingConstants, filter, includeExpert, params);
+
+        Query<Long> query = currentSession().createQuery(
+                "select count(item) from EvalItem item " + hql, Long.class);
+        bindItemsForUserParams(query, params);
+        Long count = query.uniqueResult();
+        return count == null ? 0 : count.intValue();
+    }
+
+    private StringBuilder itemsForUserWhereClause(String userId, String[] sharingConstants, String filter,
+            boolean includeExpert, Map<String, Object> params) {
+        StringBuilder hql = new StringBuilder(
+                "where item.hidden = false and item.classification <> :blockParentType ");
         params.put("blockParentType", EvalConstants.ITEM_TYPE_BLOCK_PARENT);
         appendSharingPredicate(hql, "item", userId, sharingConstants, params);
         if (!includeExpert) {
@@ -117,13 +156,39 @@ public class EvaluationAuthoringDaoImpl extends EvaluationDaoHibernateSupport im
             hql.append("and item.itemText like :filter ");
             params.put("filter", "%" + filter + "%");
         }
-        hql.append("order by item.id");
+        return hql;
+    }
 
-        Query<EvalItem> query = currentSession().createQuery(hql.toString(), EvalItem.class);
+    private void bindItemsForUserParams(Query<?> query, Map<String, Object> params) {
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             query.setParameter(entry.getKey(), entry.getValue());
         }
-        return query.list();
+    }
+
+    public Map<Long, List<EvalTemplate>> getTemplatesUsingItems(Collection<Long> itemIds) {
+        Map<Long, List<EvalTemplate>> result = new HashMap<>();
+        if (itemIds == null || itemIds.isEmpty()) {
+            return result;
+        }
+        // Single query for the whole batch of ids instead of one round trip per item
+        List<Object[]> rows = currentSession().createQuery(
+                "select templateItem.item.id, templateItem.template from EvalTemplateItem templateItem "
+                + "where templateItem.item.id in (:itemIds) and templateItem.template is not null",
+                Object[].class)
+                .setParameterList("itemIds", itemIds)
+                .list();
+        // A single template can reference the same item more than once (e.g. under different
+        // hierarchy nodes), so dedupe per item/template pair rather than listing it twice.
+        Map<Long, Map<Long, EvalTemplate>> byItemThenTemplate = new HashMap<>();
+        for (Object[] row : rows) {
+            Long itemId = (Long) row[0];
+            EvalTemplate template = (EvalTemplate) row[1];
+            byItemThenTemplate.computeIfAbsent(itemId, k -> new LinkedHashMap<>()).putIfAbsent(template.getId(), template);
+        }
+        for (Map.Entry<Long, Map<Long, EvalTemplate>> entry : byItemThenTemplate.entrySet()) {
+            result.put(entry.getKey(), new ArrayList<>(entry.getValue().values()));
+        }
+        return result;
     }
 
     public List<EvalItem> getItemsByIds(Long[] itemIds) {
