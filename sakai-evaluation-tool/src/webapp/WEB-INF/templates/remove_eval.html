@@ -60,6 +60,21 @@
 
     <form method="post" th:action="@{/remove_eval}">
         <input type="hidden" name="evaluationId" th:value="${evaluationId}"/>
+
+        <div th:if="${not #lists.isEmpty(orphanedAdhocGroups)}">
+            <p th:text="#{removeeval.adhoc.groups.note}" class="instructionText">
+                The following adhoc group(s) will no longer be used by any evaluation once this one is removed.
+            </p>
+            <ul>
+                <li th:each="group : ${orphanedAdhocGroups}">
+                    <label>
+                        <input type="checkbox" name="deleteAdhocGroupIds" th:value="${group.adhocGroupId}" checked="checked"/>
+                        <span th:text="${group.title}">Adhoc group title</span>
+                    </label>
+                </li>
+            </ul>
+        </div>
+
         <p class="act">
             <input type="submit" th:value="#{removeeval.remove.button}" class="active"/>
             <a th:href="@{/control_evaluations}" th:text="#{general.cancel.button}">Cancel</a>
