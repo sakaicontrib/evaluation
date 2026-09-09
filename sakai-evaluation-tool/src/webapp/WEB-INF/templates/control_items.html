@@ -78,15 +78,18 @@
         <table class="evalsysTable">
             <thead>
                 <tr>
+                    <th>#</th>
                     <th th:text="#{controlitems.items.metadata.title}">Item details</th>
                     <th th:text="#{controlitems.items.action.title}" class="screenOnly">Actions</th>
                     <th th:text="#{controlitems.items.owner.title}">Owner</th>
-                    <th th:text="#{controlitems.items.expert.title}">Expert</th>
+                    <th th:text="#{controlitems.items.template.title}">Template</th>
+                    <th th:if="${useExpertItems}" th:text="#{controlitems.items.expert.title}">Expert</th>
                 </tr>
             </thead>
             <tbody>
                 <tr th:each="row : ${itemRows}"
                     th:classappend="${row.odd} ? 'itemsListOddLine'">
+                    <td th:text="${row.number}" nowrap="nowrap">1</td>
                     <td>
                         <span th:text="${row.classification}">scaled</span>
                         <span th:if="${row.scaleDisplaySetting != null}"
@@ -123,6 +126,16 @@
                     </td>
                     <td th:text="${row.ownerName}" nowrap="nowrap">Owner</td>
                     <td>
+                        <a th:if="${row.templateId != null}"
+                           th:href="@{/modify_template_items(templateId=${row.templateId})}"
+                           th:text="${row.templateTitle}">Template title</a>
+                        <span th:if="${row.templateId != null and row.extraTemplatesCount > 0}"
+                              th:text="#{controlitems.extra.templates(${row.extraTemplatesCount})}"> (+1 more)</span>
+                        <span th:if="${row.templateId == null}"
+                              class="inactive"
+                              th:text="#{controlitems.no.template}">Not used by any template</span>
+                    </td>
+                    <td th:if="${useExpertItems}">
                         <th:block th:if="${row.expert}">
                             <span th:text="#{controlitems.expert.label}">Expert - </span>
                             <span th:text="${row.expertCategory}"></span>
@@ -133,6 +146,26 @@
                 </tr>
             </tbody>
         </table>
+
+        <!-- Pager -->
+        <div th:if="${pagerMsg != null}" class="listNav listPager">
+            <span class="listPagerCount" th:text="#{controlitems.pager.label(${pagerMsg[0]}, ${pagerMsg[1]}, ${pagerMsg[2]})}">
+                Viewing 1-25 of total 100
+            </span>
+            <a th:if="${hasPrev}"
+               th:href="@{/control_items(page=${prevPage})}">&lt;</a>
+            <span th:unless="${hasPrev}">&lt;</span>
+            <th:block th:each="pn : ${pageNumbers}">
+                <span th:if="${pn == -1}" class="listPagerGap">&hellip;</span>
+                <span th:if="${pn != -1 and pn == page}" class="listPagerCurrent" th:text="${pn + 1}">1</span>
+                <a th:if="${pn != -1 and pn != page}"
+                   th:href="@{/control_items(page=${pn})}"
+                   th:text="${pn + 1}">1</a>
+            </th:block>
+            <a th:if="${hasNext}"
+               th:href="@{/control_items(page=${nextPage})}">&gt;</a>
+            <span th:unless="${hasNext}">&gt;</span>
+        </div>
     </div>
 
     <p th:if="${#lists.isEmpty(itemRows)}" class="instructionText highlightPanel"
