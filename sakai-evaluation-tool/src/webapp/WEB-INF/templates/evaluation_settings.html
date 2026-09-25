@@ -51,6 +51,11 @@
     <h3 th:text="#{evalsettings.page.title}">Evaluation Settings</h3>
 
     <form th:action="@{/evaluation_settings}" method="post">
+        <!-- Keeps Enter-key implicit submission on the Save button below, not on one of the
+             "view email" buttons further down the form (the first submit button in DOM order
+             wins implicit submission otherwise). -->
+        <button type="submit" tabindex="-1" aria-hidden="true"
+                style="position:absolute;width:1px;height:1px;overflow:hidden;left:-9999px"></button>
         <input type="hidden" name="evaluationId" th:value="${evaluationId}"/>
         <input th:if="${reOpening}" type="hidden" name="reOpening" value="true"/>
 
@@ -362,8 +367,8 @@
             <div style="border:1px solid #ccc;padding:.75em;margin-bottom:.75em;border-radius:3px;">
                 <p class="instructionText">
                     <span th:text="#{evalsettings.available.mail.desc}">A notification email is sent...</span>
-                    <a th:href="@{/preview_email(emailType='Available',evaluationId=${evaluationId})}"
-                       th:text="#{evalsettings.available.mail.link}">View notification email</a>
+                    <button type="submit" name="viewEmailType" th:value="'Available'" class="makeLink"
+                            th:text="#{evalsettings.available.mail.link}">View notification email</button>
                     <span th:text="#{evalsettings.emails.appropriate}">The default email is designed for course evaluations...</span>
                 </p>
                 <p th:if="${allowToggleMail}" class="checkbox indnt1" style="margin:0">
@@ -389,8 +394,8 @@
                 </p>
                 <p style="clear:both" class="instructionText">
                     <span th:text="#{evalsettings.reminder.mail.desc}">A reminder email is sent...</span>
-                    <a th:href="@{/preview_email(emailType='Reminder',evaluationId=${evaluationId})}"
-                       th:text="#{evalsettings.reminder.mail.link}">View reminder email</a>
+                    <button type="submit" name="viewEmailType" th:value="'Reminder'" class="makeLink"
+                            th:text="#{evalsettings.reminder.mail.link}">View reminder email</button>
                     <span th:text="#{evalsettings.emails.appropriate}">The default email is designed for course evaluations...</span>
                 </p>
             </div>
@@ -399,8 +404,8 @@
             <div th:if="${submissionEmailEnabled}" style="border:1px solid #ccc;padding:.75em;margin-bottom:.75em;border-radius:3px;">
                 <p class="instructionText" style="margin:0">
                     <span th:text="#{evalsettings.submission.mail.desc}">A confirmation email will be sent...</span>
-                    <a th:href="@{/preview_email(emailType='Submitted',evaluationId=${evaluationId})}"
-                       th:text="#{evalsettings.submission.mail.link}">View confirmation email</a>
+                    <button type="submit" name="viewEmailType" th:value="'Submitted'" class="makeLink"
+                            th:text="#{evalsettings.submission.mail.link}">View confirmation email</button>
                 </p>
             </div>
 

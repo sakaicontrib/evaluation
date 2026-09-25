@@ -297,6 +297,7 @@ public class EvaluationSettingsController extends EvalControllerSupport {
             @RequestParam(required = false) String evalCategory,
             @RequestParam(required = false) String termId,
             @RequestParam(required = false, defaultValue = "false") boolean reOpening,
+            @RequestParam(required = false) String viewEmailType,
             RedirectAttributes redirectAttrs) {
 
         String currentUserId = currentUserId();
@@ -317,6 +318,12 @@ public class EvaluationSettingsController extends EvalControllerSupport {
         } catch (Exception e) {
             redirectAttrs.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/evaluation_settings?evaluationId=" + evaluationId;
+        }
+
+        // "View email" links submit this same form first (so in-progress edits aren't lost
+        // by navigating away) and carry which email to jump to afterwards.
+        if (viewEmailType != null && !viewEmailType.isEmpty()) {
+            return "redirect:/preview_email?emailType=" + viewEmailType + "&evaluationId=" + evaluationId;
         }
 
         if (EvalConstants.EVALUATION_STATE_PARTIAL.equals(evalState)) {
