@@ -194,7 +194,10 @@ public class ModifyAdhocGroupController extends EvalControllerSupport {
         }
         ra.addFlashAttribute("successMessage", "modifyadhocgroup.message.savednewgroup");
         ra.addFlashAttribute("successArgs", new Object[]{ savedTitle[0] });
-        return "redirect:" + returnUrl;
+        // returnUrl comes in without a leading slash (portal-relative, safe for an <a th:href>),
+        // but as a redirect target it must be servlet-context-relative or it resolves against
+        // this controller's own path (/modify_adhoc_group/save) instead of the calling page.
+        return "redirect:" + (returnUrl.startsWith("/") ? returnUrl : "/" + returnUrl);
     }
 
     @PostMapping("/remove")
