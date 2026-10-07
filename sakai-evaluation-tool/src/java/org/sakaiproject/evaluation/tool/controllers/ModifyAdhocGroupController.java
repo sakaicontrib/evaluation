@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalSettings;
@@ -83,6 +84,8 @@ public class ModifyAdhocGroupController extends EvalControllerSupport {
             if (isGroupLocked(group)) {
                 model.addAttribute("errorMessage", "controladhocgroups.group.locked.tooltip");
                 model.addAttribute("readOnly", true);
+            } else if (isGroupInOpenEvaluation(group)) {
+                model.addAttribute("openEvalWarning", true);
             }
             model.addAttribute("groupTitle", prefillTitle != null ? prefillTitle : group.getTitle());
 
@@ -165,6 +168,7 @@ public class ModifyAdhocGroupController extends EvalControllerSupport {
                 group.setParticipantIds(new ArrayList<>(all));
 
                 commonLogic.saveAdhocGroup(group);
+                if (adhocGroupId != null) syncUserAssignments(group);
                 savedId[0] = group.getId();
                 savedTitle[0] = group.getTitle();
             });
@@ -227,6 +231,7 @@ public class ModifyAdhocGroupController extends EvalControllerSupport {
             }
             group.setParticipantIds(participants);
             commonLogic.saveAdhocGroup(group);
+            syncUserAssignments(group);
 
             EvalUser removed = commonLogic.getEvalUserById(adhocUserId);
             removedDisplayName[0] = removed.displayName;
@@ -301,12 +306,35 @@ public class ModifyAdhocGroupController extends EvalControllerSupport {
     }
 
     private boolean isGroupLocked(EvalAdhocGroup group) {
+        return anyEvaluationInState(group, ControlAdhocGroupsController::isEditLockedState);
+    }
+
+    private boolean isGroupInOpenEvaluation(EvalAdhocGroup group) {
+        return anyEvaluationInState(group, ControlAdhocGroupsController::isOpenState);
+    }
+
+    private boolean anyEvaluationInState(EvalAdhocGroup group, Predicate<String> statePredicate) {
         List<EvalEvaluation> evals = evaluationService.getEvaluationsForEvalGroups(
                 new String[]{group.getEvalGroupId()}, 0, 0);
         for (EvalEvaluation eval : evals) {
-            if (ControlAdhocGroupsController.isLockedState(evaluationService.updateEvaluationState(eval.getId())))
+            if (statePredicate.test(evaluationService.updateEvaluationState(eval.getId())))
                 return true;
         }
         return false;
+    }
+
+    // Access to take an evaluation is checked against EvalAssignUser, not the live group
+    // membership, so resync evaluations that are not closed yet instead of waiting for the
+    // GroupMembershipSync job. Removal is allowed so a member taken out of the group loses access.
+    private void syncUserAssignments(EvalAdhocGroup group) {
+        List<EvalEvaluation> evals = evaluationService.getEvaluationsForEvalGroups(
+                new String[]{group.getEvalGroupId()}, 0, 0);
+        for (EvalEvaluation eval : evals) {
+            String state = evaluationService.updateEvaluationState(eval.getId());
+            if (EvalConstants.EVALUATION_STATE_INQUEUE.equals(state)
+                    || ControlAdhocGroupsController.isOpenState(state)) {
+                evaluationSetupService.synchronizeUserAssignmentsForced(eval, group.getEvalGroupId(), true);
+            }
+        }
     }
 }

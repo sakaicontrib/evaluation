@@ -44,6 +44,9 @@
     <div th:if="${infoMessage}" class="alertMessage informationMessage">
         <ul><li th:text="#{__${infoMessage}__(${infoArgs != null ? infoArgs[0] : ''})}">Info</li></ul>
     </div>
+    <div th:if="${openEvalWarning}" class="alertMessage informationMessage">
+        <ul><li th:text="#{modifyadhocgroup.message.openevalwarning}">This group is used in an open evaluation.</li></ul>
+    </div>
 
     <p class="instructionText" th:text="#{modifyadhocgroup.message.instructions}">Please enter a group name and list of participants.</p>
 
