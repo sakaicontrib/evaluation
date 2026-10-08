@@ -87,7 +87,9 @@ public class EvaluationAssignmentsController extends EvalControllerSupport {
                 // at the page evaluation_assignments was originally opened from, instead of
                 // at modify_adhoc_group itself (which is what plain history.go(-1) would do
                 // after this extra round trip).
-                String returnUrl = request.getContextPath() + "/evaluation_assignments?evaluationId=" + evaluationId
+                // Context-relative without leading slash, as modify_adhoc_group expects: it is used both
+                // as a link and as a redirect target, which Spring prefixes with the context path itself.
+                String returnUrl = "evaluation_assignments?evaluationId=" + evaluationId
                         + (backUrl != null ? "&backUrl=" + URLEncoder.encode(backUrl, StandardCharsets.UTF_8) : "");
                 return request.getContextPath() + "/modify_adhoc_group?adhocGroupId=" + adhocGroupId
                         + "&returnUrl=" + URLEncoder.encode(returnUrl, StandardCharsets.UTF_8);

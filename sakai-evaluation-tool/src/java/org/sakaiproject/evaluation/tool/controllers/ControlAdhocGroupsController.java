@@ -75,7 +75,7 @@ public class ControlAdhocGroupsController extends EvalControllerSupport {
             List<EvalInfo> evalInfos = new ArrayList<>();
             for (EvalEvaluation eval : evals) {
                 String state = evaluationService.updateEvaluationState(eval.getId());
-                boolean locked = isLockedState(state);
+                boolean locked = isEditLockedState(state);
                 if (locked) anyLocked = true;
                 evalInfos.add(new EvalInfo(eval.getId(), eval.getTitle(),
                         "state.label." + state.toLowerCase(), locked));
@@ -120,5 +120,17 @@ public class ControlAdhocGroupsController extends EvalControllerSupport {
                 || EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(state)
                 || EvalConstants.EVALUATION_STATE_CLOSED.equals(state)
                 || EvalConstants.EVALUATION_STATE_VIEWABLE.equals(state);
+    }
+
+    // Membership is frozen once an evaluation stops accepting responses, so the
+    // participant list stays consistent with its results.
+    static boolean isEditLockedState(String state) {
+        return EvalConstants.EVALUATION_STATE_CLOSED.equals(state)
+                || EvalConstants.EVALUATION_STATE_VIEWABLE.equals(state);
+    }
+
+    static boolean isOpenState(String state) {
+        return EvalConstants.EVALUATION_STATE_ACTIVE.equals(state)
+                || EvalConstants.EVALUATION_STATE_GRACEPERIOD.equals(state);
     }
 }
