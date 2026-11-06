@@ -27,7 +27,12 @@
     <!-- Scans @Controller beans in the controllers package (does not touch RSF Producers) -->
     <context:component-scan base-package="org.sakaiproject.evaluation.tool.controllers"/>
 
-    <mvc:annotation-driven/>
+    <!-- Sakai forwards to the named servlet with a wrapped tool path. Match that
+         path instead of parsing the original portal request URI. -->
+    <mvc:annotation-driven>
+        <mvc:path-matching path-matcher="evalPathMatcher"/>
+    </mvc:annotation-driven>
+    <bean id="evalPathMatcher" class="org.springframework.util.AntPathMatcher"/>
 
     <!-- Resolves the display locale from the user's saved Sakai preference instead of the
          browser's Accept-Language header. Bean id must be exactly "localeResolver" -

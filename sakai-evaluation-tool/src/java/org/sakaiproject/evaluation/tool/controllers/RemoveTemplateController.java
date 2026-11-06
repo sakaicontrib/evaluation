@@ -32,6 +32,9 @@ public class RemoveTemplateController extends EvalControllerSupport {
     @GetMapping
     public String show(@RequestParam(name = "templateId") Long templateId, Model model) {
         String userId = currentUserId();
+        if (!authoringService.canViewTemplate(currentUserId(), templateId)) {
+            throw new SecurityException("User cannot view this authoring object");
+        }
         EvalTemplate template = authoringService.getTemplateById(templateId);
         boolean canRemove = authoringService.canRemoveTemplate(userId, templateId);
 

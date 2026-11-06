@@ -93,8 +93,14 @@ public class PreviewItemController extends EvalControllerSupport {
 
         EvalTemplateItem templateItem;
         if (templateItemId != null) {
+            if (!authoringService.canViewTemplateItem(currentUserId(), templateItemId)) {
+                throw new SecurityException("User cannot view this authoring object");
+            }
             templateItem = authoringService.getTemplateItemById(templateItemId);
         } else if (itemId != null) {
+            if (!authoringService.canViewItem(currentUserId(), itemId)) {
+                throw new SecurityException("User cannot view this authoring object");
+            }
             EvalItem item = authoringService.getItemById(itemId);
             templateItem = TemplateItemUtils.makeTemplateItem(item);
             if (templateItem.getId() == null) templateItem.setId(item.getId());

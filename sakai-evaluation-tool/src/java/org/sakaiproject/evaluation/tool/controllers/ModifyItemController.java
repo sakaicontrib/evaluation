@@ -86,6 +86,9 @@ public class ModifyItemController extends EvalControllerSupport {
 
         if (templateItemId != null) {
             // Edit existing template item
+            if (!authoringService.canViewTemplateItem(currentUserId(), templateItemId)) {
+                throw new SecurityException("User cannot view this authoring object");
+            }
             templateItem = authoringService.getTemplateItemById(templateItemId);
             if (templateItem == null) {
                 throw new IllegalArgumentException("Template item not found: " + templateItemId);
@@ -105,6 +108,9 @@ public class ModifyItemController extends EvalControllerSupport {
 
         } else if (itemId != null) {
             // Edit item bank entry
+            if (!authoringService.canViewItem(currentUserId(), itemId)) {
+                throw new SecurityException("User cannot view this authoring object");
+            }
             item = authoringService.getItemById(itemId);
             if (item == null) {
                 throw new IllegalArgumentException("Item not found: " + itemId);
@@ -348,9 +354,15 @@ public class ModifyItemController extends EvalControllerSupport {
             // ---- Get or create the EvalItem ----
             EvalItem item;
             if (itemId != null) {
+                if (!authoringService.canViewItem(currentUserId(), itemId)) {
+                    throw new SecurityException("User cannot view this authoring object");
+                }
                 item = authoringService.getItemById(itemId);
                 if (item == null) throw new IllegalArgumentException("Item not found: " + itemId);
             } else if (templateItemId != null) {
+                if (!authoringService.canViewTemplateItem(currentUserId(), templateItemId)) {
+                    throw new SecurityException("User cannot view this authoring object");
+                }
                 EvalTemplateItem ti0 = authoringService.getTemplateItemById(templateItemId);
                 if (ti0 == null) throw new IllegalArgumentException("Template item not found: " + templateItemId);
                 item = ti0.getItem();
@@ -382,6 +394,9 @@ public class ModifyItemController extends EvalControllerSupport {
 
                 // Scale for SCALED items
                 if (EvalConstants.ITEM_TYPE_SCALED.equals(itemClassification) && scaleId != null) {
+                    if (!authoringService.canViewScale(currentUserId(), scaleId)) {
+                        throw new SecurityException("User cannot view this authoring object");
+                    }
                     EvalScale scale = authoringService.getScaleById(scaleId);
                     item.setScale(scale);
                 }
@@ -434,9 +449,15 @@ public class ModifyItemController extends EvalControllerSupport {
             if (inTemplate) {
                 EvalTemplateItem ti;
                 if (templateItemId != null) {
+                    if (!authoringService.canViewTemplateItem(currentUserId(), templateItemId)) {
+                        throw new SecurityException("User cannot view this authoring object");
+                    }
                     ti = authoringService.getTemplateItemById(templateItemId);
                 } else {
                     // Nuevo templateItem
+                    if (!authoringService.canViewTemplate(currentUserId(), templateId)) {
+                        throw new SecurityException("User cannot view this authoring object");
+                    }
                     EvalTemplate template = authoringService.getTemplateById(templateId);
                     ti = localTemplateLogic.newTemplateItem();
                     ti.setTemplate(template);

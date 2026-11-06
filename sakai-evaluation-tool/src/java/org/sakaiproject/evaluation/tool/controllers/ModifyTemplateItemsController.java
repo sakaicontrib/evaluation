@@ -126,6 +126,9 @@ public class ModifyTemplateItemsController extends EvalControllerSupport {
         model.addAttribute("backUrl", resolveBackUrl(request));
 
         String currentUserId = currentUserId();
+        if (!authoringService.canViewTemplate(currentUserId, templateId)) {
+            throw new SecurityException("User cannot view this template");
+        }
         EvalTemplate template = localTemplateLogic.fetchTemplate(templateId);
         List<EvalTemplateItem> allItems = localTemplateLogic.fetchTemplateItems(templateId);
 

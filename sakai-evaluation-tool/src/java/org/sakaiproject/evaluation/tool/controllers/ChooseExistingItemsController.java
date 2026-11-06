@@ -89,6 +89,9 @@ public class ChooseExistingItemsController extends EvalControllerSupport {
 
         if (selectedIds != null && !selectedIds.isEmpty()) {
             String currentUserId = currentUserId();
+            if (!authoringService.canViewTemplate(currentUserId(), templateId)) {
+                throw new SecurityException("User cannot view this authoring object");
+            }
             EvalTemplate template = authoringService.getTemplateById(templateId);
 
             String hierarchyLevel = EvalConstants.HIERARCHY_LEVEL_TOP;
@@ -99,6 +102,9 @@ public class ChooseExistingItemsController extends EvalControllerSupport {
             }
 
             for (Long itemId : selectedIds) {
+                if (!authoringService.canViewItem(currentUserId(), itemId)) {
+                    throw new SecurityException("User cannot view this authoring object");
+                }
                 EvalItem item = authoringService.getItemById(itemId);
                 if (item == null) continue;
                 EvalTemplateItem templateItem = TemplateItemUtils.makeTemplateItem(item);

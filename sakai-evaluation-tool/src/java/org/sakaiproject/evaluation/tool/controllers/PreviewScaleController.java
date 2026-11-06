@@ -83,6 +83,9 @@ public class PreviewScaleController extends EvalControllerSupport {
 
         EvalScale scale;
         if (scaleId != null) {
+            if (!authoringService.canViewScale(currentUserId(), scaleId)) {
+                throw new SecurityException("User cannot view this authoring object");
+            }
             scale = authoringService.getScaleById(scaleId);
         } else if (points != null) {
             scale = new EvalScale("admin", "Sample scale",

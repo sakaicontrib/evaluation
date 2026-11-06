@@ -32,6 +32,9 @@ public class RemoveScaleController extends EvalControllerSupport {
     @GetMapping
     public String show(@RequestParam(name = "scaleId") Long scaleId, Model model) {
         String userId = currentUserId();
+        if (!authoringService.canViewScale(currentUserId(), scaleId)) {
+            throw new SecurityException("User cannot view this authoring object");
+        }
         EvalScale scale = authoringService.getScaleById(scaleId);
         boolean canRemove = authoringService.canRemoveScale(userId, scaleId);
 

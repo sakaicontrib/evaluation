@@ -50,6 +50,9 @@ public class ModifyScaleController extends EvalControllerSupport {
         boolean canRemove = false;
 
         if (scaleId != null) {
+            if (!authoringService.canViewScale(currentUserId(), scaleId)) {
+                throw new SecurityException("User cannot view this authoring object");
+            }
             EvalScale scale = authoringService.getScaleById(scaleId);
             if (scale == null) {
                 throw new IllegalArgumentException("Scale not found: " + scaleId);
@@ -124,6 +127,9 @@ public class ModifyScaleController extends EvalControllerSupport {
         daoInvoker.invokeTransactionalAccess(() -> {
             EvalScale scale;
             if (scaleId != null) {
+                if (!authoringService.canViewScale(currentUserId(), scaleId)) {
+                    throw new SecurityException("User cannot view this authoring object");
+                }
                 scale = authoringService.getScaleById(scaleId);
                 if (scale == null) {
                     throw new IllegalArgumentException("Scale not found: " + scaleId);

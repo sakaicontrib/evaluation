@@ -54,6 +54,9 @@ public class ModifyTemplateController extends EvalControllerSupport {
         String currentSharing = EvalConstants.SHARING_PRIVATE;
 
         if (templateId != null) {
+            if (!authoringService.canViewTemplate(currentUserId(), templateId)) {
+                throw new SecurityException("User cannot view this template");
+            }
             EvalTemplate template = localTemplateLogic.fetchTemplate(templateId);
             title = template.getTitle() != null ? template.getTitle() : "";
             description = template.getDescription() != null ? template.getDescription() : "";

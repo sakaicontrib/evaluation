@@ -42,6 +42,9 @@ public class RemoveItemController extends EvalControllerSupport {
         model.addAttribute("templateId", templateId);
 
         if (templateItemId != null) {
+            if (!authoringService.canViewTemplateItem(currentUserId(), templateItemId)) {
+                throw new SecurityException("User cannot view this authoring object");
+            }
             EvalTemplateItem ti = authoringService.getTemplateItemById(templateItemId);
             EvalItem item = ti.getItem();
             boolean isBlockParent = TemplateItemUtils.isBlockParent(ti);
@@ -52,6 +55,9 @@ public class RemoveItemController extends EvalControllerSupport {
                 model.addAttribute("templateId", ti.getTemplate().getId());
             }
         } else if (itemId != null) {
+            if (!authoringService.canViewItem(currentUserId(), itemId)) {
+                throw new SecurityException("User cannot view this authoring object");
+            }
             EvalItem item = authoringService.getItemById(itemId);
             model.addAttribute("itemText", item.getItemText());
             model.addAttribute("isTemplateItem", false);

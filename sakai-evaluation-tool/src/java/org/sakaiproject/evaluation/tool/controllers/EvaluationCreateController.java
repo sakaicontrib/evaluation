@@ -67,6 +67,9 @@ public class EvaluationCreateController extends EvalControllerSupport {
         model.addAttribute("templateId", templateId);
 
         if (templateId != null) {
+            if (!authoringService.canViewTemplate(currentUserId(), templateId)) {
+                throw new SecurityException("User cannot view this authoring object");
+            }
             model.addAttribute("selectedTemplate", authoringService.getTemplateById(templateId));
         }
 
@@ -103,6 +106,9 @@ public class EvaluationCreateController extends EvalControllerSupport {
         evalBeanUtils.setEvaluationDefaults(eval, EvalConstants.EVALUATION_TYPE_EVALUATION);
 
         // Assign template
+        if (!authoringService.canViewTemplate(currentUserId(), templateId)) {
+            throw new SecurityException("User cannot view this authoring object");
+        }
         EvalTemplate template = authoringService.getTemplateById(templateId);
         eval.setTemplate(template);
 

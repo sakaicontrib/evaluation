@@ -2448,6 +2448,56 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
     * Test method for {@link org.sakaiproject.evaluation.logic.impl.EvalTemplatesLogicImpl#canRemoveTemplate(String, Long)}.
     */
    @Test
+   public void testCanViewPrivateAuthoringObjects() {
+      EvalScale scale = new EvalScale(EvalTestDataLoad.ADMIN_USER_ID, "Private access test scale",
+            EvalConstants.SCALE_MODE_SCALE, EvalConstants.SHARING_PRIVATE, false);
+      scale.setOptions(Arrays.asList("Low", "High"));
+      authoringService.saveScale(scale, EvalTestDataLoad.ADMIN_USER_ID);
+      EvalItem item = new EvalItem(EvalTestDataLoad.ADMIN_USER_ID, "Private access test question",
+            EvalConstants.SHARING_PRIVATE, EvalConstants.ITEM_TYPE_TEXT, false);
+      item.setDisplayRows(4);
+      authoringService.saveItem(item, EvalTestDataLoad.ADMIN_USER_ID);
+      EvalTemplate template = new EvalTemplate(EvalTestDataLoad.ADMIN_USER_ID,
+            EvalConstants.TEMPLATE_TYPE_STANDARD, "Private parent", EvalConstants.SHARING_PRIVATE, false);
+      authoringService.saveTemplate(template, EvalTestDataLoad.ADMIN_USER_ID);
+      EvalTemplateItem templateItem = new EvalTemplateItem(EvalTestDataLoad.ADMIN_USER_ID, template,
+            etdl.item1, 1, EvalConstants.ITEM_CATEGORY_COURSE,
+            EvalConstants.HIERARCHY_LEVEL_TOP, EvalConstants.HIERARCHY_NODE_ID_NONE);
+      authoringService.saveTemplateItem(templateItem, EvalTestDataLoad.ADMIN_USER_ID);
+
+      Assert.assertTrue(authoringService.canViewItem(EvalTestDataLoad.ADMIN_USER_ID, item.getId()));
+      Assert.assertTrue(authoringService.canViewScale(EvalTestDataLoad.ADMIN_USER_ID, scale.getId()));
+      Assert.assertTrue(authoringService.canViewTemplateItem(EvalTestDataLoad.ADMIN_USER_ID, templateItem.getId()));
+      Assert.assertFalse(authoringService.canViewItem(EvalTestDataLoad.STUDENT_USER_ID, item.getId()));
+      Assert.assertFalse(authoringService.canViewScale(EvalTestDataLoad.STUDENT_USER_ID, scale.getId()));
+      Assert.assertFalse(authoringService.canViewTemplateItem(EvalTestDataLoad.STUDENT_USER_ID, templateItem.getId()));
+      Assert.assertFalse(authoringService.canViewItem(null, item.getId()));
+      Assert.assertFalse(authoringService.canViewScale(null, scale.getId()));
+      Assert.assertFalse(authoringService.canViewTemplateItem(null, templateItem.getId()));
+      Assert.assertTrue(authoringService.canViewItem(null, etdl.item1.getId()));
+      Assert.assertTrue(authoringService.canViewScale(null, etdl.scale1.getId()));
+   }
+
+   @Test
+   public void testCanViewTemplate() {
+      EvalTemplate privateTemplate = new EvalTemplate(EvalTestDataLoad.MAINT_USER_ID,
+            EvalConstants.TEMPLATE_TYPE_STANDARD, "Private visibility test", EvalConstants.SHARING_PRIVATE, false);
+      authoringService.saveTemplate(privateTemplate, EvalTestDataLoad.MAINT_USER_ID);
+      Assert.assertTrue(authoringService.canViewTemplate(EvalTestDataLoad.MAINT_USER_ID, privateTemplate.getId()));
+      Assert.assertTrue(authoringService.canViewTemplate(EvalTestDataLoad.ADMIN_USER_ID, privateTemplate.getId()));
+      Assert.assertFalse(authoringService.canViewTemplate(EvalTestDataLoad.STUDENT_USER_ID, privateTemplate.getId()));
+      Assert.assertFalse(authoringService.canViewTemplate(null, privateTemplate.getId()));
+      Assert.assertTrue(authoringService.canViewTemplate(EvalTestDataLoad.STUDENT_USER_ID, etdl.templatePublic.getId()));
+      Assert.assertTrue(authoringService.canViewTemplate(null, etdl.templatePublic.getId()));
+
+      privateTemplate.setLocked(true);
+      persistence.update(privateTemplate);
+      Assert.assertTrue(authoringService.canViewTemplate(EvalTestDataLoad.MAINT_USER_ID, privateTemplate.getId()));
+      Assert.assertTrue(authoringService.canViewTemplate(EvalTestDataLoad.ADMIN_USER_ID, privateTemplate.getId()));
+      Assert.assertFalse(authoringService.canViewTemplate(EvalTestDataLoad.STUDENT_USER_ID, privateTemplate.getId()));
+   }
+
+   @Test
    public void testCanRemoveTemplate() {
       // test can remove owned templates
       Assert.assertTrue( authoringService.canRemoveTemplate( EvalTestDataLoad.ADMIN_USER_ID, 

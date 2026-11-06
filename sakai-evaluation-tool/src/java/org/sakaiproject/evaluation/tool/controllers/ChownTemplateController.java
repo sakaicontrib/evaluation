@@ -38,6 +38,9 @@ public class ChownTemplateController extends EvalControllerSupport {
                        @RequestParam(name = "errorMessage", required = false) String errorMessage,
                        Model model) {
         String currentUserId = currentUserId();
+        if (!authoringService.canViewTemplate(currentUserId(), templateId)) {
+            throw new SecurityException("User cannot view this authoring object");
+        }
         EvalTemplate template = authoringService.getTemplateById(templateId);
         boolean canModify = authoringService.canModifyTemplate(currentUserId, templateId);
 
@@ -54,6 +57,9 @@ public class ChownTemplateController extends EvalControllerSupport {
                         RedirectAttributes redirectAttributes) {
 
         String currentUserId = currentUserId();
+        if (!authoringService.canViewTemplate(currentUserId(), templateId)) {
+            throw new SecurityException("User cannot view this authoring object");
+        }
         EvalTemplate template = authoringService.getTemplateById(templateId);
 
         String newUserId = commonLogic.getUserId(newOwner);

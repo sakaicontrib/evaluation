@@ -15,7 +15,10 @@
 package org.sakaiproject.evaluation.e2e;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.microsoft.playwright.APIResponse;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
@@ -23,6 +26,9 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.Tracing;
+import com.microsoft.playwright.options.AriaRole;
+import com.microsoft.playwright.options.FormData;
+import com.microsoft.playwright.options.RequestOptions;
 import com.microsoft.playwright.options.WaitUntilState;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -50,6 +56,7 @@ class EvaluationPublishTest {
     private BrowserContext context;
     private Page page;
     private Path artifactDir;
+    private String toolContext = TOOL_CONTEXT;
 
     @BeforeAll
     static void launchBrowser() throws Exception {
@@ -111,6 +118,7 @@ class EvaluationPublishTest {
         String evaluationTitle = "Playwright Published Evaluation " + suffix;
 
         loginAsAdmin();
+        openEvaluationThroughPortal();
 
         String templateId = createTemplate(templateTitle);
         addTextItem(templateId, "What worked well in this course?");
@@ -125,12 +133,101 @@ class EvaluationPublishTest {
                 .setHasText(evaluationTitle))).isVisible();
     }
 
+    @Test
+    void anonymousRequestsCannotAccessAdministration() {
+        assertAdminAccessDenied();
+    }
+
+    @Test
+    void studentCannotAccessAdministrationOrPrivateTemplates() {
+        loginAsAdmin();
+        String templateId = createTemplate("Private access test " + Instant.now().toEpochMilli());
+        addTextItem(templateId, "Private question must not be exposed");
+        String templateItemId = queryParam(page.locator("a[href*=\"preview_item?\"]").first()
+                .getAttribute("href"), "templateItemId");
+        context.clearCookies();
+        loginAs("student0011", "sakai");
+        assertAdminAccessDenied();
+        assertPrivateTemplateAccessDenied(context, templateId);
+        assertPrivateTemplateItemAccessDenied(context, templateItemId);
+        try (BrowserContext anonymous = browser.newContext(new Browser.NewContextOptions()
+                .setBaseURL(baseUrl()).setIgnoreHTTPSErrors(true))) {
+            assertPrivateTemplateAccessDenied(anonymous, templateId);
+            assertPrivateTemplateItemAccessDenied(anonymous, templateItemId);
+        }
+    }
+
+    @Test
+    void adminCanOpenEvaluationThroughPortal() {
+        loginAsAdmin();
+        openEvaluationThroughPortal();
+        page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Administrate").setExact(true)).click();
+        assertThat(page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions()
+                .setName("Control Email Settings").setExact(true))).isVisible();
+    }
+
+    private void openEvaluationThroughPortal() {
+        page.navigate("/portal/site/!admin");
+        Locator tool = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions()
+                .setName("Evaluation System").setExact(true));
+        if (tool.count() == 0) {
+            // Use Sakai's fixture API to install the tool on a fresh CI instance.
+            APIResponse session = context.request().post("/direct/session/new", RequestOptions.create()
+                    .setForm(FormData.create().set("_username", "admin").set("_password", "admin")));
+            assertTrue(session.ok(), "Fixture login must succeed");
+            APIResponse added = context.request().get("/sakai-ws/rest/sakai/addToolAndPageToSite",
+                    RequestOptions.create().setQueryParam("sessionid", session.text().trim())
+                            .setQueryParam("siteid", "!admin").setQueryParam("toolid", "sakai.rsf.evaluation")
+                            .setQueryParam("position", "99"));
+            assertTrue(added.ok(), "Installing the tool in the test site must succeed");
+            assertEquals("success", added.text().trim());
+            page.reload();
+        }
+        tool.click();
+        assertThat(page.locator("body")).containsText("Evaluations dashboard");
+        String path = java.net.URI.create(page.url()).getPath();
+        toolContext = path.endsWith("/summary") ? path.substring(0, path.length() - "/summary".length()) : path;
+        if (toolContext.endsWith("/")) {
+            toolContext = toolContext.substring(0, toolContext.length() - 1);
+        }
+    }
+
+    private void assertAdminAccessDenied() {
+        for (String path : new String[]{"/administrate", "/administrate_email", "/administrate_reporting",
+                "/control_eval_admin", "/export_settings"}) {
+            APIResponse response = context.request().get(TOOL_CONTEXT + path);
+            assertEquals(403, response.status(), path);
+        }
+        APIResponse response = context.request().post(TOOL_CONTEXT + "/administrate",
+                RequestOptions.create().setForm(FormData.create()));
+        assertEquals(403, response.status(), "Unauthorized settings writes must be denied");
+    }
+
+    private void assertPrivateTemplateAccessDenied(BrowserContext requester, String templateId) {
+        for (String path : new String[]{"/modify_template", "/modify_template_items", "/preview_eval", "/remove_template", "/evaluation_create"}) {
+            APIResponse response = requester.request().get(TOOL_CONTEXT + path + "?templateId=" + templateId);
+            assertEquals(403, response.status(), path);
+        }
+    }
+
+    private void assertPrivateTemplateItemAccessDenied(BrowserContext requester, String templateItemId) {
+        for (String path : new String[]{"/modify_item", "/preview_item", "/remove_item"}) {
+            APIResponse response = requester.request().get(TOOL_CONTEXT + path + "?templateItemId=" + templateItemId);
+            assertEquals(403, response.status(), path);
+        }
+    }
+
     private void loginAsAdmin() {
+        loginAs("admin", "admin");
+    }
+
+    private void loginAs(String username, String password) {
+
         page.navigate("/portal/", new Page.NavigateOptions().setWaitUntil(WaitUntilState.DOMCONTENTLOADED));
         Locator userId = page.locator("input[name=\"eid\"], #eid").first();
         assertThat(userId).isVisible();
-        userId.fill("admin");
-        page.locator("input[name=\"pw\"], #pw").first().fill("admin");
+        userId.fill(username);
+        page.locator("input[name=\"pw\"], #pw").first().fill(password);
         page.locator("#submit, button[type=\"submit\"], input[type=\"submit\"]").first().click();
         page.waitForLoadState();
         assertThat(page.locator("body")).containsText(Pattern.compile("Administration Workspace|Home"));
@@ -196,12 +293,18 @@ class EvaluationPublishTest {
     }
 
     private void gotoToolPath(String path) {
-        page.navigate(TOOL_CONTEXT + path, new Page.NavigateOptions().setWaitUntil(WaitUntilState.DOMCONTENTLOADED));
+        page.navigate(toolContext + path, new Page.NavigateOptions().setWaitUntil(WaitUntilState.DOMCONTENTLOADED));
     }
 
     private void setFormValue(String selector, String value) {
         Locator locator = page.locator(selector).first();
-        locator.evaluate("(element, text) => { element.value = text; element.dispatchEvent(new Event('input', { bubbles: true })); element.dispatchEvent(new Event('change', { bubbles: true })); }", value);
+        String id = locator.getAttribute("id");
+        Locator editor = page.locator("[id=\"cke_" + id + "\"]");
+        if (editor.count() > 0) {
+            editor.frameLocator("iframe.cke_wysiwyg_frame").locator("body").fill(value);
+        } else {
+            locator.fill(value);
+        }
     }
 
     private void submitForm(String selector) {
