@@ -18,6 +18,8 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.microsoft.playwright.APIRequest;
+import com.microsoft.playwright.APIRequestContext;
 import com.microsoft.playwright.APIResponse;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
@@ -172,15 +174,21 @@ class EvaluationPublishTest {
                 .setName("Evaluation System").setExact(true));
         if (tool.count() == 0) {
             // Use Sakai's fixture API to install the tool on a fresh CI instance.
-            APIResponse session = context.request().post("/direct/session/new", RequestOptions.create()
-                    .setForm(FormData.create().set("_username", "admin").set("_password", "admin")));
-            assertTrue(session.ok(), "Fixture login must succeed");
-            APIResponse added = context.request().get("/sakai-ws/rest/sakai/addToolAndPageToSite",
-                    RequestOptions.create().setQueryParam("sessionid", session.text().trim())
-                            .setQueryParam("siteid", "!admin").setQueryParam("toolid", "sakai.rsf.evaluation")
-                            .setQueryParam("position", "99"));
-            assertTrue(added.ok(), "Installing the tool in the test site must succeed");
-            assertEquals("success", added.text().trim());
+            APIRequestContext fixture = playwright.request().newContext(new APIRequest.NewContextOptions()
+                    .setBaseURL(baseUrl()).setIgnoreHTTPSErrors(true));
+            try {
+                APIResponse session = fixture.post("/direct/session/new", RequestOptions.create()
+                        .setForm(FormData.create().set("_username", "admin").set("_password", "admin")));
+                assertTrue(session.ok(), "Fixture login failed: HTTP " + session.status());
+                APIResponse added = fixture.get("/sakai-ws/rest/sakai/addToolAndPageToSite",
+                        RequestOptions.create().setQueryParam("sessionid", session.text().trim())
+                                .setQueryParam("siteid", "!admin").setQueryParam("toolid", "sakai.rsf.evaluation")
+                                .setQueryParam("position", "99"));
+                assertTrue(added.ok(), "Installing the tool in the test site must succeed");
+                assertEquals("success", added.text().trim());
+            } finally {
+                fixture.dispose();
+            }
             page.reload();
         }
         tool.click();
