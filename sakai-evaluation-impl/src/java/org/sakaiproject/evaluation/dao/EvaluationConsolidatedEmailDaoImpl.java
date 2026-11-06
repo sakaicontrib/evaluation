@@ -26,7 +26,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
-import org.hibernate.type.DateType;
+import jakarta.persistence.TemporalType;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
 import org.springframework.dao.DataAccessResourceFailureException;
@@ -226,7 +226,7 @@ public class EvaluationConsolidatedEmailDaoImpl extends EvaluationDaoHibernateSu
     	
     	for(Map.Entry<String,Object> entry : params.entrySet()) {
     		if(entry.getValue() instanceof Date) {
-    			query.setParameter(entry.getKey(), (Date) entry.getValue(), DateType.INSTANCE);
+                query.setParameter(entry.getKey(), (Date) entry.getValue(), TemporalType.DATE);
     		} else if(entry.getValue() instanceof String) {
     			query.setParameter(entry.getKey(), (String) entry.getValue());
     		}

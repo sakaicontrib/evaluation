@@ -30,8 +30,11 @@ import lombok.extern.slf4j.Slf4j;
 public class RemoveTemplateController extends EvalControllerSupport {
 
     @GetMapping
-    public String show(@RequestParam Long templateId, Model model) {
+    public String show(@RequestParam(name = "templateId") Long templateId, Model model) {
         String userId = currentUserId();
+        if (!authoringService.canViewTemplate(currentUserId(), templateId)) {
+            throw new SecurityException("User cannot view this authoring object");
+        }
         EvalTemplate template = authoringService.getTemplateById(templateId);
         boolean canRemove = authoringService.canRemoveTemplate(userId, templateId);
 
@@ -42,7 +45,7 @@ public class RemoveTemplateController extends EvalControllerSupport {
     }
 
     @PostMapping
-    public String remove(@RequestParam Long templateId) {
+    public String remove(@RequestParam(name = "templateId") Long templateId) {
         String userId = currentUserId();
         authoringService.deleteTemplate(templateId, userId);
         return "redirect:/control_templates";

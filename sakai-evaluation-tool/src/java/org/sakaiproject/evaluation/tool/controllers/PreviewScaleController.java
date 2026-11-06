@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.EvalScale;
@@ -74,15 +74,18 @@ public class PreviewScaleController extends EvalControllerSupport {
 
     @GetMapping
     public String show(
-            @RequestParam(required = false) Long scaleId,
-            @RequestParam(required = false) String[] points,
-            @RequestParam(required = false) String ideal,
-            @RequestParam(required = false) String displaySetting,
+            @RequestParam(name = "scaleId", required = false) Long scaleId,
+            @RequestParam(name = "points", required = false) String[] points,
+            @RequestParam(name = "ideal", required = false) String ideal,
+            @RequestParam(name = "displaySetting", required = false) String displaySetting,
             Model model,
             HttpServletRequest request) {
 
         EvalScale scale;
         if (scaleId != null) {
+            if (!authoringService.canViewScale(currentUserId(), scaleId)) {
+                throw new SecurityException("User cannot view this authoring object");
+            }
             scale = authoringService.getScaleById(scaleId);
         } else if (points != null) {
             scale = new EvalScale("admin", "Sample scale",

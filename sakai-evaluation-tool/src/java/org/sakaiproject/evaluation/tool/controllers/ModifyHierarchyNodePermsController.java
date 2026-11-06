@@ -48,7 +48,7 @@ public class ModifyHierarchyNodePermsController extends EvalControllerSupport {
     }
 
     @GetMapping
-    public String show(@RequestParam String nodeId,
+    public String show(@RequestParam(name = "nodeId") String nodeId,
                        @RequestParam(value = "expanded", required = false) List<String> expanded,
                        Model model) {
         checkAdmin();
@@ -80,8 +80,8 @@ public class ModifyHierarchyNodePermsController extends EvalControllerSupport {
     }
 
     @PostMapping("/add")
-    public String addUser(@RequestParam String nodeId,
-                          @RequestParam String userEid,
+    public String addUser(@RequestParam(name = "nodeId") String nodeId,
+                          @RequestParam(name = "userEid") String userEid,
                           @RequestParam(value = "perms", required = false) List<String> perms,
                           @RequestParam(value = "expanded", required = false) List<String> expanded,
                           RedirectAttributes ra) {
@@ -109,8 +109,8 @@ public class ModifyHierarchyNodePermsController extends EvalControllerSupport {
     }
 
     @PostMapping("/save")
-    public String savePerms(@RequestParam String nodeId,
-                            @RequestParam String userId,
+    public String savePerms(@RequestParam(name = "nodeId") String nodeId,
+                            @RequestParam(name = "userId") String userId,
                             @RequestParam(value = "perms", required = false) List<String> perms,
                             @RequestParam(value = "expanded", required = false) List<String> expanded,
                             RedirectAttributes ra) {
@@ -130,8 +130,8 @@ public class ModifyHierarchyNodePermsController extends EvalControllerSupport {
     }
 
     @PostMapping("/remove-user")
-    public String removeUser(@RequestParam String nodeId,
-                             @RequestParam String userId,
+    public String removeUser(@RequestParam(name = "nodeId") String nodeId,
+                             @RequestParam(name = "userId") String userId,
                              @RequestParam(value = "expanded", required = false) List<String> expanded,
                              RedirectAttributes ra) {
         checkAdmin();

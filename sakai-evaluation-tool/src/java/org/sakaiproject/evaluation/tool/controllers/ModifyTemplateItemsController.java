@@ -17,8 +17,8 @@ package org.sakaiproject.evaluation.tool.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalSettings;
@@ -119,13 +119,16 @@ public class ModifyTemplateItemsController extends EvalControllerSupport {
     }
 
     @GetMapping
-    public String show(@RequestParam Long templateId,
-                       @RequestParam(required = false) Long templateItemId,
+    public String show(@RequestParam(name = "templateId") Long templateId,
+                       @RequestParam(name = "templateItemId", required = false) Long templateItemId,
                        Model model, HttpServletRequest request) {
 
         model.addAttribute("backUrl", resolveBackUrl(request));
 
         String currentUserId = currentUserId();
+        if (!authoringService.canViewTemplate(currentUserId, templateId)) {
+            throw new SecurityException("User cannot view this template");
+        }
         EvalTemplate template = localTemplateLogic.fetchTemplate(templateId);
         List<EvalTemplateItem> allItems = localTemplateLogic.fetchTemplateItems(templateId);
 

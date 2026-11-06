@@ -30,8 +30,11 @@ import lombok.extern.slf4j.Slf4j;
 public class RemoveScaleController extends EvalControllerSupport {
 
     @GetMapping
-    public String show(@RequestParam Long scaleId, Model model) {
+    public String show(@RequestParam(name = "scaleId") Long scaleId, Model model) {
         String userId = currentUserId();
+        if (!authoringService.canViewScale(currentUserId(), scaleId)) {
+            throw new SecurityException("User cannot view this authoring object");
+        }
         EvalScale scale = authoringService.getScaleById(scaleId);
         boolean canRemove = authoringService.canRemoveScale(userId, scaleId);
 
@@ -42,7 +45,7 @@ public class RemoveScaleController extends EvalControllerSupport {
     }
 
     @PostMapping
-    public String remove(@RequestParam Long scaleId) {
+    public String remove(@RequestParam(name = "scaleId") Long scaleId) {
         String userId = currentUserId();
         authoringService.deleteScale(scaleId, userId);
         return "redirect:/control_scales";

@@ -29,9 +29,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
@@ -166,9 +166,9 @@ public class ReportViewController extends EvalControllerSupport {
     // -------------------------------------------------------------------------
 
     @GetMapping
-    public String show(@RequestParam Long evaluationId,
-                       @RequestParam(required = false) String[] groupIds,
-                       @RequestParam(required = false, defaultValue = VIEWMODE_REGULAR) String viewmode,
+    public String show(@RequestParam(name = "evaluationId") Long evaluationId,
+                       @RequestParam(name = "groupIds", required = false) String[] groupIds,
+                       @RequestParam(name = "viewmode", required = false, defaultValue = VIEWMODE_REGULAR) String viewmode,
                        HttpServletRequest request,
                        Model model) {
 
@@ -311,11 +311,11 @@ public class ReportViewController extends EvalControllerSupport {
     // -------------------------------------------------------------------------
 
     @GetMapping("/download")
-    public void download(@RequestParam Long evaluationId,
-                         @RequestParam(required = false) String[] groupIds,
-                         @RequestParam String type,
-                         @RequestParam(required = false) String userId,
-                         @RequestParam(defaultValue = "false") boolean perGroup,
+    public void download(@RequestParam(name = "evaluationId") Long evaluationId,
+                         @RequestParam(name = "groupIds", required = false) String[] groupIds,
+                         @RequestParam(name = "type") String type,
+                         @RequestParam(name = "userId", required = false) String userId,
+                         @RequestParam(name = "perGroup", defaultValue = "false") boolean perGroup,
                          Locale locale,
                          HttpServletResponse response) throws IOException {
 

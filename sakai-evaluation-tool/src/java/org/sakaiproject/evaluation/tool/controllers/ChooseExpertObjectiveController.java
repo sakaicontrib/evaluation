@@ -56,8 +56,8 @@ public class ChooseExpertObjectiveController extends EvalControllerSupport {
     }
 
     @GetMapping
-    public String show(@RequestParam Long templateId,
-                       @RequestParam Long categoryId,
+    public String show(@RequestParam(name = "templateId") Long templateId,
+                       @RequestParam(name = "categoryId") Long categoryId,
                        Model model) {
         String currentUserId = currentUserId();
         EvalItemGroup category = authoringService.getItemGroupById(categoryId);

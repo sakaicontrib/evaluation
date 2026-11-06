@@ -45,7 +45,7 @@ public class ReportGroupsController extends EvalControllerSupport {
     }
 
     @GetMapping
-    public String show(@RequestParam Long evaluationId, Model model) {
+    public String show(@RequestParam(name = "evaluationId") Long evaluationId, Model model) {
 
         model.addAttribute("evaluationId", evaluationId);
         model.addAttribute("notAllowed", false);

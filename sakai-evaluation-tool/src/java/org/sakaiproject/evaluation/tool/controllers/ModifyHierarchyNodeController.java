@@ -32,8 +32,8 @@ import lombok.extern.slf4j.Slf4j;
 public class ModifyHierarchyNodeController extends EvalControllerSupport {
 
     @GetMapping
-    public String show(@RequestParam String nodeId,
-                       @RequestParam(required = false, defaultValue = "false") boolean addingChild,
+    public String show(@RequestParam(name = "nodeId") String nodeId,
+                       @RequestParam(name = "addingChild", required = false, defaultValue = "false") boolean addingChild,
                        @RequestParam(value = "expanded", required = false) List<String> expanded,
                        Model model) {
         checkAdmin();
@@ -53,10 +53,10 @@ public class ModifyHierarchyNodeController extends EvalControllerSupport {
     }
 
     @PostMapping("/save")
-    public String save(@RequestParam String nodeId,
-                       @RequestParam(required = false, defaultValue = "false") boolean addingChild,
-                       @RequestParam(defaultValue = "") String title,
-                       @RequestParam(defaultValue = "") String description,
+    public String save(@RequestParam(name = "nodeId") String nodeId,
+                       @RequestParam(name = "addingChild", required = false, defaultValue = "false") boolean addingChild,
+                       @RequestParam(name = "title", defaultValue = "") String title,
+                       @RequestParam(name = "description", defaultValue = "") String description,
                        @RequestParam(value = "expanded", required = false) List<String> expanded) {
         checkAdmin();
         String currentUserId = currentUserId();

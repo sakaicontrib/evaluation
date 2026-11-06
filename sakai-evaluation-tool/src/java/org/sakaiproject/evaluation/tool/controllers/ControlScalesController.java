@@ -92,7 +92,7 @@ public class ControlScalesController extends EvalControllerSupport {
     }
 
     @PostMapping("/copy")
-    public String copyScale(@RequestParam Long scaleId) {
+    public String copyScale(@RequestParam(name = "scaleId") Long scaleId) {
         String currentUserId = currentUserId();
         authoringService.copyScales(new Long[]{scaleId}, null, currentUserId, false);
         return "redirect:/control_scales";

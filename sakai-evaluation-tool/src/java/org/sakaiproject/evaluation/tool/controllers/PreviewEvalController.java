@@ -51,7 +51,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Preview view for an evaluation or template.
@@ -89,10 +89,10 @@ public class PreviewEvalController extends EvalControllerSupport {
 
     @GetMapping
     public String show(
-            @RequestParam(required = false) Long evaluationId,
-            @RequestParam(required = false) Long templateId,
-            @RequestParam(required = false) String evalGroupId,
-            @RequestParam(required = false, defaultValue = "false") boolean external,
+            @RequestParam(name = "evaluationId", required = false) Long evaluationId,
+            @RequestParam(name = "templateId", required = false) Long templateId,
+            @RequestParam(name = "evalGroupId", required = false) String evalGroupId,
+            @RequestParam(name = "external", required = false, defaultValue = "false") boolean external,
             Model model,
             HttpServletRequest request) {
 
@@ -108,6 +108,9 @@ public class PreviewEvalController extends EvalControllerSupport {
         boolean isTemplatePreview = (evaluationId == null);
 
         if (isTemplatePreview) {
+            if (!authoringService.canViewTemplate(currentUserId, templateId)) {
+                throw new SecurityException("User cannot preview this template");
+            }
             EvalTemplate template = authoringService.getTemplateById(templateId);
             eval = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, currentUserId,
                     messageSource.getMessage("previeweval.evaluation.title.default", null, locale),
@@ -115,6 +118,10 @@ public class PreviewEvalController extends EvalControllerSupport {
                     EvalConstants.EVALUATION_STATE_INQUEUE, EvalConstants.SHARING_VISIBLE, 1, template);
             eval.setInstructions(messageSource.getMessage("previeweval.instructions.default", null, locale));
         } else {
+            if (!evaluationService.canControlEvaluation(currentUserId, evaluationId)
+                    && !evaluationService.canTakeEvaluation(currentUserId, evaluationId, evalGroupId)) {
+                throw new SecurityException("User cannot preview this evaluation");
+            }
             eval = evaluationService.getEvaluationById(evaluationId);
             templateId = eval.getTemplate().getId();
         }

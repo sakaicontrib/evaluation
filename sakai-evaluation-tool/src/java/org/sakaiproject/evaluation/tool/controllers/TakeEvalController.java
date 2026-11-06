@@ -23,7 +23,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalSettings;
@@ -137,11 +137,11 @@ public class TakeEvalController extends EvalControllerSupport {
 
     @GetMapping
     public String show(
-            @RequestParam Long evaluationId,
-            @RequestParam(required = false) String evalGroupId,
-            @RequestParam(required = false) Long responseId,
-            @RequestParam(required = false, defaultValue = "false") boolean external,
-            @RequestParam(required = false) String error,
+            @RequestParam(name = "evaluationId") Long evaluationId,
+            @RequestParam(name = "evalGroupId", required = false) String evalGroupId,
+            @RequestParam(name = "responseId", required = false) Long responseId,
+            @RequestParam(name = "external", required = false, defaultValue = "false") boolean external,
+            @RequestParam(name = "error", required = false) String error,
             Model model,
             HttpServletRequest request) {
 
@@ -451,11 +451,11 @@ public class TakeEvalController extends EvalControllerSupport {
 
     @PostMapping
     public String submit(
-            @RequestParam Long evaluationId,
-            @RequestParam String evalGroupId,
-            @RequestParam(required = false) Long responseId,
-            @RequestParam(required = false) String actionSave,
-            @RequestParam(required = false) String actionSubmit,
+            @RequestParam(name = "evaluationId") Long evaluationId,
+            @RequestParam(name = "evalGroupId") String evalGroupId,
+            @RequestParam(name = "responseId", required = false) Long responseId,
+            @RequestParam(name = "actionSave", required = false) String actionSave,
+            @RequestParam(name = "actionSubmit", required = false) String actionSubmit,
             @ModelAttribute("evalForm") EvalFormWrapper formWrapper) {
 
         String currentUserId = currentUserId();

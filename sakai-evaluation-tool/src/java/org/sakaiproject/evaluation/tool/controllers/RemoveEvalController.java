@@ -46,7 +46,7 @@ public class RemoveEvalController extends EvalControllerSupport {
     }
 
     @GetMapping
-    public String show(@RequestParam Long evaluationId, Model model) {
+    public String show(@RequestParam(name = "evaluationId") Long evaluationId, Model model) {
         EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
 
         DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault());
@@ -95,8 +95,8 @@ public class RemoveEvalController extends EvalControllerSupport {
     }
 
     @PostMapping
-    public String remove(@RequestParam Long evaluationId,
-                          @RequestParam(required = false) Long[] deleteAdhocGroupIds) {
+    public String remove(@RequestParam(name = "evaluationId") Long evaluationId,
+                          @RequestParam(name = "deleteAdhocGroupIds", required = false) Long[] deleteAdhocGroupIds) {
         String userId = currentUserId();
         evaluationSetupService.deleteEvaluation(evaluationId, userId);
 

@@ -60,8 +60,8 @@ public class ModifyAdhocGroupController extends EvalControllerSupport {
     }
 
     @GetMapping
-    public String show(@RequestParam(required = false) Long adhocGroupId,
-                       @RequestParam(required = false, defaultValue = "") String returnUrl,
+    public String show(@RequestParam(name = "adhocGroupId", required = false) Long adhocGroupId,
+                       @RequestParam(name = "returnUrl", required = false, defaultValue = "") String returnUrl,
                        Model model) {
         String currentUserId = currentUserId();
         if (commonLogic.isUserAnonymous(currentUserId))
@@ -108,10 +108,10 @@ public class ModifyAdhocGroupController extends EvalControllerSupport {
     }
 
     @PostMapping("/save")
-    public String save(@RequestParam(required = false) Long adhocGroupId,
-                       @RequestParam(defaultValue = "") String groupTitle,
-                       @RequestParam(required = false, defaultValue = "") String newMembers,
-                       @RequestParam(required = false, defaultValue = "") String returnUrl,
+    public String save(@RequestParam(name = "adhocGroupId", required = false) Long adhocGroupId,
+                       @RequestParam(name = "groupTitle", defaultValue = "") String groupTitle,
+                       @RequestParam(name = "newMembers", required = false, defaultValue = "") String newMembers,
+                       @RequestParam(name = "returnUrl", required = false, defaultValue = "") String returnUrl,
                        RedirectAttributes ra) {
         String currentUserId = currentUserId();
         if (commonLogic.isUserAnonymous(currentUserId))
@@ -205,9 +205,9 @@ public class ModifyAdhocGroupController extends EvalControllerSupport {
     }
 
     @PostMapping("/remove")
-    public String removeMember(@RequestParam Long adhocGroupId,
-                               @RequestParam String adhocUserId,
-                               @RequestParam(required = false, defaultValue = "") String returnUrl,
+    public String removeMember(@RequestParam(name = "adhocGroupId") Long adhocGroupId,
+                               @RequestParam(name = "adhocUserId") String adhocUserId,
+                               @RequestParam(name = "returnUrl", required = false, defaultValue = "") String returnUrl,
                                RedirectAttributes ra) {
         String currentUserId = currentUserId();
         String[] removedDisplayName = new String[1];

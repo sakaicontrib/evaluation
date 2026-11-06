@@ -36,8 +36,8 @@ import lombok.extern.slf4j.Slf4j;
 public class ChownEvalController extends EvalControllerSupport {
 
     @GetMapping
-    public String show(@RequestParam Long evaluationId,
-                       @RequestParam(required = false) String errorMessage,
+    public String show(@RequestParam(name = "evaluationId") Long evaluationId,
+                       @RequestParam(name = "errorMessage", required = false) String errorMessage,
                        Model model) {
         EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
         model.addAttribute("eval", eval);
@@ -47,8 +47,8 @@ public class ChownEvalController extends EvalControllerSupport {
     }
 
     @PostMapping
-    public String chown(@RequestParam Long evaluationId,
-                        @RequestParam String newOwner,
+    public String chown(@RequestParam(name = "evaluationId") Long evaluationId,
+                        @RequestParam(name = "newOwner") String newOwner,
                         RedirectAttributes redirectAttributes) {
 
         String currentUserId = currentUserId();

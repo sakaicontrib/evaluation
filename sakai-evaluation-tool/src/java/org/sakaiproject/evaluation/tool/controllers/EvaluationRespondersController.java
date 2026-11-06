@@ -23,7 +23,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
@@ -68,8 +68,8 @@ public class EvaluationRespondersController extends EvalControllerSupport {
     }
 
     @GetMapping
-    public String show(@RequestParam Long evaluationId,
-                       @RequestParam(required = false) String evalGroupId,
+    public String show(@RequestParam(name = "evaluationId") Long evaluationId,
+                       @RequestParam(name = "evalGroupId", required = false) String evalGroupId,
                        Model model,
                        HttpServletRequest request) {
 

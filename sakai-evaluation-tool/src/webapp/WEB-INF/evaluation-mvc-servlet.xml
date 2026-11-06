@@ -27,7 +27,12 @@
     <!-- Scans @Controller beans in the controllers package (does not touch RSF Producers) -->
     <context:component-scan base-package="org.sakaiproject.evaluation.tool.controllers"/>
 
-    <mvc:annotation-driven/>
+    <!-- Sakai forwards to the named servlet with a wrapped tool path. Match that
+         path instead of parsing the original portal request URI. -->
+    <mvc:annotation-driven>
+        <mvc:path-matching path-matcher="evalPathMatcher"/>
+    </mvc:annotation-driven>
+    <bean id="evalPathMatcher" class="org.springframework.util.AntPathMatcher"/>
 
     <!-- Resolves the display locale from the user's saved Sakai preference instead of the
          browser's Accept-Language header. Bean id must be exactly "localeResolver" -
@@ -50,7 +55,7 @@
 
     <!-- Thymeleaf: template resolver -->
     <bean id="mvcTemplateResolver"
-          class="org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver">
+          class="org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver">
         <property name="prefix"  value="/WEB-INF/templates/"/>
         <property name="suffix"  value=".html"/>
         <property name="templateMode" value="HTML"/>
@@ -60,7 +65,7 @@
 
     <!-- Thymeleaf: template engine (reuses the messageSource from the parent context) -->
     <bean id="mvcTemplateEngine"
-          class="org.thymeleaf.spring5.SpringTemplateEngine">
+          class="org.thymeleaf.spring6.SpringTemplateEngine">
         <property name="enableSpringELCompiler" value="true"/>
         <property name="templateResolver" ref="mvcTemplateResolver"/>
         <property name="messageSource" ref="messageSource"/>
@@ -68,7 +73,7 @@
 
     <!-- Thymeleaf: view resolver -->
     <bean id="mvcViewResolver"
-          class="org.thymeleaf.spring5.view.ThymeleafViewResolver">
+          class="org.thymeleaf.spring6.view.ThymeleafViewResolver">
         <property name="templateEngine"      ref="mvcTemplateEngine"/>
         <property name="characterEncoding"   value="UTF-8"/>
         <property name="order"               value="1"/>

@@ -44,8 +44,8 @@ import org.sakaiproject.exception.IdUnusedException;
 import org.sakaiproject.hierarchy.HierarchyService;
 import org.sakaiproject.hierarchy.model.HierarchyNode;
 import org.sakaiproject.hierarchy.utils.HierarchyUtils;
-import org.sakaiproject.memory.api.Cache;
-import org.sakaiproject.memory.api.MemoryService;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.sakaiproject.site.api.Site;
 import org.sakaiproject.site.api.SiteService;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -129,9 +129,9 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
     public static final String HIERARCHY_ID = "evaluationHierarchyId";
     public static final String HIERARCHY_ROOT_TITLE = "Root";
     
-    private MemoryService memoryService;
-    public void setMemoryService(MemoryService memoryService){
-    	this.memoryService = memoryService;
+    private CacheManager cacheManager;
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
     }
     
     private Cache cache;
@@ -158,7 +158,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
             log.debug("No EvalHierarchyProvider found...");
         }
         
-        cache = memoryService.getCache(CACHE_NAME);
+        cache = cacheManager.getCache(CACHE_NAME);
     }
 
     private void ensureHierarchyExists() {
@@ -414,7 +414,7 @@ public class ExternalHierarchyLogicImpl implements ExternalHierarchyLogic {
      * @see org.sakaiproject.evaluation.providers.EvalHierarchyProvider#getNodeById(java.lang.String)
      */
     public EvalHierarchyNode getNodeById(String nodeId) {
-    	EvalHierarchyNode ret = (EvalHierarchyNode)cache.get(nodeId);
+        EvalHierarchyNode ret = cache.get(nodeId, EvalHierarchyNode.class);
     	if(ret != null) {
             log.debug("--- Fetching (External)getNodeById record from cache for: " + nodeId);
             return ret;

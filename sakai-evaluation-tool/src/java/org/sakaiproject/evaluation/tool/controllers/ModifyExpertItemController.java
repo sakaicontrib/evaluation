@@ -34,10 +34,10 @@ import lombok.extern.slf4j.Slf4j;
 public class ModifyExpertItemController extends EvalControllerSupport {
 
     @GetMapping
-    public String show(@RequestParam String type,
-                       @RequestParam(required = false) Long categoryId,
-                       @RequestParam(required = false) Long objectiveId,
-                       @RequestParam(defaultValue = "false") boolean isNew,
+    public String show(@RequestParam(name = "type") String type,
+                       @RequestParam(name = "categoryId", required = false) Long categoryId,
+                       @RequestParam(name = "objectiveId", required = false) Long objectiveId,
+                       @RequestParam(name = "isNew", defaultValue = "false") boolean isNew,
                        Model model) {
 
         String currentUserId = currentUserId();
@@ -67,13 +67,13 @@ public class ModifyExpertItemController extends EvalControllerSupport {
     }
 
     @PostMapping
-    public String save(@RequestParam String type,
-                       @RequestParam(required = false) Long categoryId,
-                       @RequestParam(required = false) Long objectiveId,
-                       @RequestParam(required = false) Long parentId,
-                       @RequestParam(defaultValue = "false") boolean isNew,
-                       @RequestParam String title,
-                       @RequestParam(required = false) String description) {
+    public String save(@RequestParam(name = "type") String type,
+                       @RequestParam(name = "categoryId", required = false) Long categoryId,
+                       @RequestParam(name = "objectiveId", required = false) Long objectiveId,
+                       @RequestParam(name = "parentId", required = false) Long parentId,
+                       @RequestParam(name = "isNew", defaultValue = "false") boolean isNew,
+                       @RequestParam(name = "title") String title,
+                       @RequestParam(name = "description", required = false) String description) {
 
         String currentUserId = currentUserId();
         boolean isCategory = EvalConstants.ITEM_GROUP_TYPE_CATEGORY.equals(type);

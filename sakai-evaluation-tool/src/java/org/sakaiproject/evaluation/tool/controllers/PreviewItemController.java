@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.model.EvalItem;
@@ -80,21 +80,27 @@ public class PreviewItemController extends EvalControllerSupport {
 
     @GetMapping
     public String show(
-            @RequestParam(required = false) Long itemId,
-            @RequestParam(required = false) Long templateItemId,
-            @RequestParam(required = false) String scaleDisplay,
-            @RequestParam(required = false) Boolean na,
-            @RequestParam(required = false) Boolean compulsory,
-            @RequestParam(required = false) Boolean showComment,
-            @RequestParam(required = false) String text,
-            @RequestParam(required = false) Integer textLines,
+            @RequestParam(name = "itemId", required = false) Long itemId,
+            @RequestParam(name = "templateItemId", required = false) Long templateItemId,
+            @RequestParam(name = "scaleDisplay", required = false) String scaleDisplay,
+            @RequestParam(name = "na", required = false) Boolean na,
+            @RequestParam(name = "compulsory", required = false) Boolean compulsory,
+            @RequestParam(name = "showComment", required = false) Boolean showComment,
+            @RequestParam(name = "text", required = false) String text,
+            @RequestParam(name = "textLines", required = false) Integer textLines,
             Model model,
             HttpServletRequest request) {
 
         EvalTemplateItem templateItem;
         if (templateItemId != null) {
+            if (!authoringService.canViewTemplateItem(currentUserId(), templateItemId)) {
+                throw new SecurityException("User cannot view this authoring object");
+            }
             templateItem = authoringService.getTemplateItemById(templateItemId);
         } else if (itemId != null) {
+            if (!authoringService.canViewItem(currentUserId(), itemId)) {
+                throw new SecurityException("User cannot view this authoring object");
+            }
             EvalItem item = authoringService.getItemById(itemId);
             templateItem = TemplateItemUtils.makeTemplateItem(item);
             if (templateItem.getId() == null) templateItem.setId(item.getId());

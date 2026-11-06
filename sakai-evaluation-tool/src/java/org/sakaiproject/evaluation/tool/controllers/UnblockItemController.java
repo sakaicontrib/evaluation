@@ -34,10 +34,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class UnblockItemController extends EvalControllerSupport {
 
     @GetMapping
-    public String show(@RequestParam Long templateItemId,
-                       @RequestParam Long templateId,
+    public String show(@RequestParam(name = "templateItemId") Long templateItemId,
+                       @RequestParam(name = "templateId") Long templateId,
                        Model model) {
 
+        if (!authoringService.canViewTemplateItem(currentUserId(), templateItemId)) {
+            throw new SecurityException("User cannot view this authoring object");
+        }
         EvalTemplateItem templateItem = authoringService.getTemplateItemById(templateItemId);
         if (!TemplateItemUtils.isBlockChild(templateItem)) {
             throw new IllegalStateException("Template item " + templateItemId + " is not part of a group");
@@ -50,10 +53,13 @@ public class UnblockItemController extends EvalControllerSupport {
     }
 
     @PostMapping
-    public String unblock(@RequestParam Long templateItemId,
-                          @RequestParam Long templateId) {
+    public String unblock(@RequestParam(name = "templateItemId") Long templateItemId,
+                          @RequestParam(name = "templateId") Long templateId) {
 
         daoInvoker.invokeTransactionalAccess(() -> {
+            if (!authoringService.canViewTemplateItem(currentUserId(), templateItemId)) {
+                throw new SecurityException("User cannot view this authoring object");
+            }
             EvalTemplateItem templateItem = authoringService.getTemplateItemById(templateItemId);
             if (!TemplateItemUtils.isBlockChild(templateItem)) {
                 throw new IllegalStateException("Template item " + templateItemId + " is not part of a group");

@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalSettings;
@@ -99,8 +99,8 @@ public class EvaluationAssignmentsController extends EvalControllerSupport {
     }
 
     @GetMapping
-    public String show(@RequestParam Long evaluationId,
-                       @RequestParam(required = false) String backUrl,
+    public String show(@RequestParam(name = "evaluationId") Long evaluationId,
+                       @RequestParam(name = "backUrl", required = false) String backUrl,
                        Model model, HttpServletRequest request) {
         if (evaluationId == null)
             throw new IllegalArgumentException("evaluationId is required");

@@ -64,7 +64,7 @@ public class EvaluationAssignController extends EvalControllerSupport {
     }
 
     @GetMapping
-    public String show(@RequestParam Long evaluationId, Locale locale, Model model) {
+    public String show(@RequestParam(name = "evaluationId") Long evaluationId, Locale locale, Model model) {
         String currentUserId = currentUserId();
 
         EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);

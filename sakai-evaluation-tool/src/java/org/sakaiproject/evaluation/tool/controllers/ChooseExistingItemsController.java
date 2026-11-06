@@ -48,8 +48,8 @@ public class ChooseExistingItemsController extends EvalControllerSupport {
     }
 
     @GetMapping
-    public String show(@RequestParam Long templateId,
-                       @RequestParam(required = false, defaultValue = "") String searchString,
+    public String show(@RequestParam(name = "templateId") Long templateId,
+                       @RequestParam(name = "searchString", required = false, defaultValue = "") String searchString,
                        Model model) {
 
         String currentUserId = currentUserId();
@@ -84,11 +84,14 @@ public class ChooseExistingItemsController extends EvalControllerSupport {
     }
 
     @PostMapping
-    public String insert(@RequestParam Long templateId,
-                         @RequestParam(required = false) List<Long> selectedIds) {
+    public String insert(@RequestParam(name = "templateId") Long templateId,
+                         @RequestParam(name = "selectedIds", required = false) List<Long> selectedIds) {
 
         if (selectedIds != null && !selectedIds.isEmpty()) {
             String currentUserId = currentUserId();
+            if (!authoringService.canViewTemplate(currentUserId(), templateId)) {
+                throw new SecurityException("User cannot view this authoring object");
+            }
             EvalTemplate template = authoringService.getTemplateById(templateId);
 
             String hierarchyLevel = EvalConstants.HIERARCHY_LEVEL_TOP;
@@ -99,6 +102,9 @@ public class ChooseExistingItemsController extends EvalControllerSupport {
             }
 
             for (Long itemId : selectedIds) {
+                if (!authoringService.canViewItem(currentUserId(), itemId)) {
+                    throw new SecurityException("User cannot view this authoring object");
+                }
                 EvalItem item = authoringService.getItemById(itemId);
                 if (item == null) continue;
                 EvalTemplateItem templateItem = TemplateItemUtils.makeTemplateItem(item);

@@ -156,7 +156,7 @@ public class EvaluationAdminSupportDaoImpl extends EvaluationDaoHibernateSupport
         if (permCheck != null) {
             // select b.baz from Foo f join f.bars b"
             // select g.* from EVAL_ADHOC_GROUP g join EVAL_ADHOC_PARTICIPANTS p on p.ID = g.ID and p.USER_ID = 'aaronz' order by g.ID
-            String hql = "from EvalAdhocGroup ag join ag." + permCheck + " userIds  where userIds.id = :userId order by ag.id";
+            String hql = "select ag from EvalAdhocGroup ag join ag." + permCheck + " userIds  where userIds = :userId order by ag.id";
             Query<EvalAdhocGroup> query = currentSession().createQuery(hql, EvalAdhocGroup.class);
             query.setParameter("userId", userId);
             results = query.list();
@@ -191,9 +191,9 @@ public class EvaluationAdminSupportDaoImpl extends EvaluationDaoHibernateSupport
         if (permCheck != null) {
             Long id = EvalAdhocGroup.getIdFromAdhocEvalGroupId(evalGroupId);
             if (id != null) {
-                // from EvalAdhocGroup ag join ag." + permCheck + " userIds where userIds.id = :userId
+                // from EvalAdhocGroup ag join ag." + permCheck + " userIds where userIds = :userId
                 String hql = "select count(ag) from EvalAdhocGroup ag join ag." + permCheck + " userIds "
-                + " where ag.id = :groupId and userIds.id = :userId";
+                + " where ag.id = :groupId and userIds = :userId";
                 Long count = currentSession().createQuery(hql, Long.class)
                         .setParameter("groupId", id)
                         .setParameter("userId", userId)

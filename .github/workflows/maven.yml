@@ -3,17 +3,22 @@ name: Sakai Tomcat Smoke Test
 on:
   workflow_dispatch:
   pull_request:
+  push:
+    branches: [master]
 
 jobs:
   sakai-tomcat:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 120
     env:
       TERM: xterm
+      MAVEN_VERSION: "3.9.16"
+      MAVEN_ARGS: "-Dmaven.repo.local=${{ github.workspace }}/.m2/repository"
       JAVA_OPTS: "-Dhttp.agent=Sakai -Xms2512m -Xmx2512m -Dsakai.cookieName=SAKAIID -Dsakai.demo=true"
       MAVEN_OPTS: "-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true -Dmaven.wagon.http.retryHandler.count=2 -Dmaven.wagon.http.pool=true"
       PLAYWRIGHT_BROWSER: chromium
       TOMCAT_DIR: "${{ github.workspace }}/tomcat"
+      TOMCAT_VERSION: "10.1.61"
 
     steps:
       - name: Checkout evaluation tool
@@ -30,17 +35,16 @@ jobs:
           fetch-depth: 1
           fetch-tags: false
 
-      - name: Set up Temurin JDK 17
-        uses: actions/setup-java@v5
+      - name: Set up Temurin JDK 21
+        uses: actions/setup-java@v6.0.1
         with:
-          java-version: 17
+          java-version: 21
           distribution: temurin
-          cache: maven
 
-      - name: Set up Maven 3.9.9
+      - name: Set up Maven
         uses: stCarolas/setup-maven@v5.1
         with:
-          maven-version: 3.9.9
+          maven-version: ${{ env.MAVEN_VERSION }}
 
       - name: Provision Tomcat and database
         run: |
@@ -50,7 +54,7 @@ jobs:
           echo "127.0.0.1 maven2-repository.dev.java.net" | sudo tee -a /etc/hosts
           mkdir -p "${TOMCAT_DIR}"
           pushd "${TOMCAT_DIR}"
-          curl -s -o tomcat.tar.gz https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.111/bin/apache-tomcat-9.0.111.tar.gz
+          curl --fail --show-error --location --retry 3 -o tomcat.tar.gz "https://archive.apache.org/dist/tomcat/tomcat-10/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz"
           tar --strip-components=1 -xzf tomcat.tar.gz
           git clone https://github.com/sakaiproject/nightly-config.git sakai
           cp sakai/setenv.sh bin/setenv.sh
@@ -62,21 +66,39 @@ jobs:
           popd
           mysql -u root -proot -e "DROP DATABASE IF EXISTS sakai; CREATE DATABASE sakai;"
 
-      - name: Cache Maven repository
-        uses: actions/cache@v6
+      - name: Restore master Maven repository cache
+        id: maven-cache
+        uses: actions/cache/restore@v6.1.0
         with:
-          path: |
-            ~/.m2/repository
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-m2-
+          path: .m2/repository
+          enableCrossOsArchive: true
+          key: evalsys-m2-sakai-master-maven-${{ env.MAVEN_VERSION }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: evalsys-m2-sakai-master-maven-${{ env.MAVEN_VERSION }}-
+
+      - name: Report Maven cache status
+        env:
+          MATCHED_CACHE_KEY: ${{ steps.maven-cache.outputs.cache-matched-key }}
+        run: echo "Restored Maven cache = ${MATCHED_CACHE_KEY:-none}"
 
       - name: Build Sakai master and deploy to Tomcat
+        id: build-sakai
         working-directory: sakai
-        run: mvn --batch-mode -DskipTests -Denforcer.skip -Dmaven.source.skip install sakai:deploy-exploded -Dmaven.tomcat.home="${TOMCAT_DIR}"
+        run: mvn --batch-mode -DskipTests -Dmaven.source.skip install sakai:deploy-exploded -Dmaven.tomcat.home="${TOMCAT_DIR}"
 
       - name: Build evaluation tool and deploy to Tomcat
         run: mvn --batch-mode install sakai:deploy-exploded -Dmaven.tomcat.home="${TOMCAT_DIR}"
+
+      - name: Remove failed-download markers from Maven cache
+        if: always() && steps.maven-cache.outcome == 'success'
+        run: find .m2/repository -type f -name '*.lastUpdated' -delete
+
+      - name: Save Maven repository cache
+        if: always() && steps.maven-cache.outcome == 'success'
+        uses: actions/cache/save@v6.1.0
+        with:
+          path: .m2/repository
+          enableCrossOsArchive: true
+          key: ${{ steps.maven-cache.outputs.cache-primary-key }}
 
       - name: Start Tomcat and verify startup
         run: |
@@ -98,9 +120,9 @@ jobs:
           tail -n 20 "${TOMCAT_DIR}/logs/catalina.out"
 
       - name: Set up Node for Playwright
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7.1.0
         with:
-          node-version: 20
+          node-version: 24
 
       - name: Resolve Playwright Java version
         id: playwright-version
@@ -109,7 +131,7 @@ jobs:
           echo "value=${PLAYWRIGHT_VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Cache Playwright browsers
-        uses: actions/cache@v4
+        uses: actions/cache@v6.1.0
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-java-${{ steps.playwright-version.outputs.value }}
@@ -129,7 +151,7 @@ jobs:
 
       - name: Run Playwright e2e tests
         env:
-          PLAYWRIGHT_BASE_URL: http://127.0.0.1:8080
+          PLAYWRIGHT_BASE_URL: http://localhost:8080
         run: |
           set -o pipefail
           mkdir -p e2e-tests/target
@@ -137,12 +159,13 @@ jobs:
 
       - name: Upload Playwright artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: evaluation-playwright-artifacts
           path: |
             e2e-tests/target/playwright-artifacts
             e2e-tests/target/surefire-reports
             e2e-tests/target/playwright-run.log
+            tomcat/logs/
           if-no-files-found: ignore
           retention-days: 5

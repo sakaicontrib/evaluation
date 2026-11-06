@@ -32,9 +32,9 @@ import lombok.extern.slf4j.Slf4j;
 public class RemoveItemController extends EvalControllerSupport {
 
     @GetMapping
-    public String show(@RequestParam(required = false) Long itemId,
-                       @RequestParam(required = false) Long templateItemId,
-                       @RequestParam(required = false) Long templateId,
+    public String show(@RequestParam(name = "itemId", required = false) Long itemId,
+                       @RequestParam(name = "templateItemId", required = false) Long templateItemId,
+                       @RequestParam(name = "templateId", required = false) Long templateId,
                        Model model) {
 
         model.addAttribute("itemId", itemId);
@@ -42,6 +42,9 @@ public class RemoveItemController extends EvalControllerSupport {
         model.addAttribute("templateId", templateId);
 
         if (templateItemId != null) {
+            if (!authoringService.canViewTemplateItem(currentUserId(), templateItemId)) {
+                throw new SecurityException("User cannot view this authoring object");
+            }
             EvalTemplateItem ti = authoringService.getTemplateItemById(templateItemId);
             EvalItem item = ti.getItem();
             boolean isBlockParent = TemplateItemUtils.isBlockParent(ti);
@@ -52,6 +55,9 @@ public class RemoveItemController extends EvalControllerSupport {
                 model.addAttribute("templateId", ti.getTemplate().getId());
             }
         } else if (itemId != null) {
+            if (!authoringService.canViewItem(currentUserId(), itemId)) {
+                throw new SecurityException("User cannot view this authoring object");
+            }
             EvalItem item = authoringService.getItemById(itemId);
             model.addAttribute("itemText", item.getItemText());
             model.addAttribute("isTemplateItem", false);
@@ -63,9 +69,9 @@ public class RemoveItemController extends EvalControllerSupport {
     }
 
     @PostMapping
-    public String remove(@RequestParam(required = false) Long itemId,
-                         @RequestParam(required = false) Long templateItemId,
-                         @RequestParam(required = false) Long templateId) {
+    public String remove(@RequestParam(name = "itemId", required = false) Long itemId,
+                         @RequestParam(name = "templateItemId", required = false) Long templateItemId,
+                         @RequestParam(name = "templateId", required = false) Long templateId) {
         String userId = currentUserId();
         if (templateItemId != null) {
             authoringService.deleteTemplateItem(templateItemId, userId);
