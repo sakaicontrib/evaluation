@@ -19,7 +19,7 @@ import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.sakaiproject.evaluation.logic.EvalSettings;
 import org.springframework.stereotype.Controller;

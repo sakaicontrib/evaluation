@@ -264,13 +264,13 @@ public class EvaluationResponseDaoImpl extends EvaluationDaoHibernateSupport imp
             // purge out the answers first
             String hql = "delete EvalAnswer answer where answer.response.id in " + rids;
             log.debug("delete EvalAnswer HQL:" + hql);
-            int results = getHibernateTemplate().bulkUpdate(hql);
+            int results = currentSession().createMutationQuery(hql).executeUpdate();
             log.info("Remove " + results + " answers that were associated with the following responses: " + rids);
 
             // purge out the responses
             hql = "delete EvalResponse response where response.id in " + rids;
             log.debug("delete EvalResponse HQL:" + hql);
-            results = getHibernateTemplate().bulkUpdate(hql);
+            results = currentSession().createMutationQuery(hql).executeUpdate();
             log.info("Remove " + results + " responses with the following ids: " + rids);
         }
     }

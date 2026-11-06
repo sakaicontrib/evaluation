@@ -14,6 +14,7 @@ jobs:
       MAVEN_OPTS: "-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true -Dmaven.wagon.http.retryHandler.count=2 -Dmaven.wagon.http.pool=true"
       PLAYWRIGHT_BROWSER: chromium
       TOMCAT_DIR: "${{ github.workspace }}/tomcat"
+      TOMCAT_VERSION: "10.1.61"
 
     steps:
       - name: Checkout evaluation tool
@@ -30,10 +31,10 @@ jobs:
           fetch-depth: 1
           fetch-tags: false
 
-      - name: Set up Temurin JDK 17
+      - name: Set up Temurin JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: 17
+          java-version: 21
           distribution: temurin
           cache: maven
 
@@ -50,7 +51,7 @@ jobs:
           echo "127.0.0.1 maven2-repository.dev.java.net" | sudo tee -a /etc/hosts
           mkdir -p "${TOMCAT_DIR}"
           pushd "${TOMCAT_DIR}"
-          curl -s -o tomcat.tar.gz https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.111/bin/apache-tomcat-9.0.111.tar.gz
+          curl --fail --show-error --location --retry 3 -o tomcat.tar.gz "https://archive.apache.org/dist/tomcat/tomcat-10/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz"
           tar --strip-components=1 -xzf tomcat.tar.gz
           git clone https://github.com/sakaiproject/nightly-config.git sakai
           cp sakai/setenv.sh bin/setenv.sh
@@ -73,7 +74,7 @@ jobs:
 
       - name: Build Sakai master and deploy to Tomcat
         working-directory: sakai
-        run: mvn --batch-mode -DskipTests -Denforcer.skip -Dmaven.source.skip install sakai:deploy-exploded -Dmaven.tomcat.home="${TOMCAT_DIR}"
+        run: mvn --batch-mode -DskipTests -Dmaven.source.skip install sakai:deploy-exploded -Dmaven.tomcat.home="${TOMCAT_DIR}"
 
       - name: Build evaluation tool and deploy to Tomcat
         run: mvn --batch-mode install sakai:deploy-exploded -Dmaven.tomcat.home="${TOMCAT_DIR}"
@@ -129,7 +130,7 @@ jobs:
 
       - name: Run Playwright e2e tests
         env:
-          PLAYWRIGHT_BASE_URL: http://127.0.0.1:8080
+          PLAYWRIGHT_BASE_URL: http://localhost:8080
         run: |
           set -o pipefail
           mkdir -p e2e-tests/target
@@ -144,5 +145,6 @@ jobs:
             e2e-tests/target/playwright-artifacts
             e2e-tests/target/surefire-reports
             e2e-tests/target/playwright-run.log
+            tomcat/logs/
           if-no-files-found: ignore
           retention-days: 5

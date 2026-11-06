@@ -50,7 +50,7 @@
 
     <!-- Thymeleaf: template resolver -->
     <bean id="mvcTemplateResolver"
-          class="org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver">
+          class="org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver">
         <property name="prefix"  value="/WEB-INF/templates/"/>
         <property name="suffix"  value=".html"/>
         <property name="templateMode" value="HTML"/>
@@ -60,7 +60,7 @@
 
     <!-- Thymeleaf: template engine (reuses the messageSource from the parent context) -->
     <bean id="mvcTemplateEngine"
-          class="org.thymeleaf.spring5.SpringTemplateEngine">
+          class="org.thymeleaf.spring6.SpringTemplateEngine">
         <property name="enableSpringELCompiler" value="true"/>
         <property name="templateResolver" ref="mvcTemplateResolver"/>
         <property name="messageSource" ref="messageSource"/>
@@ -68,7 +68,7 @@
 
     <!-- Thymeleaf: view resolver -->
     <bean id="mvcViewResolver"
-          class="org.thymeleaf.spring5.view.ThymeleafViewResolver">
+          class="org.thymeleaf.spring6.view.ThymeleafViewResolver">
         <property name="templateEngine"      ref="mvcTemplateEngine"/>
         <property name="characterEncoding"   value="UTF-8"/>
         <property name="order"               value="1"/>

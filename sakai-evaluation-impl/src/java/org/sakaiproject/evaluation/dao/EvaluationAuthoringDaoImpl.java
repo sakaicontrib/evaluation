@@ -331,7 +331,7 @@ public class EvaluationAuthoringDaoImpl extends EvaluationDaoHibernateSupport im
         params.put("templateType", EvalConstants.TEMPLATE_TYPE_STANDARD);
         appendSharingPredicate(hql, "template", userId, sharingConstants, params);
         if (!includeEmpty) {
-            hql.append("and template.templateItems.size > 0 ");
+            hql.append("and size(template.templateItems) > 0 ");
         }
     }
 
@@ -506,15 +506,15 @@ public class EvaluationAuthoringDaoImpl extends EvaluationDaoHibernateSupport im
 
         for( EvalTemplateItem templateItem : templateItems )
         {
-            EvalTemplateItem eti = (EvalTemplateItem) getHibernateTemplate().merge( templateItem );
+            EvalTemplateItem eti = (EvalTemplateItem) currentSession().merge( templateItem );
             deleteTemplateItems.add(eti);
             eti.getItem().getTemplateItems().remove(eti);
             eti.getTemplate().getTemplateItems().remove(eti);
-            getHibernateTemplate().update(eti);
+            currentSession().update(eti);
         }
 
         // do the actual deletes
-        getHibernateTemplate().deleteAll(deleteTemplateItems);
+        deleteAll(deleteTemplateItems);
         log.info("Removed " + deleteTemplateItems.size() + " template items");
     }
 

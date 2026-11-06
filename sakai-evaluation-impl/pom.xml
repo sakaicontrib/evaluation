@@ -46,7 +46,7 @@
           <artifactId>spring-core</artifactId>
         </dependency>
         <dependency>
-          <groupId>org.hibernate</groupId>
+          <groupId>org.hibernate.orm</groupId>
           <artifactId>hibernate-core</artifactId>
         </dependency>
         <dependency>
@@ -85,8 +85,8 @@
 
         <!-- Servlet dependency: needed by EvalAnonymousAccessProvider (EntityViewAccessProvider) -->
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
         </dependency>
 
         <dependency>
@@ -101,16 +101,10 @@
             <version>${reflectutils.version}</version>
         </dependency>
 
-        <!-- Required for hibernate 3 HQL queries -->
-        <dependency>
-            <groupId>antlr</groupId>
-            <artifactId>antlr</artifactId>
-        </dependency>
-
         <!-- email dependencies -->
         <dependency>
-            <groupId>com.sun.mail</groupId>
-            <artifactId>jakarta.mail</artifactId>
+            <groupId>jakarta.mail</groupId>
+            <artifactId>jakarta.mail-api</artifactId>
         </dependency>
 
         <!-- JDOM dependencies -->

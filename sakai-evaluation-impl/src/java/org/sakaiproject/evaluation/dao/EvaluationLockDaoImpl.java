@@ -55,7 +55,7 @@ public class EvaluationLockDaoImpl extends EvaluationDaoHibernateSupport impleme
             } else {
                 // lock scale
                 scale.setLocked(Boolean.TRUE);
-                getHibernateTemplate().update(scale);
+                currentSession().update(scale);
                 return true;
             }
         } else {
@@ -78,7 +78,7 @@ public class EvaluationLockDaoImpl extends EvaluationDaoHibernateSupport impleme
 
                 // unlock scale
                 scale.setLocked(Boolean.FALSE);
-                getHibernateTemplate().update(scale);
+                currentSession().update(scale);
                 return true;
             }
         }
@@ -110,7 +110,7 @@ public class EvaluationLockDaoImpl extends EvaluationDaoHibernateSupport impleme
                 if (item.getScale() != null) {
                     lockScale(item.getScale(), Boolean.TRUE);
                 }
-                getHibernateTemplate().update(item);
+                currentSession().update(item);
                 return true;
             }
         } else {
@@ -128,7 +128,7 @@ public class EvaluationLockDaoImpl extends EvaluationDaoHibernateSupport impleme
 
                 // unlock item
                 item.setLocked(Boolean.FALSE);
-                getHibernateTemplate().update(item);
+                currentSession().update(item);
 
                 // unlock associated scale if there is one
                 if (item.getScale() != null) {
@@ -170,7 +170,7 @@ public class EvaluationLockDaoImpl extends EvaluationDaoHibernateSupport impleme
                         lockItem(eti.getItem(), Boolean.TRUE);
                     }
                 }
-                getHibernateTemplate().update(template);
+                currentSession().update(template);
                 return true;
             }
         } else {
@@ -188,7 +188,7 @@ public class EvaluationLockDaoImpl extends EvaluationDaoHibernateSupport impleme
 
                 // unlock template
                 template.setLocked(Boolean.FALSE);
-                getHibernateTemplate().update(template);
+                currentSession().update(template);
 
                 // unlock associated items if there are any
                 if (template.getTemplateItems() != null && template.getTemplateItems().size() > 0) {
@@ -390,8 +390,8 @@ public class EvaluationLockDaoImpl extends EvaluationDaoHibernateSupport impleme
                     obtainedLock = true;
                     // if this is my lock then update it immediately
                     lock.setLastModified(new Date());
-                    getHibernateTemplate().save(lock);
-                    getHibernateTemplate().flush(); // this should commit the data immediately
+                    currentSession().save(lock);
+                    currentSession().flush(); // this should commit the data immediately
                 } else {
                     // not the lock owner but we can still get the lock
                     long validTime = lock.getLastModified().getTime() + timePeriod + 100;
@@ -400,8 +400,8 @@ public class EvaluationLockDaoImpl extends EvaluationDaoHibernateSupport impleme
                         obtainedLock = true;
                         lock.setLastModified(new Date());
                         lock.setHolder(executerId);
-                        getHibernateTemplate().save(lock);
-                        getHibernateTemplate().flush(); // this should commit the data immediately
+                        currentSession().save(lock);
+                        currentSession().flush(); // this should commit the data immediately
                     } else {
                         // someone else is holding a valid lock still
                         obtainedLock = false;
@@ -410,8 +410,8 @@ public class EvaluationLockDaoImpl extends EvaluationDaoHibernateSupport impleme
             } else {
                 // obtain the lock
                 EvalLock lock = new EvalLock(lockId, executerId);
-                getHibernateTemplate().save(lock);
-                getHibernateTemplate().flush(); // this should commit the data immediately
+                currentSession().save(lock);
+                currentSession().flush(); // this should commit the data immediately
                 obtainedLock = true;
             }
         } catch (RuntimeException e) {
@@ -455,8 +455,8 @@ public class EvaluationLockDaoImpl extends EvaluationDaoHibernateSupport impleme
                 if (lock.getHolder().equals(executerId)) {
                     releasedLock = true;
                     // if this is my lock then remove it immediately
-                    getHibernateTemplate().delete(lock);
-                    getHibernateTemplate().flush(); // this should commit the data immediately
+                    currentSession().delete(lock);
+                    currentSession().flush(); // this should commit the data immediately
                 } else {
                     releasedLock = false;
                 }
@@ -476,12 +476,12 @@ public class EvaluationLockDaoImpl extends EvaluationDaoHibernateSupport impleme
      * @param lockId
      */
     private void cleanupLockAfterFailure(String lockId) {
-        getHibernateTemplate().clear(); // cancel any pending operations
+        currentSession().clear(); // cancel any pending operations
         // try to clear the lock if things died
         try {
             List<EvalLock> locks = getLocksByName(lockId);
-            getHibernateTemplate().deleteAll(locks);
-            getHibernateTemplate().flush();
+            deleteAll(locks);
+            currentSession().flush();
         } catch (Exception ex) {
             log.error("Could not cleanup the lock ("+lockId+") after failure: " + ex.getMessage(), ex);
         }

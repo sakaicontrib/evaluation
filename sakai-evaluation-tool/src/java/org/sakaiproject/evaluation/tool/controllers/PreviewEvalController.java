@@ -51,7 +51,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Preview view for an evaluation or template.

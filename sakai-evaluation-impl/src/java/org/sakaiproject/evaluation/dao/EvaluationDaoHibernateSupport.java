@@ -30,10 +30,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.SessionFactory;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
-import org.hibernate.type.DateType;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.model.EvalAdhocGroup;
@@ -59,8 +58,6 @@ import org.sakaiproject.evaluation.utils.ArrayUtils;
 import org.sakaiproject.evaluation.utils.ComparatorsUtils;
 import org.sakaiproject.evaluation.utils.EvalUtils;
 import org.springframework.dao.DataAccessResourceFailureException;
-import org.springframework.orm.hibernate5.HibernateObjectRetrievalFailureException;
-import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -68,7 +65,21 @@ import lombok.extern.slf4j.Slf4j;
  * Focused slice of the Hibernate-backed evaluation DAO implementation.
  */
 @Slf4j
-abstract class EvaluationDaoHibernateSupport extends HibernateDaoSupport {
+abstract class EvaluationDaoHibernateSupport {
+
+    private SessionFactory sessionFactory;
+
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
+
+    protected SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
+
+    protected Session currentSession() {
+        return sessionFactory.getCurrentSession();
+    }
 
     protected static final int MAX_UPDATE_SIZE = 999;
 
@@ -91,11 +102,7 @@ abstract class EvaluationDaoHibernateSupport extends HibernateDaoSupport {
         if (id == null) {
             throw new IllegalArgumentException("id must be set to find persistent object");
         }
-        try {
-            return getHibernateTemplate().get(type, id);
-        } catch (HibernateObjectRetrievalFailureException e) {
-            return null;
-        }
+        return currentSession().get(type, id);
     }
 
     public <T> List<T> findAll(Class<T> type) {
@@ -133,7 +140,7 @@ abstract class EvaluationDaoHibernateSupport extends HibernateDaoSupport {
         }
     }
 
-    protected <T> void deleteAll(Set<T> entities) {
+    protected <T> void deleteAll(Collection<T> entities) {
         if (entities == null || entities.isEmpty()) {
             return;
         }
@@ -149,7 +156,7 @@ abstract class EvaluationDaoHibernateSupport extends HibernateDaoSupport {
             throw new IllegalArgumentException("This object is already persistent with id: " + getPersistentId(object)
                     + " - you must use update to save this object and not create");
         }
-        getHibernateTemplate().save(object);
+        currentSession().save(object);
     }
 
     public void save(Object object) {
@@ -164,13 +171,13 @@ abstract class EvaluationDaoHibernateSupport extends HibernateDaoSupport {
         if (getPersistentId(object) == null) {
             throw new IllegalArgumentException("Could not get an id value from the supplied object, cannot update without an id: " + object);
         }
-        getHibernateTemplate().update(object);
+        currentSession().update(object);
     }
 
     public void delete(Object object) {
         Serializable id = getPersistentId(object);
         if (id == null) {
-            getHibernateTemplate().delete(object);
+            currentSession().delete(object);
         } else {
             // Re-fetch by id so deleting a detached instance still works when the
             // current session already contains another instance for the same row.
@@ -183,23 +190,19 @@ abstract class EvaluationDaoHibernateSupport extends HibernateDaoSupport {
         if (object == null) {
             return false;
         }
-        getHibernateTemplate().delete(object);
+        currentSession().delete(object);
         return true;
     }
 
     private Serializable getPersistentId(Object object) {
-        ClassMetadata metadata = getSessionFactory().getClassMetadata(Hibernate.getClass(object));
-        if (metadata == null) {
-            throw new IllegalArgumentException("Could not get class metadata for this object, it may not be persistent: " + object);
-        }
-        return metadata.getIdentifier(object);
+        return (Serializable) getSessionFactory().getPersistenceUnitUtil().getIdentifier(object);
     }
 
     /* (non-Javadoc)
      * @see org.sakaiproject.evaluation.dao.EvaluationDao#forceCommit()
      */
     public void forceCommit() {
-        getHibernateTemplate().flush(); // this should sync the data immediately
+        currentSession().flush(); // this should sync the data immediately
         // do a commit using the current transaction or make a new one
         if (currentSession().getTransaction() != null) {
             currentSession().getTransaction().commit();
@@ -215,7 +218,7 @@ abstract class EvaluationDaoHibernateSupport extends HibernateDaoSupport {
      * @see org.sakaiproject.evaluation.dao.EvaluationDao#forceRollback()
      */
     public void forceRollback() {
-        getHibernateTemplate().clear(); // clear pending data
+        currentSession().clear(); // clear pending data
         // do a rollback using the current transaction or make a new one
         if (currentSession().getTransaction() != null) {
             currentSession().getTransaction().rollback();
@@ -256,27 +259,27 @@ abstract class EvaluationDaoHibernateSupport extends HibernateDaoSupport {
         count = countEvaluationsWithNullProperty("studentViewResults");
         if (count > 0) {
             int counter = 0;
-            counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.studentViewResults = false where eval.studentsDate is null");
-            counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.studentViewResults = true where eval.studentsDate is not null");
+            counter += currentSession().createMutationQuery("update EvalEvaluation eval set eval.studentViewResults = false where eval.studentsDate is null").executeUpdate();
+            counter += currentSession().createMutationQuery("update EvalEvaluation eval set eval.studentViewResults = true where eval.studentsDate is not null").executeUpdate();
             log.info("Updated " + counter + " EvalEvaluation.studentViewResults fields from null to boolean values based on studentsDate values");
         }
         count = countEvaluationsWithNullProperty("instructorViewResults");
         if (count > 0) {
             int counter = 0;
-            counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.instructorViewResults = false where eval.instructorsDate is null");
-            counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.instructorViewResults = true where eval.instructorsDate is not null");
+            counter += currentSession().createMutationQuery("update EvalEvaluation eval set eval.instructorViewResults = false where eval.instructorsDate is null").executeUpdate();
+            counter += currentSession().createMutationQuery("update EvalEvaluation eval set eval.instructorViewResults = true where eval.instructorsDate is not null").executeUpdate();
             log.info("Updated " + counter + " EvalEvaluation.instructorViewResults fields from null to boolean values based on instructorsDate values");
         }
         count = countEvaluationsWithNullProperty("modifyResponsesAllowed");
         if (count > 0) {
             int counter = 0;
-            counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.modifyResponsesAllowed = false where eval.modifyResponsesAllowed is null");
+            counter += currentSession().createMutationQuery("update EvalEvaluation eval set eval.modifyResponsesAllowed = false where eval.modifyResponsesAllowed is null").executeUpdate();
             log.info("Updated " + counter + " EvalEvaluation.modifyResponsesAllowed fields from null to default");
         }
         count = countEvaluationsWithNullProperty("blankResponsesAllowed");
         if (count > 0) {
             int counter = 0;
-            counter += getHibernateTemplate().bulkUpdate("update EvalEvaluation eval set eval.blankResponsesAllowed = false where eval.blankResponsesAllowed is null");
+            counter += currentSession().createMutationQuery("update EvalEvaluation eval set eval.blankResponsesAllowed = false where eval.blankResponsesAllowed is null").executeUpdate();
             log.info("Updated " + counter + " EvalEvaluation.blankResponsesAllowed fields from null to default");
         }
     }
