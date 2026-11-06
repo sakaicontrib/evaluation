@@ -59,9 +59,9 @@ public class EvaluationAssignConfirmController extends EvalControllerSupport {
     }
 
     @GetMapping
-    public String show(@RequestParam Long evaluationId,
-                       @RequestParam(required = false) String[] selectedGroupIDs,
-                       @RequestParam(required = false) String[] selectedHierarchyNodeIDs,
+    public String show(@RequestParam(name = "evaluationId") Long evaluationId,
+                       @RequestParam(name = "selectedGroupIDs", required = false) String[] selectedGroupIDs,
+                       @RequestParam(name = "selectedHierarchyNodeIDs", required = false) String[] selectedHierarchyNodeIDs,
                        Locale locale, Model model) {
 
         EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
@@ -134,9 +134,9 @@ public class EvaluationAssignConfirmController extends EvalControllerSupport {
     }
 
     @PostMapping
-    public String confirm(@RequestParam Long evaluationId,
-                          @RequestParam(required = false) String[] selectedGroupIDs,
-                          @RequestParam(required = false) String[] selectedHierarchyNodeIDs,
+    public String confirm(@RequestParam(name = "evaluationId") Long evaluationId,
+                          @RequestParam(name = "selectedGroupIDs", required = false) String[] selectedGroupIDs,
+                          @RequestParam(name = "selectedHierarchyNodeIDs", required = false) String[] selectedHierarchyNodeIDs,
                           RedirectAttributes redirectAttrs) {
 
         if (selectedGroupIDs == null) selectedGroupIDs = new String[0];

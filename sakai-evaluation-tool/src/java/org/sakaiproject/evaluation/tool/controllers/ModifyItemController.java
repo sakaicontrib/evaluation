@@ -57,10 +57,10 @@ public class ModifyItemController extends EvalControllerSupport {
     }
 
     @GetMapping
-    public String show(@RequestParam(required = false) Long itemId,
-                       @RequestParam(required = false) Long templateItemId,
-                       @RequestParam(required = false) Long templateId,
-                       @RequestParam(required = false) String itemClassification,
+    public String show(@RequestParam(name = "itemId", required = false) Long itemId,
+                       @RequestParam(name = "templateItemId", required = false) Long templateItemId,
+                       @RequestParam(name = "templateId", required = false) Long templateId,
+                       @RequestParam(name = "itemClassification", required = false) String itemClassification,
                        Model model,
                        HttpServletRequest request) {
 
@@ -306,24 +306,24 @@ public class ModifyItemController extends EvalControllerSupport {
     }
 
     @PostMapping
-    public String save(@RequestParam(required = false) Long itemId,
-                       @RequestParam(required = false) Long templateItemId,
-                       @RequestParam(required = false) Long templateId,
-                       @RequestParam String itemClassification,
-                       @RequestParam String itemText,
-                       @RequestParam(required = false) String sharing,
-                       @RequestParam(required = false) Long scaleId,
-                       @RequestParam(required = false) String[] options,
-                       @RequestParam(required = false) String scaleDisplaySetting,
-                       @RequestParam(required = false) String displayRows,
-                       @RequestParam(required = false) Boolean usesNA,
-                       @RequestParam(required = false) Boolean usesComment,
-                       @RequestParam(required = false) Boolean compulsory,
-                       @RequestParam(required = false) String category,
-                       @RequestParam(required = false) Boolean itemExpert,
-                       @RequestParam(required = false) String expertDescription,
-                       @RequestParam(required = false) Long itemGroupId,
-                       @RequestParam(required = false) String resultsSharing,
+    public String save(@RequestParam(name = "itemId", required = false) Long itemId,
+                       @RequestParam(name = "templateItemId", required = false) Long templateItemId,
+                       @RequestParam(name = "templateId", required = false) Long templateId,
+                       @RequestParam(name = "itemClassification") String itemClassification,
+                       @RequestParam(name = "itemText") String itemText,
+                       @RequestParam(name = "sharing", required = false) String sharing,
+                       @RequestParam(name = "scaleId", required = false) Long scaleId,
+                       @RequestParam(name = "options", required = false) String[] options,
+                       @RequestParam(name = "scaleDisplaySetting", required = false) String scaleDisplaySetting,
+                       @RequestParam(name = "displayRows", required = false) String displayRows,
+                       @RequestParam(name = "usesNA", required = false) Boolean usesNA,
+                       @RequestParam(name = "usesComment", required = false) Boolean usesComment,
+                       @RequestParam(name = "compulsory", required = false) Boolean compulsory,
+                       @RequestParam(name = "category", required = false) String category,
+                       @RequestParam(name = "itemExpert", required = false) Boolean itemExpert,
+                       @RequestParam(name = "expertDescription", required = false) String expertDescription,
+                       @RequestParam(name = "itemGroupId", required = false) Long itemGroupId,
+                       @RequestParam(name = "resultsSharing", required = false) String resultsSharing,
                        HttpServletRequest request,
                        Model model) {
 

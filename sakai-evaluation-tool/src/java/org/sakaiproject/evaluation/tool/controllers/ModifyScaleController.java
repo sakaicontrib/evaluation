@@ -39,7 +39,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class ModifyScaleController extends EvalControllerSupport {
 
     @GetMapping
-    public String show(@RequestParam(required = false) Long scaleId, Model model) {
+    public String show(@RequestParam(name = "scaleId", required = false) Long scaleId, Model model) {
         String currentUserId = currentUserId();
         boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
 
@@ -91,11 +91,11 @@ public class ModifyScaleController extends EvalControllerSupport {
     }
 
     @PostMapping
-    public String save(@RequestParam(required = false) Long scaleId,
-                       @RequestParam String title,
-                       @RequestParam(required = false) String[] options,
-                       @RequestParam(required = false) String ideal,
-                       @RequestParam(required = false) String sharing,
+    public String save(@RequestParam(name = "scaleId", required = false) Long scaleId,
+                       @RequestParam(name = "title") String title,
+                       @RequestParam(name = "options", required = false) String[] options,
+                       @RequestParam(name = "ideal", required = false) String ideal,
+                       @RequestParam(name = "sharing", required = false) String sharing,
                        RedirectAttributes redirectAttrs) {
 
         String currentUserId = currentUserId();

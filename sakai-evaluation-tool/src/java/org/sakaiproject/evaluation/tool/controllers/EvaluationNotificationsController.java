@@ -55,9 +55,9 @@ public class EvaluationNotificationsController extends EvalControllerSupport {
     }
 
     @GetMapping
-    public String show(@RequestParam Long evaluationId,
-                       @RequestParam(required = false) String evalGroupId,
-                       @RequestParam(required = false) String errorMessage,
+    public String show(@RequestParam(name = "evaluationId") Long evaluationId,
+                       @RequestParam(name = "evalGroupId", required = false) String evalGroupId,
+                       @RequestParam(name = "errorMessage", required = false) String errorMessage,
                        Model model) {
 
         String currentUserId = currentUserId();
@@ -94,11 +94,11 @@ public class EvaluationNotificationsController extends EvalControllerSupport {
     }
 
     @PostMapping
-    public String send(@RequestParam Long evaluationId,
-                       @RequestParam(required = false) String evalGroupId,
-                       @RequestParam(required = false) String subject,
-                       @RequestParam(required = false) String message,
-                       @RequestParam(required = false) String sendTo,
+    public String send(@RequestParam(name = "evaluationId") Long evaluationId,
+                       @RequestParam(name = "evalGroupId", required = false) String evalGroupId,
+                       @RequestParam(name = "subject", required = false) String subject,
+                       @RequestParam(name = "message", required = false) String message,
+                       @RequestParam(name = "sendTo", required = false) String sendTo,
                        RedirectAttributes redirectAttributes) {
 
         if (EvalUtils.isBlank(subject) || EvalUtils.isBlank(message) || EvalUtils.isBlank(sendTo)) {

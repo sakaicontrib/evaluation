@@ -119,8 +119,8 @@ public class ModifyTemplateItemsController extends EvalControllerSupport {
     }
 
     @GetMapping
-    public String show(@RequestParam Long templateId,
-                       @RequestParam(required = false) Long templateItemId,
+    public String show(@RequestParam(name = "templateId") Long templateId,
+                       @RequestParam(name = "templateItemId", required = false) Long templateItemId,
                        Model model, HttpServletRequest request) {
 
         model.addAttribute("backUrl", resolveBackUrl(request));

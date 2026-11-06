@@ -43,7 +43,7 @@ public class ModifyTemplateController extends EvalControllerSupport {
 
 
     @GetMapping
-    public String show(@RequestParam(required = false) Long templateId,
+    public String show(@RequestParam(name = "templateId", required = false) Long templateId,
                        Model model,
                        HttpServletRequest request) {
 
@@ -71,11 +71,11 @@ public class ModifyTemplateController extends EvalControllerSupport {
     }
 
     @PostMapping
-    public String save(@RequestParam(required = false) Long templateId,
-                       @RequestParam(defaultValue = "") String title,
-                       @RequestParam(defaultValue = "") String description,
-                       @RequestParam(required = false) String sharing,
-                       @RequestParam(required = false) String fixedSharing,
+    public String save(@RequestParam(name = "templateId", required = false) Long templateId,
+                       @RequestParam(name = "title", defaultValue = "") String title,
+                       @RequestParam(name = "description", defaultValue = "") String description,
+                       @RequestParam(name = "sharing", required = false) String sharing,
+                       @RequestParam(name = "fixedSharing", required = false) String fixedSharing,
                        HttpServletRequest request) {
 
         boolean inFacebox = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));

@@ -74,10 +74,10 @@ public class PreviewScaleController extends EvalControllerSupport {
 
     @GetMapping
     public String show(
-            @RequestParam(required = false) Long scaleId,
-            @RequestParam(required = false) String[] points,
-            @RequestParam(required = false) String ideal,
-            @RequestParam(required = false) String displaySetting,
+            @RequestParam(name = "scaleId", required = false) Long scaleId,
+            @RequestParam(name = "points", required = false) String[] points,
+            @RequestParam(name = "ideal", required = false) String ideal,
+            @RequestParam(name = "displaySetting", required = false) String displaySetting,
             Model model,
             HttpServletRequest request) {
 

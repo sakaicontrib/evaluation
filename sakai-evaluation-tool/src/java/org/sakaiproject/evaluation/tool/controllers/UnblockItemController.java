@@ -34,8 +34,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class UnblockItemController extends EvalControllerSupport {
 
     @GetMapping
-    public String show(@RequestParam Long templateItemId,
-                       @RequestParam Long templateId,
+    public String show(@RequestParam(name = "templateItemId") Long templateItemId,
+                       @RequestParam(name = "templateId") Long templateId,
                        Model model) {
 
         EvalTemplateItem templateItem = authoringService.getTemplateItemById(templateItemId);
@@ -50,8 +50,8 @@ public class UnblockItemController extends EvalControllerSupport {
     }
 
     @PostMapping
-    public String unblock(@RequestParam Long templateItemId,
-                          @RequestParam Long templateId) {
+    public String unblock(@RequestParam(name = "templateItemId") Long templateItemId,
+                          @RequestParam(name = "templateId") Long templateId) {
 
         daoInvoker.invokeTransactionalAccess(() -> {
             EvalTemplateItem templateItem = authoringService.getTemplateItemById(templateItemId);

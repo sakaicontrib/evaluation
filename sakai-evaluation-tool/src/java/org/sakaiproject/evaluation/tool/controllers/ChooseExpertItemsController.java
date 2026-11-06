@@ -52,9 +52,9 @@ public class ChooseExpertItemsController extends EvalControllerSupport {
     }
 
     @GetMapping
-    public String show(@RequestParam Long templateId,
-                       @RequestParam Long categoryId,
-                       @RequestParam Long objectiveId,
+    public String show(@RequestParam(name = "templateId") Long templateId,
+                       @RequestParam(name = "categoryId") Long categoryId,
+                       @RequestParam(name = "objectiveId") Long objectiveId,
                        Model model) {
 
         EvalItemGroup category = authoringService.getItemGroupById(categoryId);
@@ -78,8 +78,8 @@ public class ChooseExpertItemsController extends EvalControllerSupport {
     }
 
     @PostMapping
-    public String insert(@RequestParam Long templateId,
-                         @RequestParam(required = false) String[] selectedIds) {
+    public String insert(@RequestParam(name = "templateId") Long templateId,
+                         @RequestParam(name = "selectedIds", required = false) String[] selectedIds) {
 
         if (selectedIds == null || selectedIds.length == 0) {
             return "redirect:/modify_template_items?templateId=" + templateId;

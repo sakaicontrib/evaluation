@@ -32,9 +32,9 @@ import lombok.extern.slf4j.Slf4j;
 public class RemoveItemController extends EvalControllerSupport {
 
     @GetMapping
-    public String show(@RequestParam(required = false) Long itemId,
-                       @RequestParam(required = false) Long templateItemId,
-                       @RequestParam(required = false) Long templateId,
+    public String show(@RequestParam(name = "itemId", required = false) Long itemId,
+                       @RequestParam(name = "templateItemId", required = false) Long templateItemId,
+                       @RequestParam(name = "templateId", required = false) Long templateId,
                        Model model) {
 
         model.addAttribute("itemId", itemId);
@@ -63,9 +63,9 @@ public class RemoveItemController extends EvalControllerSupport {
     }
 
     @PostMapping
-    public String remove(@RequestParam(required = false) Long itemId,
-                         @RequestParam(required = false) Long templateItemId,
-                         @RequestParam(required = false) Long templateId) {
+    public String remove(@RequestParam(name = "itemId", required = false) Long itemId,
+                         @RequestParam(name = "templateItemId", required = false) Long templateItemId,
+                         @RequestParam(name = "templateId", required = false) Long templateId) {
         String userId = currentUserId();
         if (templateItemId != null) {
             authoringService.deleteTemplateItem(templateItemId, userId);

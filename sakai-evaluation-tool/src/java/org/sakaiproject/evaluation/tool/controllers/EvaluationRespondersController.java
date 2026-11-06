@@ -68,8 +68,8 @@ public class EvaluationRespondersController extends EvalControllerSupport {
     }
 
     @GetMapping
-    public String show(@RequestParam Long evaluationId,
-                       @RequestParam(required = false) String evalGroupId,
+    public String show(@RequestParam(name = "evaluationId") Long evaluationId,
+                       @RequestParam(name = "evalGroupId", required = false) String evalGroupId,
                        Model model,
                        HttpServletRequest request) {
 

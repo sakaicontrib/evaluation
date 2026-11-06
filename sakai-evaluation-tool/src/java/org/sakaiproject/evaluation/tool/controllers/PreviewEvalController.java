@@ -89,10 +89,10 @@ public class PreviewEvalController extends EvalControllerSupport {
 
     @GetMapping
     public String show(
-            @RequestParam(required = false) Long evaluationId,
-            @RequestParam(required = false) Long templateId,
-            @RequestParam(required = false) String evalGroupId,
-            @RequestParam(required = false, defaultValue = "false") boolean external,
+            @RequestParam(name = "evaluationId", required = false) Long evaluationId,
+            @RequestParam(name = "templateId", required = false) Long templateId,
+            @RequestParam(name = "evalGroupId", required = false) String evalGroupId,
+            @RequestParam(name = "external", required = false, defaultValue = "false") boolean external,
             Model model,
             HttpServletRequest request) {
 

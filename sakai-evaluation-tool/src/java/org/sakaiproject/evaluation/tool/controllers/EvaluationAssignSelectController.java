@@ -55,9 +55,9 @@ public class EvaluationAssignSelectController extends EvalControllerSupport {
     }
 
     @GetMapping
-    public String show(@RequestParam Long evaluationId,
-                       @RequestParam String evalGroupId,
-                       @RequestParam String evalCategory,
+    public String show(@RequestParam(name = "evaluationId") Long evaluationId,
+                       @RequestParam(name = "evalGroupId") String evalGroupId,
+                       @RequestParam(name = "evalCategory") String evalCategory,
                        Model model) {
 
         EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
@@ -113,10 +113,10 @@ public class EvaluationAssignSelectController extends EvalControllerSupport {
     }
 
     @PostMapping("/save")
-    public void save(@RequestParam Long evaluationId,
-                     @RequestParam String evalGroupId,
-                     @RequestParam String evalCategory,
-                     @RequestParam(required = false, defaultValue = "") String selectionOption,
+    public void save(@RequestParam(name = "evaluationId") Long evaluationId,
+                     @RequestParam(name = "evalGroupId") String evalGroupId,
+                     @RequestParam(name = "evalCategory") String evalCategory,
+                     @RequestParam(name = "selectionOption", required = false, defaultValue = "") String selectionOption,
                      @RequestParam(value = "selectedUserIds", required = false) List<String> selectedUserIds,
                      HttpServletResponse response) {
 

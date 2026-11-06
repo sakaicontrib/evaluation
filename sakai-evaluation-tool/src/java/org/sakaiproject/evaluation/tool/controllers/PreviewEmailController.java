@@ -31,9 +31,9 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/preview_email")
 public class PreviewEmailController extends EvalControllerSupport {
     @GetMapping
-    public String show(@RequestParam(required = false) Long templateId,
-                       @RequestParam(required = false) String emailType,
-                       @RequestParam(required = false) Long evaluationId,
+    public String show(@RequestParam(name = "templateId", required = false) Long templateId,
+                       @RequestParam(name = "emailType", required = false) String emailType,
+                       @RequestParam(name = "evaluationId", required = false) Long evaluationId,
                        Model model) {
 
         EvalEmailTemplate template = null;

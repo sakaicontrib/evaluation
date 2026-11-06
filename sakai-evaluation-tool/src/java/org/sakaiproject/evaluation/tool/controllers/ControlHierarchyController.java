@@ -82,7 +82,7 @@ public class ControlHierarchyController extends EvalControllerSupport {
     }
 
     @PostMapping("/remove")
-    public String remove(@RequestParam String nodeId,
+    public String remove(@RequestParam(name = "nodeId") String nodeId,
                          @RequestParam(value = "expanded", required = false) List<String> expanded) {
         checkAdmin();
         hierarchyLogic.removeNode(nodeId);

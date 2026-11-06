@@ -69,8 +69,8 @@ public class ControlEmailTemplatesController extends EvalControllerSupport {
     }
 
     @GetMapping
-    public String show(@RequestParam(defaultValue = DEFAULTS) String switcher,
-                        @RequestParam(defaultValue = "0") int page,
+    public String show(@RequestParam(name = "switcher", defaultValue = DEFAULTS) String switcher,
+                        @RequestParam(name = "page", defaultValue = "0") int page,
                         Locale locale,
                         Model model) {
 
