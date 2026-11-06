@@ -83,10 +83,11 @@ jobs:
       - name: Bootstrap dependencies absent from Maven Central
         run: |
           (cd .github/maven-seed && sha256sum --check --strict SHA256SUMS)
-          mvn --batch-mode --no-transfer-progress --non-recursive -f sakai/master/pom.xml \
-            org.apache.maven.plugins:maven-install-plugin:3.1.4:install-file \
-            -Dfile="${GITHUB_WORKSPACE}/.github/maven-seed/ignite-hibernate-ext-5.3.0.jar" \
-            -DpomFile="${GITHUB_WORKSPACE}/.github/maven-seed/ignite-hibernate-ext-5.3.0.pom"
+          for pom in "${GITHUB_WORKSPACE}"/.github/maven-seed/*.pom; do
+            mvn --batch-mode --no-transfer-progress --non-recursive -f sakai/master/pom.xml \
+              org.apache.maven.plugins:maven-install-plugin:3.1.4:install-file \
+              -Dfile="${pom%.pom}.jar" -DpomFile="${pom}"
+          done
 
       - name: Build Sakai master and deploy to Tomcat
         id: build-sakai
@@ -96,8 +97,12 @@ jobs:
       - name: Build evaluation tool and deploy to Tomcat
         run: mvn --batch-mode install sakai:deploy-exploded -Dmaven.tomcat.home="${TOMCAT_DIR}"
 
+      - name: Remove failed-download markers from Maven cache
+        if: always() && steps.maven-cache.outcome == 'success'
+        run: find .m2/repository -type f -name '*.lastUpdated' -delete
+
       - name: Save Maven repository cache
-        if: always() && steps.build-sakai.outcome == 'success'
+        if: always() && steps.maven-cache.outcome == 'success'
         uses: actions/cache/save@v6.1.0
         with:
           path: .m2/repository
