@@ -80,15 +80,6 @@ jobs:
           MATCHED_CACHE_KEY: ${{ steps.maven-cache.outputs.cache-matched-key }}
         run: echo "Restored Maven cache = ${MATCHED_CACHE_KEY:-none}"
 
-      - name: Bootstrap dependencies absent from Maven Central
-        run: |
-          (cd .github/maven-seed && sha256sum --check --strict SHA256SUMS)
-          for pom in "${GITHUB_WORKSPACE}"/.github/maven-seed/*.pom; do
-            mvn --batch-mode --no-transfer-progress --non-recursive -f sakai/master/pom.xml \
-              org.apache.maven.plugins:maven-install-plugin:3.1.4:install-file \
-              -Dfile="${pom%.pom}.jar" -DpomFile="${pom}"
-          done
-
       - name: Build Sakai master and deploy to Tomcat
         id: build-sakai
         working-directory: sakai
