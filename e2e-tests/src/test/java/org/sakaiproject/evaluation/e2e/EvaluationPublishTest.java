@@ -146,6 +146,7 @@ class EvaluationPublishTest {
     @Test
     void studentCannotAccessAdministrationOrPrivateTemplates() {
         loginAsAdmin();
+        openEvaluationThroughPortal();
         String templateId = createTemplate("Private access test " + Instant.now().toEpochMilli());
         addTextItem(templateId, "Private question must not be exposed");
         String templateItemId = queryParam(toolFrame.locator("a[href*=\"preview_item?\"]").first()
@@ -237,7 +238,8 @@ class EvaluationPublishTest {
     }
 
     private void loginAs(String username, String password) {
-
+        toolFrame = page.mainFrame();
+        toolContext = TOOL_CONTEXT;
         page.navigate("/portal/", new Page.NavigateOptions().setWaitUntil(WaitUntilState.DOMCONTENTLOADED));
         Locator userId = toolFrame.locator("input[name=\"eid\"], #eid").first();
         assertThat(userId).isVisible();
@@ -260,7 +262,7 @@ class EvaluationPublishTest {
 
     private void addTextItem(String templateId, String itemText) {
         gotoToolPath("/modify_item?itemClassification=Essay&templateId=" + templateId);
-        setFormValue("textarea[name=\"itemText\"]", itemText);
+        fillEditor("item-text", itemText);
         toolFrame.locator("select[name=\"displayRows\"]").selectOption("2");
         Locator courseCategory = toolFrame.locator("input[name=\"category\"][value=\"course\"]");
         if (courseCategory.count() > 0) {
@@ -273,8 +275,8 @@ class EvaluationPublishTest {
 
     private String createEvaluation(String templateId, String evaluationTitle) {
         gotoToolPath("/evaluation_create?templateId=" + templateId);
-        setFormValue("input[name=\"title\"]", evaluationTitle);
-        setFormValue("textarea[name=\"instructions\"]", "Please complete this test evaluation.");
+        toolFrame.locator("input[name=\"title\"]").fill(evaluationTitle);
+        fillEditor("instructions", "Please complete this test evaluation.");
         submitForm("form");
         toolFrame.waitForURL(Pattern.compile(".*/evaluation_settings\\?evaluationId=\\d+.*"));
         return queryParam(toolFrame.url(), "evaluationId");
@@ -283,8 +285,8 @@ class EvaluationPublishTest {
     private void saveEvaluationSettings(String evaluationId, String evaluationTitle) {
         LocalDateTime now = LocalDateTime.now();
         gotoToolPath("/evaluation_settings?evaluationId=" + evaluationId);
-        setFormValue("input[name=\"title\"]", evaluationTitle);
-        setFormValue("textarea[name=\"instructions\"]", "Published by Playwright e2e.");
+        toolFrame.locator("input[name=\"title\"]").fill(evaluationTitle);
+        fillEditor("instructions", "Published by Playwright e2e.");
         toolFrame.locator("input[name=\"startDate\"]").fill(now.plusMinutes(10).format(DATE_TIME_LOCAL));
         toolFrame.locator("input[name=\"dueDate\"]").fill(now.plusDays(2).format(DATE_TIME_LOCAL));
         Locator authControl = toolFrame.locator("select[name=\"authControl\"]");
@@ -311,19 +313,13 @@ class EvaluationPublishTest {
         toolFrame.navigate(toolContext + path, new Frame.NavigateOptions().setWaitUntil(WaitUntilState.DOMCONTENTLOADED));
     }
 
-    private void setFormValue(String selector, String value) {
-        Locator locator = toolFrame.locator(selector).first();
-        String id = locator.getAttribute("id");
-        Locator editor = toolFrame.locator("[id=\"cke_" + id + "\"]");
-        if (editor.count() > 0) {
-            editor.frameLocator("iframe.cke_wysiwyg_frame").locator("body").fill(value);
-        } else {
-            locator.fill(value);
-        }
+    private void fillEditor(String id, String value) {
+        toolFrame.locator("[id=\"cke_" + id + "\"]")
+                .frameLocator("iframe.cke_wysiwyg_frame").locator("body").fill(value);
     }
 
     private void submitForm(String selector) {
-        toolFrame.locator(selector).evaluate("form => form.submit()");
+        toolFrame.locator(selector).locator("input[type=\"submit\"], button[type=\"submit\"]").first().click();
     }
 
     private static String queryParam(String url, String name) {
