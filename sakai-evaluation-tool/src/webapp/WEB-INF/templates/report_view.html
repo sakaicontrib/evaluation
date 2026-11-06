@@ -83,6 +83,15 @@
                     This report format separates course and instructor questions into distinct worksheets.
                 </p>
             </div>
+            <div th:if="${canExportPerGroup}" class="checkbox">
+                <input type="checkbox" name="perGroupExport" id="perGroupExport"
+                       aria-describedby="perGroupExportExplanation"/>
+                <label for="perGroupExport" th:text="#{viewreport.pergroup.label}">One report per group (ZIP)</label>
+                <p id="perGroupExportExplanation" class="instructionText"
+                   th:text="#{viewreport.pergroup.explanation}">
+                    Download a ZIP file with a separate report for each selected group.
+                </p>
+            </div>
             <th:block th:each="opt : ${exportOptions}">
                 <a th:href="${opt.url}"
                    th:attr="data-standard-url=${opt.url},data-sectioned-url=${opt.sectionedUrl}"
@@ -241,23 +250,27 @@
             /*[[${hasTextResponses ? 'allTextResponses' : ''}]]*/  ''
         );
     </script>
-    <script th:if="${hasSectionedExports}" type="text/javascript">
-        (function () {
-            var toggle = document.getElementById("sectionedExport");
-            var links = document.querySelectorAll("[data-standard-url]");
-            if (!toggle || !links.length) return;
+    <script th:if="${hasSectionedExports or canExportPerGroup}" type="text/javascript">
+        (() => {
+            const sectionedToggle = document.getElementById("sectionedExport");
+            const perGroupToggle = document.getElementById("perGroupExport");
+            const links = document.querySelectorAll("[data-standard-url]");
+            if (!links.length) return;
 
-            var updateLinks = function () {
-                for (var i = 0; i < links.length; i++) {
-                    var standardUrl = links[i].getAttribute("data-standard-url");
-                    var sectionedUrl = links[i].getAttribute("data-sectioned-url");
-                    links[i].href = toggle.checked && sectionedUrl ? sectionedUrl : standardUrl;
-                }
+            const updateLinks = () => {
+                links.forEach(link => {
+                    const sectionedUrl = link.getAttribute("data-sectioned-url");
+                    let url = sectionedToggle?.checked && sectionedUrl ? sectionedUrl : link.getAttribute("data-standard-url");
+                    if (perGroupToggle?.checked) {
+                        url += "&perGroup=true";
+                    }
+                    link.href = url;
+                });
             };
 
-            toggle.addEventListener("change", updateLinks);
+            [sectionedToggle, perGroupToggle].forEach(toggle => toggle?.addEventListener("change", updateLinks));
             updateLinks();
-        }());
+        })();
     </script>
 
 </div>

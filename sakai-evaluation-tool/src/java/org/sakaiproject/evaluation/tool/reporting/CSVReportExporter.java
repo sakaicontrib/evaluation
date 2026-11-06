@@ -263,7 +263,7 @@ public class CSVReportExporter implements ReportExporter {
                         // If this DTI uses comments, put in the comment or a blank placeholder in the next column
                         if( dti.usesComments() )
                         {
-                            row.add( StringUtils.trimToEmpty( answer.getComment() ) );
+                            row.add( answer != null ? StringUtils.trimToEmpty( answer.getComment() ) : "" );
                         }
                     }
                 }

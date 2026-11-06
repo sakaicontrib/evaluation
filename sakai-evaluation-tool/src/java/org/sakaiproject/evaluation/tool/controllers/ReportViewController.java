@@ -14,20 +14,30 @@
  */
 package org.sakaiproject.evaluation.tool.controllers;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalEvaluationService;
 import org.sakaiproject.evaluation.logic.EvalSettings;
+import org.sakaiproject.evaluation.logic.model.EvalGroup;
 import org.sakaiproject.evaluation.logic.model.EvalUser;
 import org.sakaiproject.evaluation.model.EvalAnswer;
 import org.sakaiproject.evaluation.model.EvalAssignUser;
@@ -46,6 +56,7 @@ import org.sakaiproject.evaluation.utils.TemplateItemDataList.HierarchyNodeGroup
 import org.sakaiproject.evaluation.utils.TemplateItemDataList.TemplateItemGroup;
 import org.sakaiproject.evaluation.utils.TemplateItemUtils;
 import org.sakaiproject.util.Validator;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -67,9 +78,21 @@ public class ReportViewController extends EvalControllerSupport {
     private static final String VIEWMODE_REGULAR = "viewmode_regular";
     private static final String VIEWMODE_ALLESSAYS = "viewmode_allessays";
 
+    // Export types that can be downloaded as one report per group, with the suffix of each file in the ZIP
+    private static final Map<String, String> PER_GROUP_SUFFIXES = Map.of(
+            EvalEvaluationService.XLS_RESULTS_REPORT, ".xlsx",
+            EvalEvaluationService.XLS_RESULTS_REPORT_SECTIONED, ".xlsx",
+            EvalEvaluationService.CSV_RESULTS_REPORT, ".csv",
+            EvalEvaluationService.CSV_RESULTS_REPORT_SECTIONED, "/",
+            EvalEvaluationService.CSV_TAKERS_REPORT, "-takers.csv",
+            EvalEvaluationService.PDF_RESULTS_REPORT, ".pdf");
+
 
     @Resource(name = "org.sakaiproject.evaluation.tool.utils.EvalResponseAggregatorUtil")
     private EvalResponseAggregatorUtil responseAggregator;
+
+    @Resource(name = "messageSource")
+    private MessageSource messageSource;
 
 
     // -------------------------------------------------------------------------
@@ -163,6 +186,7 @@ public class ReportViewController extends EvalControllerSupport {
         model.addAttribute("groupIds", groupIds);
         model.addAttribute("allEssays", false);
         model.addAttribute("canChooseGroups", false);
+        model.addAttribute("canExportPerGroup", false);
 
         Set<String> viewableGroups = reportingPermissions.getResultsViewableEvalGroupIdsForCurrentUser(evaluationId);
         if (viewableGroups.isEmpty()) {
@@ -275,6 +299,7 @@ public class ReportViewController extends EvalControllerSupport {
         model.addAttribute("hasTextResponses", totalTextResponses > 0);
         model.addAttribute("exportOptions", exportOptions);
         model.addAttribute("hasSectionedExports", hasSectionedExports);
+        model.addAttribute("canExportPerGroup", groupIds.length > 1);
         model.addAttribute("individualPdfs", individualPdfs);
         model.addAttribute("notAllowed", false);
 
@@ -290,6 +315,8 @@ public class ReportViewController extends EvalControllerSupport {
                          @RequestParam(required = false) String[] groupIds,
                          @RequestParam String type,
                          @RequestParam(required = false) String userId,
+                         @RequestParam(defaultValue = "false") boolean perGroup,
+                         Locale locale,
                          HttpServletResponse response) throws IOException {
 
         EvalEvaluation evaluation = evaluationService.getEvaluationById(evaluationId);
@@ -297,6 +324,12 @@ public class ReportViewController extends EvalControllerSupport {
 
         if (!reportingPermissions.canViewEvaluationResponses(evaluation, groupIds)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+
+        // One report per group: the minimum-response threshold is checked for each group inside the ZIP
+        if (perGroup && groupIds != null && groupIds.length > 1 && PER_GROUP_SUFFIXES.containsKey(type)) {
+            writePerGroupZip(evaluation, groupIds, type, locale, response);
             return;
         }
 
@@ -354,6 +387,104 @@ public class ReportViewController extends EvalControllerSupport {
     // -------------------------------------------------------------------------
     // Private helpers
     // -------------------------------------------------------------------------
+
+    private void writePerGroupZip(EvalEvaluation evaluation, String[] groupIds, String type,
+                                  Locale locale, HttpServletResponse response) throws IOException {
+        boolean controlEval = evaluationService.canControlEvaluation(currentUserId(), evaluation.getId());
+        List<String> groupsWithoutResponses = new ArrayList<>();
+        List<String> groupsBelowMinimum = new ArrayList<>();
+        Set<String> usedNames = new HashSet<>();
+
+        response.setContentType("application/zip");
+        response.setHeader("Content-Disposition",
+                "attachment; filename=\"" + sanitizeFilename(evaluation.getTitle()) + ".zip\"");
+
+        try (ZipOutputStream zip = new ZipOutputStream(response.getOutputStream(), StandardCharsets.UTF_8)) {
+            for (String groupId : groupIds) {
+                String groupName = getGroupNameForZip(groupId, locale);
+                // An empty report is of no use to anyone, so skip it even for users who can control the evaluation
+                if (deliveryService.countResponses(evaluation.getId(), groupId, true) == 0) {
+                    groupsWithoutResponses.add(groupName);
+                    continue;
+                }
+                if (!controlEval && getResponsesNeeded(evaluation.getId(), groupId) > 0) {
+                    groupsBelowMinimum.add(groupName);
+                    continue;
+                }
+
+                // Exporters may close the stream they write to, so build each report in memory first
+                ByteArrayOutputStream report = new ByteArrayOutputStream();
+                evaluationService.exportReport(evaluation, new String[]{groupId}, null, report, type);
+
+                String entryName = getUniqueEntryName(groupName, groupId, usedNames);
+                if (EvalEvaluationService.CSV_RESULTS_REPORT_SECTIONED.equals(type)) {
+                    // This export is already a ZIP: copy its files into a folder for the group
+                    copyZipEntries(report.toByteArray(), entryName + "/", zip);
+                } else {
+                    addZipEntry(zip, entryName + PER_GROUP_SUFFIXES.get(type), report.toByteArray());
+                }
+            }
+
+            if (!groupsWithoutResponses.isEmpty() || !groupsBelowMinimum.isEmpty()) {
+                StringBuilder text = new StringBuilder();
+                appendSkippedGroups(text, "viewreport.pergroup.skipped.noresponses", groupsWithoutResponses, locale);
+                appendSkippedGroups(text, "viewreport.pergroup.skipped.message", groupsBelowMinimum, locale);
+                addZipEntry(zip, messageSource.getMessage("viewreport.pergroup.skipped.filename", null, locale),
+                        text.toString().getBytes(StandardCharsets.UTF_8));
+            }
+        }
+    }
+
+    private String getGroupNameForZip(String groupId, Locale locale) {
+        EvalGroup group = commonLogic.makeEvalGroupObject(groupId);
+        if (group == null || EvalConstants.GROUP_TYPE_INVALID.equals(group.type)) {
+            // Deleted groups get a placeholder title, show a readable label instead
+            return messageSource.getMessage("controlevaluations.eval.group.deleted", null, locale) + " (" + groupId + ")";
+        }
+        return group.title;
+    }
+
+    private void appendSkippedGroups(StringBuilder text, String messageKey, List<String> groupNames, Locale locale) {
+        if (groupNames.isEmpty()) {
+            return;
+        }
+        if (text.length() > 0) {
+            text.append("\r\n");
+        }
+        text.append(messageSource.getMessage(messageKey, null, locale)).append("\r\n\r\n");
+        for (String groupName : groupNames) {
+            text.append(groupName).append("\r\n");
+        }
+    }
+
+    private int getResponsesNeeded(Long evaluationId, String groupId) {
+        int responsesCount = deliveryService.countResponses(evaluationId, groupId, true);
+        int enrollmentsCount = evaluationService.countParticipantsForEval(evaluationId, new String[]{groupId});
+        return evalBeanUtils.getResponsesNeededToViewForResponseRate(responsesCount, enrollmentsCount);
+    }
+
+    private String getUniqueEntryName(String groupName, String groupId, Set<String> usedNames) {
+        String base = sanitizeFilename(StringUtils.isBlank(groupName) ? groupId : groupName);
+        String name = base;
+        for (int i = 2; !usedNames.add(name); i++) {
+            name = base + " (" + i + ")";
+        }
+        return name;
+    }
+
+    private void copyZipEntries(byte[] zipBytes, String folder, ZipOutputStream zip) throws IOException {
+        try (ZipInputStream in = new ZipInputStream(new ByteArrayInputStream(zipBytes), StandardCharsets.UTF_8)) {
+            for (ZipEntry entry = in.getNextEntry(); entry != null; entry = in.getNextEntry()) {
+                addZipEntry(zip, folder + entry.getName(), in.readAllBytes());
+            }
+        }
+    }
+
+    private void addZipEntry(ZipOutputStream zip, String name, byte[] content) throws IOException {
+        zip.putNextEntry(new ZipEntry(name));
+        zip.write(content);
+        zip.closeEntry();
+    }
 
     private ItemResult buildItemResult(DataTemplateItem dti, int displayNumber, int renderedItemCount, boolean allEssays) {
         EvalTemplateItem templateItem = dti.templateItem;
