@@ -348,7 +348,7 @@ public class XLSReportExporter implements ReportExporter {
                     }
                     if( dti.usesComments() )
                     {
-                        row.add( QUESTION_COMMENTS_COLUMN_START_INDEX_COURSE_SHEET + ++questionCounter, StringUtils.trimToEmpty( answer.getComment() ) );
+                        row.add( QUESTION_COMMENTS_COLUMN_START_INDEX_COURSE_SHEET + ++questionCounter, answer != null ? StringUtils.trimToEmpty( answer.getComment() ) : "" );
                     }
                     questionCounter++;
                 }
