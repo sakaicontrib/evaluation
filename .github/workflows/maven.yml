@@ -3,13 +3,17 @@ name: Sakai Tomcat Smoke Test
 on:
   workflow_dispatch:
   pull_request:
+  push:
+    branches: [master]
 
 jobs:
   sakai-tomcat:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 120
     env:
       TERM: xterm
+      MAVEN_VERSION: "3.9.16"
+      MAVEN_ARGS: "-Dmaven.repo.local=${{ github.workspace }}/.m2/repository"
       JAVA_OPTS: "-Dhttp.agent=Sakai -Xms2512m -Xmx2512m -Dsakai.cookieName=SAKAIID -Dsakai.demo=true"
       MAVEN_OPTS: "-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true -Dmaven.wagon.http.retryHandler.count=2 -Dmaven.wagon.http.pool=true"
       PLAYWRIGHT_BROWSER: chromium
@@ -32,16 +36,15 @@ jobs:
           fetch-tags: false
 
       - name: Set up Temurin JDK 21
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6.0.1
         with:
           java-version: 21
           distribution: temurin
-          cache: maven
 
-      - name: Set up Maven 3.9.9
+      - name: Set up Maven
         uses: stCarolas/setup-maven@v5.1
         with:
-          maven-version: 3.9.9
+          maven-version: ${{ env.MAVEN_VERSION }}
 
       - name: Provision Tomcat and database
         run: |
@@ -63,21 +66,43 @@ jobs:
           popd
           mysql -u root -proot -e "DROP DATABASE IF EXISTS sakai; CREATE DATABASE sakai;"
 
-      - name: Cache Maven repository
-        uses: actions/cache@v6
+      - name: Restore master Maven repository cache
+        id: maven-cache
+        uses: actions/cache/restore@v6.1.0
         with:
-          path: |
-            ~/.m2/repository
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-m2-
+          path: .m2/repository
+          enableCrossOsArchive: true
+          key: evalsys-m2-sakai-master-maven-${{ env.MAVEN_VERSION }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: evalsys-m2-sakai-master-maven-${{ env.MAVEN_VERSION }}-
+
+      - name: Report Maven cache status
+        env:
+          MATCHED_CACHE_KEY: ${{ steps.maven-cache.outputs.cache-matched-key }}
+        run: echo "Restored Maven cache = ${MATCHED_CACHE_KEY:-none}"
+
+      - name: Bootstrap dependencies absent from Maven Central
+        run: |
+          (cd .github/maven-seed && sha256sum --check --strict SHA256SUMS)
+          mvn --batch-mode --no-transfer-progress --non-recursive -f sakai/master/pom.xml \
+            org.apache.maven.plugins:maven-install-plugin:3.1.4:install-file \
+            -Dfile="${GITHUB_WORKSPACE}/.github/maven-seed/ignite-hibernate-ext-5.3.0.jar" \
+            -DpomFile="${GITHUB_WORKSPACE}/.github/maven-seed/ignite-hibernate-ext-5.3.0.pom"
 
       - name: Build Sakai master and deploy to Tomcat
+        id: build-sakai
         working-directory: sakai
         run: mvn --batch-mode -DskipTests -Dmaven.source.skip install sakai:deploy-exploded -Dmaven.tomcat.home="${TOMCAT_DIR}"
 
       - name: Build evaluation tool and deploy to Tomcat
         run: mvn --batch-mode install sakai:deploy-exploded -Dmaven.tomcat.home="${TOMCAT_DIR}"
+
+      - name: Save Maven repository cache
+        if: always() && steps.build-sakai.outcome == 'success'
+        uses: actions/cache/save@v6.1.0
+        with:
+          path: .m2/repository
+          enableCrossOsArchive: true
+          key: ${{ steps.maven-cache.outputs.cache-primary-key }}
 
       - name: Start Tomcat and verify startup
         run: |
@@ -99,9 +124,9 @@ jobs:
           tail -n 20 "${TOMCAT_DIR}/logs/catalina.out"
 
       - name: Set up Node for Playwright
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7.1.0
         with:
-          node-version: 20
+          node-version: 24
 
       - name: Resolve Playwright Java version
         id: playwright-version
@@ -110,7 +135,7 @@ jobs:
           echo "value=${PLAYWRIGHT_VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Cache Playwright browsers
-        uses: actions/cache@v4
+        uses: actions/cache@v6.1.0
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-java-${{ steps.playwright-version.outputs.value }}
@@ -138,7 +163,7 @@ jobs:
 
       - name: Upload Playwright artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: evaluation-playwright-artifacts
           path: |

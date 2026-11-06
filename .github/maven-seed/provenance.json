@@ -1,0 +1,11 @@
+{
+  "coordinates": "org.apache.ignite:ignite-hibernate-ext:5.3.0",
+  "source": "Existing local Maven cache; _remote.repositories records sakai-maven for the JAR and POM.",
+  "repository": "https://source.sakaiproject.org/maven2",
+  "reason": "Sakai master requires this version. Maven Central returns 404 and the Sakai repository times out from CI. This seed bootstraps the repository-local Maven cache.",
+  "license": "Apache-2.0; LICENSE and NOTICE are included in the JAR.",
+  "sha256": {
+    "ignite-hibernate-ext-5.3.0.jar": "dbd6fc37e0d5c64d71392804afce060b96c6d77bcaf209bc51f84c5d4f1eedf8",
+    "ignite-hibernate-ext-5.3.0.pom": "e23bb5dac196a2dc35d8e90a4f4e5647a3c12b4e36791159797914d4f383cd37"
+  }
+}
