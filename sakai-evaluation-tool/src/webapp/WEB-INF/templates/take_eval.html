@@ -46,7 +46,7 @@
     <ul th:unless="${external}" th:replace="~{fragments/nav :: navbar}">nav</ul>
 
     <!-- Title -->
-    <div>
+    <div style="margin:1em 0 .75em">
         <h3 style="display:inline">
             <span th:text="#{takeeval.eval.title.header}">Evaluation:</span>
             <span th:text="${eval != null ? eval.title : ''}">Eval title</span>
