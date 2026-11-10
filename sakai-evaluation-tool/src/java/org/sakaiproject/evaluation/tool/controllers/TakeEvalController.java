@@ -56,6 +56,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 import lombok.Data;
@@ -173,7 +174,7 @@ public class TakeEvalController extends EvalControllerSupport {
         model.addAttribute("responseId", responseState.responseId);
         addSavedWarning(responseState, locale, model);
         addSubmissionError(error, locale, model);
-        addTakeSettings(eval, responseState.response, model);
+        addTakeSettings(eval, responseState.response, commonLogic.isUserAnonymous(currentUserId), model);
 
         Boolean useCourseOnly = Boolean.TRUE.equals(settings.get(EvalSettings.ITEM_USE_COURSE_CATEGORY_ONLY));
         Boolean showHierHeaders = Boolean.TRUE.equals(settings.get(EvalSettings.DISPLAY_HIERARCHY_HEADERS));
@@ -308,7 +309,7 @@ public class TakeEvalController extends EvalControllerSupport {
         }
     }
 
-    private void addTakeSettings(EvalEvaluation eval, EvalResponse response, Model model) {
+    private void addTakeSettings(EvalEvaluation eval, EvalResponse response, boolean anonymous, Model model) {
         Boolean studentAllowedLeaveUnanswered = (Boolean) settings.get(EvalSettings.STUDENT_ALLOWED_LEAVE_UNANSWERED);
         if (studentAllowedLeaveUnanswered == null) {
             studentAllowedLeaveUnanswered = EvalUtils.safeBool(eval.getBlankResponsesAllowed(), false);
@@ -317,8 +318,11 @@ public class TakeEvalController extends EvalControllerSupport {
 
         Boolean saveWithoutSubmit = (Boolean) settings.get(EvalSettings.STUDENT_SAVE_WITHOUT_SUBMIT);
         Boolean cancelAllowed = (Boolean) settings.get(EvalSettings.STUDENT_CANCEL_ALLOWED);
-        model.addAttribute("saveWithoutSubmit", Boolean.TRUE.equals(saveWithoutSubmit) && (response == null || !response.complete));
-        model.addAttribute("cancelAllowed", Boolean.TRUE.equals(cancelAllowed));
+        // Anonymous users cannot come back to a saved response or use the dashboard,
+        // so "Save" and "Cancel" (which goes to the dashboard) make no sense for them.
+        model.addAttribute("saveWithoutSubmit", !anonymous && Boolean.TRUE.equals(saveWithoutSubmit)
+                && (response == null || !response.complete));
+        model.addAttribute("cancelAllowed", !anonymous && Boolean.TRUE.equals(cancelAllowed));
     }
 
     private TakeEvalFormModel buildTakeEvalFormModel(Long evaluationId, String evalGroupId,
@@ -456,7 +460,8 @@ public class TakeEvalController extends EvalControllerSupport {
             @RequestParam(required = false) Long responseId,
             @RequestParam(required = false) String actionSave,
             @RequestParam(required = false) String actionSubmit,
-            @ModelAttribute("evalForm") EvalFormWrapper formWrapper) {
+            @ModelAttribute("evalForm") EvalFormWrapper formWrapper,
+            RedirectAttributes redirectAttributes) {
 
         String currentUserId = currentUserId();
         boolean submit = (actionSubmit != null);
@@ -485,7 +490,19 @@ public class TakeEvalController extends EvalControllerSupport {
             return redirectToTakeEval(evaluationId, evalGroupId, savedId, "savefailed");
         }
 
+        // Anonymous users cannot use the evaluation dashboard, so show them a confirmation page instead.
+        if (commonLogic.isUserAnonymous(currentUserId)) {
+            EvalEvaluation eval = evaluationService.getEvaluationById(evaluationId);
+            redirectAttributes.addFlashAttribute("submittedEvalTitle", eval != null ? eval.getTitle() : "");
+            return "redirect:/take_eval/submitted";
+        }
         return "redirect:/summary";
+    }
+
+    /** Confirmation page shown to anonymous users after submitting. The title comes as a flash attribute. */
+    @GetMapping("/submitted")
+    public String submitted() {
+        return "take_eval_submitted";
     }
 
     private Long savePartialResponse(Long evaluationId, String evalGroupId, Long responseId,
@@ -549,33 +566,43 @@ public class TakeEvalController extends EvalControllerSupport {
     /** Builds the answer set from the submitted form data. */
     private Set<EvalAnswer> buildAnswers(EvalResponse response, EvalFormWrapper formWrapper) {
         Set<EvalAnswer> answers = new HashSet<>();
+        // Answers already stored in this response, keyed by template item and association.
+        // A form rendered before the first save (e.g. reopened with the browser Back button)
+        // has no answer ids, so it must overwrite these instead of adding duplicates.
+        Map<String, EvalAnswer> storedAnswers = response.getAnswers() == null
+                ? new HashMap<>() : EvalUtils.getAnswersMapByTempItemAndAssociated(response);
         for (EvalFormWrapper.AnswerSubmission sub : formWrapper.getAnswers()) {
             if (sub.getTemplateItemId() == null) continue;
 
             EvalTemplateItem ti = authoringService.getTemplateItemById(sub.getTemplateItemId());
             if (ti == null) continue;
 
-            EvalAnswer answer;
-            if (sub.getExistingAnswerId() != null) {
-                answer = findAnswerInResponse(response, sub.getExistingAnswerId());
-                if (answer == null) {
-                    answer = new EvalAnswer(response, ti, ti.getItem());
-                }
-            } else {
-                answer = new EvalAnswer(response, ti, ti.getItem());
-            }
-
             // Normalize empty strings to null: th:value="${null}" renders as "" in HTML,
             // so blank form values must be treated as null to match the answer map keys
             // built by makeTemplateItemAnswerKey (which uses null, not "").
             String assocId = sub.getAssociatedId();
-            answer.setAssociatedId(assocId != null && !assocId.isEmpty() ? assocId : null);
+            assocId = assocId != null && !assocId.isEmpty() ? assocId : null;
             String assocType = sub.getAssociatedType();
-            answer.setAssociatedType(assocType != null && !assocType.isEmpty() ? assocType : null);
+            assocType = assocType != null && !assocType.isEmpty() ? assocType : null;
+
+            EvalAnswer answer = null;
+            if (sub.getExistingAnswerId() != null) {
+                answer = findAnswerInResponse(response, sub.getExistingAnswerId());
+            }
+            if (answer == null) {
+                answer = storedAnswers.get(TemplateItemUtils.makeTemplateItemAnswerKey(ti.getId(), assocType, assocId));
+            }
+            if (answer == null) {
+                answer = new EvalAnswer(response, ti, ti.getItem());
+            }
+            answer.setAssociatedId(assocId);
+            answer.setAssociatedType(assocType);
 
             String type = sub.getItemType();
             if (EvalConstants.ITEM_TYPE_TEXT.equals(type)) {
                 answer.setText(sub.getText());
+                // Clear a stale N/A value from a previous save.
+                answer.setNumeric(sub.isNa() ? EvalConstants.NA_VALUE : null);
             } else if (EvalConstants.ITEM_TYPE_MULTIPLEANSWER.equals(type)) {
                 if (sub.isNa()) {
                     answer.setNumeric(EvalConstants.NA_VALUE);
@@ -605,6 +632,9 @@ public class TakeEvalController extends EvalControllerSupport {
                 }
             }
             answer.setComment(sub.getComment());
+            // Stored answers come with the transient NA flag decoded from the previous save;
+            // reset it from the submitted value or saveResponse would re-encode the old N/A.
+            answer.NA = EvalConstants.NA_VALUE.equals(answer.getNumeric());
             answers.add(answer);
         }
         return answers;
