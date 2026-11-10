@@ -1,0 +1,43 @@
+<!--
+
+    Copyright 2005 Sakai Foundation Licensed under the
+    Educational Community License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may
+    obtain a copy of the License at
+
+    http://www.osedu.org/licenses/ECL-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an "AS IS"
+    BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+    or implied. See the License for the specific language governing
+    permissions and limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!--
+    Optional comment for an item, collapsed behind an "Add a comment" link.
+    The links are wired by toggleCommentBox.js ($.fn.evalComment), which
+    evalsys.instrumentItems() binds to every div.JSevalComment.
+-->
+<div th:fragment="comment(item)" class="JSevalComment">
+    <div>
+        <span class="JSlabel editComment" style="display:none; font-weight:bold;" th:text="#{comment.label}">My comment:</span>
+        <span class="JScommentTruncated" style="display:none"></span>
+        <a href="#" class="JSedit" style="display:none" th:text="#{comment.edit}">Edit my comment</a>
+        <a href="#" class="JSshow addItem" th:title="#{comment.show.tooltip}" th:text="#{comment.show}">Add a comment</a>
+        <span class="JSwarn commentWarn" style="display:none" th:text="#{comment.warn}">Warning</span>
+    </div>
+    <div>
+        <a href="#" class="JShide hideComment" style="display:none" th:text="#{comment.hide}">Hide this comment</a>
+    </div>
+    <div>
+        <textarea style="display:none" cols="65" rows="3"
+                  th:name="${'answers[' + item.answerIndex + '].comment'}"
+                  th:text="${item.currentComment}"></textarea>
+    </div>
+</div>
+</body>
+</html>
