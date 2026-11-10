@@ -222,7 +222,8 @@ public final class ScaleOptionsBuilder {
         List<OptionData> options = new ArrayList<>();
 
         for (int i = 0; i < optionCount; i++) {
-            OptionData option = option(i, String.valueOf(optionCount - 1 - i), String.valueOf(i + 1));
+            // Column i stores option i, matching the start/end legends above the matrix.
+            OptionData option = option(i, String.valueOf(i), String.valueOf(i + 1));
             if (!numericScale) {
                 if (i == 0) {
                     option.setMatrixLegend(headers.get(0));
