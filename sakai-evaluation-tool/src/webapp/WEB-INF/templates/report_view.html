@@ -31,23 +31,25 @@
 <div class="portletBody evaluation">
 
 
-    <ul th:replace="~{fragments/nav :: navbar}">nav</ul>
+    <th:block th:unless="${external}">
+        <ul th:replace="~{fragments/nav :: navbar}">nav</ul>
+    </th:block>
 
     <ul class="breadCrumb">
-        <li><a th:href="@{/summary}" th:text="#{summary.page.title}">Summary</a></li>
+        <li th:unless="${external}"><a th:href="@{/summary}" th:text="#{summary.page.title}">Summary</a></li>
         <li th:if="${canChooseGroups}">
-            <a th:href="@{/report_groups(evaluationId=${evaluationId})}"
+            <a th:href="${external} ? @{/report_groups(evaluationId=${evaluationId}, external=true)} : @{/report_groups(evaluationId=${evaluationId})}"
                th:text="#{reportgroups.page.title}">Choose Report Groups</a>
         </li>
         <li class="lastCrumbNoFloat" th:text="#{viewreport.page.title}">View Report</li>
         <li th:if="${hasItems}" class="lastCrumb">
             <a th:if="${allEssays}"
-               th:href="@{/report_view(evaluationId=${evaluationId}, groupIds=${groupIds}, viewmode='viewmode_regular')}"
+               th:href="${external} ? @{/report_view(evaluationId=${evaluationId}, groupIds=${groupIds}, viewmode='viewmode_regular', external=true)} : @{/report_view(evaluationId=${evaluationId}, groupIds=${groupIds}, viewmode='viewmode_regular')}"
                th:text="#{viewreport.view.all}" class="goToList">
                 <span class="bi bi-list-ul" aria-hidden="true"></span> View All Items
             </a>
             <a th:unless="${allEssays}"
-               th:href="@{/report_view(evaluationId=${evaluationId}, groupIds=${groupIds}, viewmode='viewmode_allessays')}"
+               th:href="${external} ? @{/report_view(evaluationId=${evaluationId}, groupIds=${groupIds}, viewmode='viewmode_allessays', external=true)} : @{/report_view(evaluationId=${evaluationId}, groupIds=${groupIds}, viewmode='viewmode_allessays')}"
                th:text="#{viewreport.view.written}" class="goToList">
                 <span class="bi bi-list-ul" aria-hidden="true"></span> View Written Responses Only
             </a>

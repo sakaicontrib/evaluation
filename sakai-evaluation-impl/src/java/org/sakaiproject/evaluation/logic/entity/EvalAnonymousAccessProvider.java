@@ -45,6 +45,9 @@ import lombok.extern.slf4j.Slf4j;
  * (anonymous) evaluation be taken without first hitting the portal's login wall, since
  * a {@code SecurityException} is only thrown for evaluations that actually require a
  * logged-in user.
+ * <p>
+ * It also handles {@code /direct/eval-reports/{id}}, the "view results" link sent in the
+ * results-available emails, by redirecting to the report page, which checks permissions.
  */
 @Slf4j
 public class EvalAnonymousAccessProvider implements EntityViewAccessProvider {
@@ -72,15 +75,25 @@ public class EvalAnonymousAccessProvider implements EntityViewAccessProvider {
         this.accessProviderManager = accessProviderManager;
     }
 
-    /** Spring init-method: register this provider for both entity prefixes it handles. */
+    /** Spring init-method: register this provider for the entity prefixes it handles. */
     public void init() {
         accessProviderManager.registerProvider(AssignGroupEntityProvider.ENTITY_PREFIX, this);
         accessProviderManager.registerProvider(EvaluationEntityProvider.ENTITY_PREFIX, this);
+        accessProviderManager.registerProvider(EvalReportsEntityProvider.ENTITY_PREFIX, this);
     }
 
     public void handleAccess(EntityView view, HttpServletRequest req, HttpServletResponse res) {
         String prefix = view.getEntityReference().getPrefix();
         String id = view.getEntityReference().getId();
+
+        // EntityBroker sets "max-age=600" before calling us; the browser would then reuse
+        // the redirect (e.g. to login) for 10 minutes, even after the user logs in.
+        res.setHeader("Cache-Control", "no-store");
+
+        if (EvalReportsEntityProvider.ENTITY_PREFIX.equals(prefix)) {
+            handleReportAccess(id, res);
+            return;
+        }
 
         EvalEvaluation eval;
         String evalGroupId = null;
@@ -123,6 +136,34 @@ public class EvalAnonymousAccessProvider implements EntityViewAccessProvider {
             res.sendRedirect(target);
         } catch (IOException e) {
             log.error("Could not redirect direct access for evaluation {} to {}", eval.getId(), target, e);
+        }
+    }
+
+    private void handleReportAccess(String id, HttpServletResponse res) {
+        EvalEvaluation eval;
+        try {
+            eval = evaluationService.getEvaluationById(Long.valueOf(id));
+        } catch (NumberFormatException e) {
+            sendNotFound(res);
+            return;
+        }
+        if (eval == null) {
+            sendNotFound(res);
+            return;
+        }
+
+        // Public results need no login; the report page checks all other permissions.
+        boolean loggedIn = sessionManager.getCurrentSessionUserId() != null;
+        if (!loggedIn && !EvalConstants.SHARING_PUBLIC.equals(eval.getResultsSharing())) {
+            throw new SecurityException("Login required to view results of evaluation " + eval.getId());
+        }
+
+        String target = serverConfigurationService.getServerUrl() + TOOL_WEBAPP_PATH
+                + "/report_view?evaluationId=" + eval.getId() + "&external=true";
+        try {
+            res.sendRedirect(target);
+        } catch (IOException e) {
+            log.error("Could not redirect direct report access for evaluation {} to {}", eval.getId(), target, e);
         }
     }
 
