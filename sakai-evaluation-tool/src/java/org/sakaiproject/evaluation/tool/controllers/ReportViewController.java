@@ -169,6 +169,7 @@ public class ReportViewController extends EvalControllerSupport {
     public String show(@RequestParam Long evaluationId,
                        @RequestParam(required = false) String[] groupIds,
                        @RequestParam(required = false, defaultValue = VIEWMODE_REGULAR) String viewmode,
+                       @RequestParam(required = false, defaultValue = "false") boolean external,
                        HttpServletRequest request,
                        Model model) {
 
@@ -187,6 +188,8 @@ public class ReportViewController extends EvalControllerSupport {
         model.addAttribute("allEssays", false);
         model.addAttribute("canChooseGroups", false);
         model.addAttribute("canExportPerGroup", false);
+        // external: opened from the email link, outside the portal, so hide the tool navigation
+        model.addAttribute("external", external);
 
         Set<String> viewableGroups = reportingPermissions.getResultsViewableEvalGroupIdsForCurrentUser(evaluationId);
         if (viewableGroups.isEmpty()) {
@@ -197,7 +200,7 @@ public class ReportViewController extends EvalControllerSupport {
         boolean canChooseGroups = viewableGroups.size() > 1;
         if (groupIds == null || groupIds.length == 0) {
             if (canChooseGroups) {
-                return "redirect:/report_groups?evaluationId=" + evaluationId;
+                return "redirect:/report_groups?evaluationId=" + evaluationId + (external ? "&external=true" : "");
             }
             groupIds = viewableGroups.toArray(new String[0]);
         }
