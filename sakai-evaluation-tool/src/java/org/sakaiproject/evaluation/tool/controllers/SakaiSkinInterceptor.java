@@ -95,6 +95,10 @@ public class SakaiSkinInterceptor implements HandlerInterceptor {
     private List<NavItem> buildNavItems(String currentPath) {
         List<NavItem> items = new ArrayList<>();
         String currentUserId = commonLogic.getCurrentUserId();
+        // Anonymous users can only take the evaluation; the dashboard is empty for them.
+        if (commonLogic.isUserAnonymous(currentUserId)) {
+            return items;
+        }
         boolean isAdmin      = commonLogic.isUserAdmin(currentUserId);
         boolean canCreate    = authoringService.canCreateTemplate(currentUserId);
         boolean canBegin     = evaluationService.canBeginEvaluation(currentUserId);

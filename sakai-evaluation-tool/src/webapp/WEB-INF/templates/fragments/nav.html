@@ -17,7 +17,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-<ul th:fragment="navbar" class="navIntraTool">
+<ul th:fragment="navbar" th:if="${navItems != null and !navItems.isEmpty()}" class="navIntraTool">
     <li th:each="item : ${navItems}">
         <a th:href="@{${item.url}}"
            th:text="#{${item.messageKey}}"

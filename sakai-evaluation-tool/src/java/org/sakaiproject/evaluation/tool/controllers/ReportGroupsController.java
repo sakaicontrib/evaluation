@@ -45,9 +45,12 @@ public class ReportGroupsController extends EvalControllerSupport {
     }
 
     @GetMapping
-    public String show(@RequestParam(name = "evaluationId") Long evaluationId, Model model) {
+    public String show(@RequestParam(name = "evaluationId") Long evaluationId,
+                       @RequestParam(name = "external", required = false, defaultValue = "false") boolean external,
+                       Model model) {
 
         model.addAttribute("evaluationId", evaluationId);
+        model.addAttribute("external", external);
         model.addAttribute("notAllowed", false);
         model.addAttribute("groups", new ArrayList<>());
 

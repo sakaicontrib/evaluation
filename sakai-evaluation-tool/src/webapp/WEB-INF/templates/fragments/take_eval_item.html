@@ -59,12 +59,7 @@
                     </th:block>
                 </div>
                 <th:block th:if="${item.usesComment}">
-                    <div class="commentBox" style="display:none;">
-                        <label>Comment:</label>
-                        <textarea rows="2"
-                                  th:name="${'answers[' + item.answerIndex + '].comment'}"
-                                  th:text="${item.currentComment}"></textarea>
-                    </div>
+                    <div th:replace="~{fragments/item_comment :: comment(item=${item})}">comment</div>
                 </th:block>
             </div>
         </div>
@@ -126,12 +121,7 @@
                         </table>
                     </div>
                     <th:block th:if="${item.usesComment}">
-                        <div class="commentBox" style="display:none;">
-                            <label>Comment:</label>
-                            <textarea rows="2"
-                                      th:name="${'answers[' + item.answerIndex + '].comment'}"
-                                      th:text="${item.currentComment}"></textarea>
-                        </div>
+                        <div th:replace="~{fragments/item_comment :: comment(item=${item})}">comment</div>
                     </th:block>
                 </div>
             </th:block>
@@ -170,12 +160,7 @@
                         </table>
                     </div>
                     <th:block th:if="${item.usesComment}">
-                        <div class="commentBox" style="display:none;">
-                            <label>Comment:</label>
-                            <textarea rows="2"
-                                      th:name="${'answers[' + item.answerIndex + '].comment'}"
-                                      th:text="${item.currentComment}"></textarea>
-                        </div>
+                        <div th:replace="~{fragments/item_comment :: comment(item=${item})}">comment</div>
                     </th:block>
                 </div>
             </th:block>
@@ -226,12 +211,7 @@
                         </table>
                     </div>
                     <th:block th:if="${item.usesComment}">
-                        <div class="commentBox" style="display:none;">
-                            <label>Comment:</label>
-                            <textarea rows="2"
-                                      th:name="${'answers[' + item.answerIndex + '].comment'}"
-                                      th:text="${item.currentComment}"></textarea>
-                        </div>
+                        <div th:replace="~{fragments/item_comment :: comment(item=${item})}">comment</div>
                     </th:block>
                 </div>
             </th:block>
@@ -268,12 +248,7 @@
                         </ul>
                     </div>
                     <th:block th:if="${item.usesComment}">
-                        <div class="commentBox" style="display:none;">
-                            <label>Comment:</label>
-                            <textarea rows="2"
-                                      th:name="${'answers[' + item.answerIndex + '].comment'}"
-                                      th:text="${item.currentComment}"></textarea>
-                        </div>
+                        <div th:replace="~{fragments/item_comment :: comment(item=${item})}">comment</div>
                     </th:block>
                 </div>
             </th:block>
@@ -325,12 +300,7 @@
                             </fieldset>
                         </div>
                         <th:block th:if="${item.usesComment}">
-                            <div class="commentBox" style="display:none;">
-                                <label>Comment:</label>
-                                <textarea rows="2"
-                                          th:name="${'answers[' + item.answerIndex + '].comment'}"
-                                          th:text="${item.currentComment}"></textarea>
-                            </div>
+                            <div th:replace="~{fragments/item_comment :: comment(item=${item})}">comment</div>
                         </th:block>
                     </div>
                 </div>
@@ -410,12 +380,7 @@
                     </tr>
                 </table>
                 <th:block th:if="${item.usesComment}">
-                    <div class="commentBox" style="display:none;">
-                        <label>Comment:</label>
-                        <textarea rows="2"
-                                  th:name="${'answers[' + item.answerIndex + '].comment'}"
-                                  th:text="${item.currentComment}"></textarea>
-                    </div>
+                    <div th:replace="~{fragments/item_comment :: comment(item=${item})}">comment</div>
                 </th:block>
             </th:block>
 
@@ -481,12 +446,7 @@
                     </th:block>
                 </div>
                 <th:block th:if="${item.usesComment}">
-                    <div class="commentBox" style="display:none;">
-                        <label>Comment:</label>
-                        <textarea rows="2"
-                                  th:name="${'answers[' + item.answerIndex + '].comment'}"
-                                  th:text="${item.currentComment}"></textarea>
-                    </div>
+                    <div th:replace="~{fragments/item_comment :: comment(item=${item})}">comment</div>
                 </th:block>
             </div>
         </div>
@@ -553,12 +513,7 @@
                     </div>
                 </div>
                 <th:block th:if="${item.usesComment}">
-                    <div class="commentBox" style="display:none;">
-                        <label>Comment:</label>
-                        <textarea rows="2"
-                                  th:name="${'answers[' + item.answerIndex + '].comment'}"
-                                  th:text="${item.currentComment}"></textarea>
-                    </div>
+                    <div th:replace="~{fragments/item_comment :: comment(item=${item})}">comment</div>
                 </th:block>
             </div>
         </div>

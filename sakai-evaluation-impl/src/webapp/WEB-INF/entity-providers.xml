@@ -29,7 +29,8 @@
 	<!-- Handles direct (non-portal) access to /direct/eval-evaluation/{id} and
 	     /direct/eval-assigngroup/{id} so anonymous (NONE auth control) evaluations
 	     can be taken without hitting the Sakai portal's login wall, and so the
-	     permanent link / notification email links don't 406. -->
+	     permanent link / notification email links don't 406.
+	     Also handles /direct/eval-reports/{id} (results-available email link). -->
 	<bean id="org.sakaiproject.evaluation.logic.entity.EvalAnonymousAccessProvider"
 			class="org.sakaiproject.evaluation.logic.entity.EvalAnonymousAccessProvider"
 			init-method="init">

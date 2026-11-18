@@ -34,10 +34,12 @@
 <div class="portletBody evaluation">
 
 
-    <ul th:replace="~{fragments/nav :: navbar}">nav</ul>
+    <th:block th:unless="${external}">
+        <ul th:replace="~{fragments/nav :: navbar}">nav</ul>
+    </th:block>
 
     <ul class="breadCrumb">
-        <li><a th:href="@{/summary}" th:text="#{summary.page.title}">Summary</a></li>
+        <li th:unless="${external}"><a th:href="@{/summary}" th:text="#{summary.page.title}">Summary</a></li>
         <li class="lastCrumbNoFloat" th:text="#{reportgroups.page.title}">Choose Report Groups</li>
     </ul>
 
@@ -47,6 +49,7 @@
 
     <form th:unless="${notAllowed}" name="report_groups_form" method="get" th:action="@{/report_view}">
         <input type="hidden" name="evaluationId" th:value="${evaluationId}"/>
+        <input th:if="${external}" type="hidden" name="external" value="true"/>
 
         <p th:text="#{reportgroups.main.message}" class="instructionText">Choose the groups...</p>
 
