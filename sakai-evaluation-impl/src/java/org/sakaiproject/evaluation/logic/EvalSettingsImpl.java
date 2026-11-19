@@ -98,9 +98,9 @@ public class EvalSettingsImpl implements EvalSettings {
             if (type.equals("java.lang.Boolean")) {
             	setting = Boolean.valueOf( c.getValue() );
             } else if (type.equals("java.lang.Integer")) {
-                setting = new Integer( c.getValue() );
+                setting = Integer.valueOf( c.getValue() );
             } else if (type.equals("java.lang.Float")) {
-                setting = new Float( c.getValue() );
+                setting = Float.valueOf( c.getValue() );
             } else {
                 setting = c.getValue();
             }

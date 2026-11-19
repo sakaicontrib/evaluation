@@ -42,7 +42,7 @@ public class EvalAdhocUser implements java.io.Serializable {
         int location = userId.indexOf(ADHOC_ID_PREFIX);
         if (location != -1) {
             String idString = userId.substring(location + ADHOC_ID_PREFIX.length());
-            id = new Long(idString);
+            id = Long.valueOf(idString);
         }
         return id;
     }

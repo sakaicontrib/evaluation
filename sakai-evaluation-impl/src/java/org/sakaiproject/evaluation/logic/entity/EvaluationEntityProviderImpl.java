@@ -37,7 +37,7 @@ public class EvaluationEntityProviderImpl implements EvaluationEntityProvider, C
     public boolean entityExists(String id) {
         Long evaluationId;
         try {
-            evaluationId = new Long(id);
+            evaluationId = Long.valueOf(id);
             if (evaluationService.checkEvaluationExists(evaluationId)) {
                 return true;
             }

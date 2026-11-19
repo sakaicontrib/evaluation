@@ -47,7 +47,7 @@ public class EvalReportsEntityProviderImpl implements EvalReportsEntityProvider,
     public boolean entityExists(String id) {
         Long evaluationId;
         try {
-            evaluationId = new Long(id);
+            evaluationId = Long.valueOf(id);
             if (evaluationService.checkEvaluationExists(evaluationId)) {
                 return true;
             }

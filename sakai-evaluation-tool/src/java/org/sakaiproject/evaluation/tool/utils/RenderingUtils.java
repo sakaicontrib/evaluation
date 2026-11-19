@@ -105,7 +105,7 @@ public class RenderingUtils {
         {
         	try
         	{
-	        	realValues[i]=new Integer(answersArray.get(i));
+	        	realValues[i]=Integer.valueOf(answersArray.get(i));
         	}
         	catch (Exception e)
         	{

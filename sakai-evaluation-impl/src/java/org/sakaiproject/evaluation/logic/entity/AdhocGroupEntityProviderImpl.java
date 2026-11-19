@@ -53,7 +53,7 @@ public class AdhocGroupEntityProviderImpl implements AdhocGroupEntityProvider, C
     public boolean entityExists(String id) {
         Long adhocGroupId;
         try {
-            adhocGroupId = new Long(id);
+            adhocGroupId = Long.valueOf(id);
             if (commonLogic.getAdhocGroupById(adhocGroupId) != null) {
                 return true;
             }

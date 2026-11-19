@@ -1299,7 +1299,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
 //    try {
 //    authoringService.saveTemplateItem( new EvalTemplateItem( new Date(), 
 //    EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, etdl.item3, 
-//    new Integer(3), EvalConstants.ITEM_CATEGORY_COURSE, 
+//    Integer.valueOf(3), EvalConstants.ITEM_CATEGORY_COURSE, 
 //    null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null),
 //    EvalTestDataLoad.MAINT_USER_ID);
 //    Assert.fail("Should have thrown exception");
@@ -3209,7 +3209,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
          } else {
             Assert.assertNull(item.getAutoUseInsertionTag());
          }
-         Assert.assertEquals(new Integer(displayOrder++), item.getDisplayOrder());
+         Assert.assertEquals(Integer.valueOf(displayOrder++), item.getDisplayOrder());
       }
 
       currentItems = authoringService.getTemplateItemsForTemplate(templateId, new String[] {}, new String[] {}, new String[] {});
@@ -3228,7 +3228,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
          } else {
             Assert.assertNull(item.getAutoUseInsertionTag());
          }
-         Assert.assertEquals(new Integer(displayOrder++), item.getDisplayOrder());
+         Assert.assertEquals(Integer.valueOf(displayOrder++), item.getDisplayOrder());
       }
 
       // test insertion with save
@@ -3242,7 +3242,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
          } else {
             Assert.assertNull(item.getAutoUseInsertionTag());
          }
-         Assert.assertEquals(new Integer(displayOrder++), item.getDisplayOrder());
+         Assert.assertEquals(Integer.valueOf(displayOrder++), item.getDisplayOrder());
       }
 
       currentItems = authoringService.getTemplateItemsForTemplate(templateId, new String[] {}, new String[] {}, new String[] {});

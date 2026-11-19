@@ -171,9 +171,9 @@ public class TemplateItemUtilsTest extends TestCase {
         assertEquals(etdl.templateItem1U, list.get(0));
         assertEquals(etdl.templateItem3U, list.get(1));
         assertEquals(etdl.templateItem5U, list.get(2));
-        assertEquals(new Integer(1), etdl.templateItem1U.getDisplayOrder());
-        assertEquals(new Integer(2), etdl.templateItem3U.getDisplayOrder());
-        assertEquals(new Integer(3), etdl.templateItem5U.getDisplayOrder());
+        assertEquals(Integer.valueOf(1), etdl.templateItem1U.getDisplayOrder());
+        assertEquals(Integer.valueOf(2), etdl.templateItem3U.getDisplayOrder());
+        assertEquals(Integer.valueOf(3), etdl.templateItem5U.getDisplayOrder());
 
         // check for orders which are all the same
         etdl.templateItem1U.setDisplayOrder(2);
@@ -191,9 +191,9 @@ public class TemplateItemUtilsTest extends TestCase {
         assertEquals(etdl.templateItem1U, list.get(0));
         assertEquals(etdl.templateItem3U, list.get(1));
         assertEquals(etdl.templateItem5U, list.get(2));
-        assertEquals(new Integer(1), etdl.templateItem1U.getDisplayOrder());
-        assertEquals(new Integer(2), etdl.templateItem3U.getDisplayOrder());
-        assertEquals(new Integer(3), etdl.templateItem5U.getDisplayOrder());
+        assertEquals(Integer.valueOf(1), etdl.templateItem1U.getDisplayOrder());
+        assertEquals(Integer.valueOf(2), etdl.templateItem3U.getDisplayOrder());
+        assertEquals(Integer.valueOf(3), etdl.templateItem5U.getDisplayOrder());
 
         // check for orders which are reversed
         etdl.templateItem1U.setDisplayOrder(1);
@@ -211,9 +211,9 @@ public class TemplateItemUtilsTest extends TestCase {
         assertEquals(etdl.templateItem1U, list.get(0));
         assertEquals(etdl.templateItem3U, list.get(1));
         assertEquals(etdl.templateItem5U, list.get(2));
-        assertEquals(new Integer(1), etdl.templateItem1U.getDisplayOrder());
-        assertEquals(new Integer(2), etdl.templateItem3U.getDisplayOrder());
-        assertEquals(new Integer(3), etdl.templateItem5U.getDisplayOrder());
+        assertEquals(Integer.valueOf(1), etdl.templateItem1U.getDisplayOrder());
+        assertEquals(Integer.valueOf(2), etdl.templateItem3U.getDisplayOrder());
+        assertEquals(Integer.valueOf(3), etdl.templateItem5U.getDisplayOrder());
 
         // TODO check for block ordering
 
@@ -241,7 +241,7 @@ public class TemplateItemUtilsTest extends TestCase {
         List<EvalTemplateItem> itemList = new ArrayList<>();
 
         // need to trick this into thinking it works
-        etdl.templateItem9B.setId( new Long(0) );
+        etdl.templateItem9B.setId( Long.valueOf(0) );
 
         itemList.add(etdl.templateItem2B);
         itemList.add(etdl.templateItem3B);
@@ -306,9 +306,9 @@ public class TemplateItemUtilsTest extends TestCase {
         EvalTestDataLoad etdl = new EvalTestDataLoad(null);
 
         // need to trick this into thinking it works
-        etdl.templateItem9B.setId( new Long(0) );
-        etdl.templateItem2B.setBlockId( new Long(0) );
-        etdl.templateItem3B.setBlockId( new Long(0) );
+        etdl.templateItem9B.setId( Long.valueOf(0) );
+        etdl.templateItem2B.setBlockId( Long.valueOf(0) );
+        etdl.templateItem3B.setBlockId( Long.valueOf(0) );
 
         assertFalse( TemplateItemUtils.isBlockChild(etdl.templateItem1U) );
         assertTrue( TemplateItemUtils.isBlockChild(etdl.templateItem2B) );
@@ -344,16 +344,16 @@ public class TemplateItemUtilsTest extends TestCase {
         List<EvalTemplateItem> itemList = new ArrayList<>();
 
         // need to trick this into thinking it works
-        etdl.templateItem9B.setId( new Long(0) );
-        etdl.templateItem2B.setBlockId( new Long(0) );
-        etdl.templateItem3B.setBlockId( new Long(0) );
+        etdl.templateItem9B.setId( Long.valueOf(0) );
+        etdl.templateItem2B.setBlockId( Long.valueOf(0) );
+        etdl.templateItem3B.setBlockId( Long.valueOf(0) );
 
         itemList.add(etdl.templateItem2B);
         itemList.add(etdl.templateItem3B);
         itemList.add(etdl.templateItem9B);
 
         List<EvalTemplateItem> list;
-        list = TemplateItemUtils.getChildItems(itemList, new Long(0));
+        list = TemplateItemUtils.getChildItems(itemList, Long.valueOf(0));
         assertNotNull(list);
         assertEquals(2, list.size());
         assertEquals(etdl.templateItem2B, list.get(0));
@@ -386,11 +386,11 @@ public class TemplateItemUtilsTest extends TestCase {
     public void testMakeTemplateItemAnswerKey() {
         String key;
 
-        key = TemplateItemUtils.makeTemplateItemAnswerKey(new Long(10), null, null);
+        key = TemplateItemUtils.makeTemplateItemAnswerKey(Long.valueOf(10), null, null);
         assertNotNull(key);
         assertEquals("10_null_null", key);
 
-        key = TemplateItemUtils.makeTemplateItemAnswerKey(new Long(5), "instructor", "aaronz");
+        key = TemplateItemUtils.makeTemplateItemAnswerKey(Long.valueOf(5), "instructor", "aaronz");
         assertNotNull(key);
         assertEquals("5_instructor_aaronz", key);
     }

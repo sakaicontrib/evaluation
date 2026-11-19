@@ -698,9 +698,9 @@ public class EvaluationAuthoringDaoImpl extends EvaluationDaoHibernateSupport im
     // String hqlQuery = "select max(item.blockId) from EvalItem item";
     // Integer max = (Integer) getHibernateTemplate().iterate(hqlQuery).next();
     // if (max == null) {
-    // return new Integer(0);
+    // return Integer.valueOf(0);
     // }
-    // return new Integer(max.intValue() + 1);
+    // return Integer.valueOf(max.intValue() + 1);
     // }
 
 
