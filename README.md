@@ -1,3 +1,13 @@
+# Archived Sakai 25 RSF version
+
+This branch preserves the former `25.x` RSF implementation for reference only.
+It receives no further fixes. For Sakai 25 installations, use the maintained
+[`25.x` Thymeleaf branch](https://github.com/sakaicontrib/evaluation/tree/25.x).
+For Sakai 27 development, use
+[`master`](https://github.com/sakaicontrib/evaluation/tree/master).
+
+---
+
 Sakai Evaluation System (EVALSYS)
 
 This version of Evaluation is only compatible with Sakai 11 and Java 8
