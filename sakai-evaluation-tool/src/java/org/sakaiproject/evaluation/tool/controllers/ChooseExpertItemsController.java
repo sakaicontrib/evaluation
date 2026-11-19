@@ -86,6 +86,9 @@ public class ChooseExpertItemsController extends EvalControllerSupport {
         }
 
         String currentUserId = currentUserId();
+        if (!authoringService.canViewTemplate(currentUserId(), templateId)) {
+            throw new SecurityException("User cannot view this authoring object");
+        }
         EvalTemplate template = authoringService.getTemplateById(templateId);
 
         String hierarchyLevel = EvalConstants.HIERARCHY_LEVEL_TOP;
@@ -97,6 +100,9 @@ public class ChooseExpertItemsController extends EvalControllerSupport {
 
         for (String idStr : selectedIds) {
             Long itemId = Long.parseLong(idStr);
+            if (!authoringService.canViewItem(currentUserId(), itemId)) {
+                throw new SecurityException("User cannot view this authoring object");
+            }
             EvalItem item = authoringService.getItemById(itemId);
             if (item == null) continue;
             EvalTemplateItem templateItem = TemplateItemUtils.makeTemplateItem(item);

@@ -528,6 +528,27 @@ public interface EvalAuthoringService {
    public boolean canCreateTemplate(String userId);
 
    /**
+    * Checks whether a user may view a template, including a locked template.
+    * Public templates are visible to everyone; private templates require ownership
+    * or evaluation administrator permission.
+    * @param userId the current user's internal id, or null for an anonymous request
+    * @param templateId the template id
+    * @return true when the template is visible to this user
+    */
+   public boolean canViewTemplate(String userId, Long templateId);
+
+   /** Checks public visibility or ownership/admin access to an item, including locked items. */
+   public boolean canViewItem(String userId, Long itemId);
+
+   /** Checks public visibility or ownership/admin access to a scale, including locked scales. */
+   public boolean canViewScale(String userId, Long scaleId);
+
+   /** Checks visibility through a template item's parent template. */
+   public boolean canViewTemplateItem(String userId, Long templateItemId);
+
+
+
+   /**
     * Check if a user can modify a template,
     * locked templates cannot be modified
     * 

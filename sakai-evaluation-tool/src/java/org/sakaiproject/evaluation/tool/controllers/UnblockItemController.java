@@ -38,6 +38,9 @@ public class UnblockItemController extends EvalControllerSupport {
                        @RequestParam Long templateId,
                        Model model) {
 
+        if (!authoringService.canViewTemplateItem(currentUserId(), templateItemId)) {
+            throw new SecurityException("User cannot view this authoring object");
+        }
         EvalTemplateItem templateItem = authoringService.getTemplateItemById(templateItemId);
         if (!TemplateItemUtils.isBlockChild(templateItem)) {
             throw new IllegalStateException("Template item " + templateItemId + " is not part of a group");
@@ -54,6 +57,9 @@ public class UnblockItemController extends EvalControllerSupport {
                           @RequestParam Long templateId) {
 
         daoInvoker.invokeTransactionalAccess(() -> {
+            if (!authoringService.canViewTemplateItem(currentUserId(), templateItemId)) {
+                throw new SecurityException("User cannot view this authoring object");
+            }
             EvalTemplateItem templateItem = authoringService.getTemplateItemById(templateItemId);
             if (!TemplateItemUtils.isBlockChild(templateItem)) {
                 throw new IllegalStateException("Template item " + templateItemId + " is not part of a group");
