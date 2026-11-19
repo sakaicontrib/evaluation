@@ -165,6 +165,19 @@ public interface EvalEvaluationSetupService {
      */
     public EvalEvaluation closeEvaluation(Long evaluationId, String userId);
 
+    /**
+     * Close an evaluation before the closing date (see {@link #closeEvaluation(Long, String)})
+     * and optionally send the results-available notifications right away
+     *
+     * @param evaluationId the id of an {@link EvalEvaluation} object
+     * @param userId the acting user, normally the current user, internal user id (not username)
+     * @param sendResultsNow if true and the results become viewable on close (no future view date),
+     * the results-available notifications are sent now instead of on the originally scheduled due date;
+     * if false the originally scheduled notifications are left untouched
+     * @return the evaluation that is being worked with
+     */
+    public EvalEvaluation closeEvaluation(Long evaluationId, String userId, boolean sendResultsNow);
+
 
     // ASSIGNMENTS
 
