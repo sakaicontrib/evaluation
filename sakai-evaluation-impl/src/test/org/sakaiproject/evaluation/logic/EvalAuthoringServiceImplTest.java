@@ -1299,7 +1299,7 @@ public class EvalAuthoringServiceImplTest extends BaseTestEvalLogic {
 //    try {
 //    authoringService.saveTemplateItem( new EvalTemplateItem( new Date(), 
 //    EvalTestDataLoad.MAINT_USER_ID, etdl.templateUnused, etdl.item3, 
-//    Integer.valueOf(3), EvalConstants.ITEM_CATEGORY_COURSE, 
+//    Integer.valueOf(3), EvalConstants.ITEM_CATEGORY_COURSE,
 //    null, EvalConstants.ITEM_SCALE_DISPLAY_FULL, Boolean.TRUE, null, null),
 //    EvalTestDataLoad.MAINT_USER_ID);
 //    Assert.fail("Should have thrown exception");

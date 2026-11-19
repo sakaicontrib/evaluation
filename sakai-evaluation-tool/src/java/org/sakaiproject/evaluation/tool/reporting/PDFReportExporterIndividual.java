@@ -453,7 +453,7 @@ public class PDFReportExporterIndividual implements ReportExporter {
             numeroValores=numeroValores+collectedValues.get(n);
             try
             {
-            	answer=Integer.valueOf(answers.get(n));
+                answer=Integer.valueOf(answers.get(n));
             }
             catch (NumberFormatException e)
             {
