@@ -115,8 +115,8 @@ public class EvaluationSettingsController extends EvalControllerSupport {
 
 
     @GetMapping
-    public String show(@RequestParam Long evaluationId,
-                       @RequestParam(required = false, defaultValue = "false") boolean reopen,
+    public String show(@RequestParam(name = "evaluationId") Long evaluationId,
+                       @RequestParam(name = "reopen", required = false, defaultValue = "false") boolean reopen,
                        Locale locale, Model model) {
         String currentUserId = currentUserId();
 
@@ -271,33 +271,33 @@ public class EvaluationSettingsController extends EvalControllerSupport {
 
     @PostMapping
     public String save(
-            @RequestParam Long evaluationId,
-            @RequestParam(required = false) String title,
-            @RequestParam(required = false) String instructions,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date startDate,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date dueDate,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date stopDate,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date viewDate,
-            @RequestParam(required = false) String resultsSharing,
-            @RequestParam(required = false) Boolean studentViewResults,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date studentsDate,
-            @RequestParam(required = false) Boolean instructorViewResults,
-            @RequestParam(required = false) Boolean instructorViewAllResults,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date instructorsDate,
-            @RequestParam(required = false) Boolean blankResponsesAllowed,
-            @RequestParam(required = false) Boolean modifyResponsesAllowed,
-            @RequestParam(required = false) Boolean allRolesParticipate,
-            @RequestParam(required = false) Boolean compulsoryTextItemsAllowed,
-            @RequestParam(required = false) Boolean sectionAwareness,
-            @RequestParam(required = false) String authControl,
-            @RequestParam(required = false) String instructorOpt,
-            @RequestParam(required = false) Boolean sendAvailableNotifications,
-            @RequestParam(required = false) Integer reminderDays,
-            @RequestParam(required = false) String reminderFromEmail,
-            @RequestParam(required = false) String evalCategory,
-            @RequestParam(required = false) String termId,
-            @RequestParam(required = false, defaultValue = "false") boolean reOpening,
-            @RequestParam(required = false) String viewEmailType,
+            @RequestParam(name = "evaluationId") Long evaluationId,
+            @RequestParam(name = "title", required = false) String title,
+            @RequestParam(name = "instructions", required = false) String instructions,
+            @RequestParam(name = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date startDate,
+            @RequestParam(name = "dueDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date dueDate,
+            @RequestParam(name = "stopDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date stopDate,
+            @RequestParam(name = "viewDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date viewDate,
+            @RequestParam(name = "resultsSharing", required = false) String resultsSharing,
+            @RequestParam(name = "studentViewResults", required = false) Boolean studentViewResults,
+            @RequestParam(name = "studentsDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date studentsDate,
+            @RequestParam(name = "instructorViewResults", required = false) Boolean instructorViewResults,
+            @RequestParam(name = "instructorViewAllResults", required = false) Boolean instructorViewAllResults,
+            @RequestParam(name = "instructorsDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date instructorsDate,
+            @RequestParam(name = "blankResponsesAllowed", required = false) Boolean blankResponsesAllowed,
+            @RequestParam(name = "modifyResponsesAllowed", required = false) Boolean modifyResponsesAllowed,
+            @RequestParam(name = "allRolesParticipate", required = false) Boolean allRolesParticipate,
+            @RequestParam(name = "compulsoryTextItemsAllowed", required = false) Boolean compulsoryTextItemsAllowed,
+            @RequestParam(name = "sectionAwareness", required = false) Boolean sectionAwareness,
+            @RequestParam(name = "authControl", required = false) String authControl,
+            @RequestParam(name = "instructorOpt", required = false) String instructorOpt,
+            @RequestParam(name = "sendAvailableNotifications", required = false) Boolean sendAvailableNotifications,
+            @RequestParam(name = "reminderDays", required = false) Integer reminderDays,
+            @RequestParam(name = "reminderFromEmail", required = false) String reminderFromEmail,
+            @RequestParam(name = "evalCategory", required = false) String evalCategory,
+            @RequestParam(name = "termId", required = false) String termId,
+            @RequestParam(name = "reOpening", required = false, defaultValue = "false") boolean reOpening,
+            @RequestParam(name = "viewEmailType", required = false) String viewEmailType,
             RedirectAttributes redirectAttrs) {
 
         String currentUserId = currentUserId();

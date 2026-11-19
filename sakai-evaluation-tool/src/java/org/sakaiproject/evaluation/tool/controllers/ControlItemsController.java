@@ -66,7 +66,7 @@ public class ControlItemsController extends EvalControllerSupport {
         int     extraTemplatesCount; // more templates beyond the first one, if any
     }
     @GetMapping
-    public String show(@RequestParam(defaultValue = "0") int page, Model model) {
+    public String show(@RequestParam(name = "page", defaultValue = "0") int page, Model model) {
 
         String currentUserId = currentUserId();
         boolean userAdmin = commonLogic.isUserAdmin(currentUserId);
@@ -181,7 +181,7 @@ public class ControlItemsController extends EvalControllerSupport {
     }
 
     @PostMapping("/copy")
-    public String copyItem(@RequestParam Long itemId, RedirectAttributes redirectAttrs) {
+    public String copyItem(@RequestParam(name = "itemId") Long itemId, RedirectAttributes redirectAttrs) {
         String currentUserId = currentUserId();
         authoringService.copyItems(new Long[]{itemId}, currentUserId, false, true);
         redirectAttrs.addFlashAttribute("successMessage", "controlitems.copy.user.message");

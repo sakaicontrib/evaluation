@@ -67,7 +67,7 @@ public class AssignGroupEntityProviderImpl implements AssignGroupEntityProvider,
     public boolean entityExists(String id) {
         Long assignGroupId;
         try {
-            assignGroupId = new Long(id);
+            assignGroupId = Long.valueOf(id);
             if (evaluationService.getAssignGroupById(assignGroupId) != null) {
                 return true;
             }

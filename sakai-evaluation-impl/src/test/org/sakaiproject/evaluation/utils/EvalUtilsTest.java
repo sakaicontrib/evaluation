@@ -45,7 +45,7 @@ public class EvalUtilsTest extends TestCase {
       EvalTestDataLoad etdl = new EvalTestDataLoad(null);
 
       // positive
-      etdl.evaluationNew.setId( new Long(1) );
+      etdl.evaluationNew.setId( Long.valueOf(1) );
       state = EvalUtils.getEvaluationState(etdl.evaluationNew, false);
       assertEquals(EvalConstants.EVALUATION_STATE_INQUEUE, state);
 
@@ -53,26 +53,26 @@ public class EvalUtilsTest extends TestCase {
       state = EvalUtils.getEvaluationState(etdl.evaluationNew, true);
       assertEquals(EvalConstants.EVALUATION_STATE_INQUEUE, state);
 
-      etdl.evaluationActive.setId( new Long(2) );
+      etdl.evaluationActive.setId( Long.valueOf(2) );
       state = EvalUtils.getEvaluationState(etdl.evaluationActive, false);
       assertEquals(EvalConstants.EVALUATION_STATE_ACTIVE, state);
 
-      etdl.evaluationActiveUntaken.setId( new Long(3) );
+      etdl.evaluationActiveUntaken.setId( Long.valueOf(3) );
       state = EvalUtils.getEvaluationState(etdl.evaluationActiveUntaken, false);
       assertEquals(EvalConstants.EVALUATION_STATE_ACTIVE, state);
 
-      etdl.evaluationClosed.setId( new Long(4) );
+      etdl.evaluationClosed.setId( Long.valueOf(4) );
       state = EvalUtils.getEvaluationState(etdl.evaluationClosed, false);
       assertEquals(EvalConstants.EVALUATION_STATE_CLOSED, state);
 
-      etdl.evaluationViewable.setId( new Long(5) );
+      etdl.evaluationViewable.setId( Long.valueOf(5) );
       state = EvalUtils.getEvaluationState(etdl.evaluationViewable, false);
       assertEquals(EvalConstants.EVALUATION_STATE_VIEWABLE, state);
 
       // negative (null start date) and saved (should not even be possible)
       EvalEvaluation invalidEval = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, 
             "aaronz", "testing null dates", null, "XXXXXXXX", EvalConstants.SHARING_PRIVATE, 0, null);
-      invalidEval.setId( new Long(6) );
+      invalidEval.setId( Long.valueOf(6) );
       state = EvalUtils.getEvaluationState( invalidEval, false );
       assertEquals(EvalConstants.EVALUATION_STATE_UNKNOWN, state);
 
@@ -89,7 +89,7 @@ public class EvalUtilsTest extends TestCase {
       assertEquals(EvalConstants.EVALUATION_STATE_INQUEUE, state);
 
       // set the id so this eval does not look new
-      datesEval.setId( new Long(99999) );
+      datesEval.setId( Long.valueOf(99999) );
 
       // only the start date is set and in the future
       state = EvalUtils.getEvaluationState(datesEval, false);
@@ -553,7 +553,7 @@ public class EvalUtilsTest extends TestCase {
 
       assertFalse( EvalUtils.encodeAnswerNA(applicableAnswer) );
       assertEquals(false, applicableAnswer.NA);
-      assertEquals(new Integer(3), applicableAnswer.getNumeric());
+      assertEquals(Integer.valueOf(3), applicableAnswer.getNumeric());
       assertEquals("text", applicableAnswer.getText());
 
       assertTrue( EvalUtils.encodeAnswerNA(naAnswer) );
@@ -580,7 +580,7 @@ public class EvalUtilsTest extends TestCase {
 
       assertFalse( EvalUtils.decodeAnswerNA(applicableAnswer) );
       assertEquals(false, applicableAnswer.NA);
-      assertEquals(new Integer(3), applicableAnswer.getNumeric());
+      assertEquals(Integer.valueOf(3), applicableAnswer.getNumeric());
       assertEquals("text", applicableAnswer.getText());
 
       assertTrue( EvalUtils.decodeAnswerNA(naAnswer) );

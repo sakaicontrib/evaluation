@@ -91,7 +91,7 @@ public class ControlAdhocGroupsController extends EvalControllerSupport {
     }
 
     @PostMapping("/delete")
-    public String delete(@RequestParam Long adhocGroupId, RedirectAttributes ra) {
+    public String delete(@RequestParam(name = "adhocGroupId") Long adhocGroupId, RedirectAttributes ra) {
         String userId = commonLogic.getCurrentUserId();
 
         EvalAdhocGroup group = commonLogic.getAdhocGroupById(adhocGroupId);

@@ -14,7 +14,7 @@
  */
 package org.sakaiproject.evaluation.tool.controllers;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.sakaiproject.evaluation.beans.EvalBeanUtils;
 import org.sakaiproject.evaluation.dao.EvalDaoInvoker;

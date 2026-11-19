@@ -1443,6 +1443,33 @@ public class EvalAuthoringServiceImpl implements EvalAuthoringService {
     }
 
 
+    public boolean canViewItem(String userId, Long itemId) {
+        EvalItem item = getItemOrFail(itemId);
+        return EvalConstants.SHARING_PUBLIC.equals(item.getSharing())
+                || item.getOwner().equals(userId)
+                || commonLogic.isUserAdmin(userId);
+    }
+
+    public boolean canViewScale(String userId, Long scaleId) {
+        EvalScale scale = getScaleOrFail(scaleId);
+        return EvalConstants.SHARING_PUBLIC.equals(scale.getSharing())
+                || scale.getOwner().equals(userId)
+                || commonLogic.isUserAdmin(userId);
+    }
+
+    public boolean canViewTemplateItem(String userId, Long templateItemId) {
+        EvalTemplateItem templateItem = getTemplateItemOrFail(templateItemId);
+        return canViewTemplate(userId, templateItem.getTemplate().getId());
+    }
+
+    public boolean canViewTemplate(String userId, Long templateId) {
+        EvalTemplate template = getTemplateOrFail(templateId);
+        return EvalConstants.SHARING_PUBLIC.equals(template.getSharing())
+                || template.getOwner().equals(userId)
+                || commonLogic.isUserAdmin(userId);
+    }
+
+
     public boolean canModifyTemplate(String userId, Long templateId) {
         log.debug("templateId: " + templateId + ", userId: " + userId);
         // get the template by id

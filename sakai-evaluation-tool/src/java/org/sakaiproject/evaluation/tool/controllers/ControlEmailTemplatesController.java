@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.sakaiproject.evaluation.model.EvalEmailTemplate;
 import org.sakaiproject.evaluation.model.EvalEvaluation;
@@ -69,8 +69,8 @@ public class ControlEmailTemplatesController extends EvalControllerSupport {
     }
 
     @GetMapping
-    public String show(@RequestParam(defaultValue = DEFAULTS) String switcher,
-                        @RequestParam(defaultValue = "0") int page,
+    public String show(@RequestParam(name = "switcher", defaultValue = DEFAULTS) String switcher,
+                        @RequestParam(name = "page", defaultValue = "0") int page,
                         Locale locale,
                         Model model) {
 

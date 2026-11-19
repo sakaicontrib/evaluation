@@ -49,8 +49,8 @@ public class AdminTestEGProviderController extends EvalControllerSupport {
 
     @GetMapping
     public String show(
-            @RequestParam(required = false, defaultValue = "") String username,
-            @RequestParam(required = false, defaultValue = "") String evalGroupId,
+            @RequestParam(name = "username", required = false, defaultValue = "") String username,
+            @RequestParam(name = "evalGroupId", required = false, defaultValue = "") String evalGroupId,
             Model model) {
 
         String currentUserId = currentUserId();

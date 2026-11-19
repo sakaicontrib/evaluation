@@ -45,7 +45,7 @@ public class ModifyHierarchyNodeRulesController extends EvalControllerSupport {
     }
 
     @GetMapping
-    public String show(@RequestParam String nodeId,
+    public String show(@RequestParam(name = "nodeId") String nodeId,
                        @RequestParam(value = "expanded", required = false) List<String> expanded,
                        Model model) {
         checkAdmin();
@@ -77,10 +77,10 @@ public class ModifyHierarchyNodeRulesController extends EvalControllerSupport {
     }
 
     @PostMapping("/add")
-    public String addRule(@RequestParam String nodeId,
-                          @RequestParam(defaultValue = "") String ruleText,
-                          @RequestParam(defaultValue = "") String qualifier,
-                          @RequestParam(defaultValue = "") String option,
+    public String addRule(@RequestParam(name = "nodeId") String nodeId,
+                          @RequestParam(name = "ruleText", defaultValue = "") String ruleText,
+                          @RequestParam(name = "qualifier", defaultValue = "") String qualifier,
+                          @RequestParam(name = "option", defaultValue = "") String option,
                           @RequestParam(value = "expanded", required = false) List<String> expanded,
                           RedirectAttributes ra) {
         checkAdmin();
@@ -98,11 +98,11 @@ public class ModifyHierarchyNodeRulesController extends EvalControllerSupport {
     }
 
     @PostMapping("/update")
-    public String updateRule(@RequestParam String nodeId,
-                             @RequestParam Long ruleId,
-                             @RequestParam(defaultValue = "") String ruleText,
-                             @RequestParam(defaultValue = "") String qualifier,
-                             @RequestParam(defaultValue = "") String option,
+    public String updateRule(@RequestParam(name = "nodeId") String nodeId,
+                             @RequestParam(name = "ruleId") Long ruleId,
+                             @RequestParam(name = "ruleText", defaultValue = "") String ruleText,
+                             @RequestParam(name = "qualifier", defaultValue = "") String qualifier,
+                             @RequestParam(name = "option", defaultValue = "") String option,
                              @RequestParam(value = "expanded", required = false) List<String> expanded) {
         checkAdmin();
         hierarchyLogic.updateNodeRule(ruleId, ruleText.trim(), qualifier, option, Long.parseLong(nodeId));
@@ -111,8 +111,8 @@ public class ModifyHierarchyNodeRulesController extends EvalControllerSupport {
     }
 
     @PostMapping("/remove")
-    public String removeRule(@RequestParam String nodeId,
-                             @RequestParam Long ruleId,
+    public String removeRule(@RequestParam(name = "nodeId") String nodeId,
+                             @RequestParam(name = "ruleId") Long ruleId,
                              @RequestParam(value = "expanded", required = false) List<String> expanded) {
         checkAdmin();
         hierarchyLogic.removeNodeRule(ruleId);

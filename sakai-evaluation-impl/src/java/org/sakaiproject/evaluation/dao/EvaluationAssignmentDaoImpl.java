@@ -203,6 +203,8 @@ public class EvaluationAssignmentDaoImpl extends EvaluationDaoHibernateSupport i
         if (evaluationId == null) {
             throw new IllegalArgumentException("evaluationId cannot be null");
         }
+        // Remove managed assignments as well as their rows. Bulk HQL leaves stale
+        // references that Hibernate 6 rejects when the evaluation is deleted.
         int deletedAssignUsers = deleteAssignUsersForEvaluation(evaluationId);
         int deletedAssignGroups = deleteAssignGroupsForEvaluation(evaluationId);
         int deletedAssignHierarchies = deleteAssignHierarchiesForEvaluation(evaluationId);
@@ -211,24 +213,33 @@ public class EvaluationAssignmentDaoImpl extends EvaluationDaoHibernateSupport i
     }
 
     private int deleteAssignUsersForEvaluation(Long evaluationId) {
-        return currentSession().createQuery(
-                "delete from EvalAssignUser assignUser where assignUser.evaluation.id = :evaluationId")
+        List<EvalAssignUser> assignments = currentSession().createQuery(
+                "select assignUser from EvalAssignUser assignUser where assignUser.evaluation.id = :evaluationId",
+                EvalAssignUser.class)
                 .setParameter("evaluationId", evaluationId)
-                .executeUpdate();
+                .list();
+        deleteAll(assignments);
+        return assignments.size();
     }
 
     private int deleteAssignGroupsForEvaluation(Long evaluationId) {
-        return currentSession().createQuery(
-                "delete from EvalAssignGroup assignGroup where assignGroup.evaluation.id = :evaluationId")
+        List<EvalAssignGroup> assignments = currentSession().createQuery(
+                "select assignGroup from EvalAssignGroup assignGroup where assignGroup.evaluation.id = :evaluationId",
+                EvalAssignGroup.class)
                 .setParameter("evaluationId", evaluationId)
-                .executeUpdate();
+                .list();
+        deleteAll(assignments);
+        return assignments.size();
     }
 
     private int deleteAssignHierarchiesForEvaluation(Long evaluationId) {
-        return currentSession().createQuery(
-                "delete from EvalAssignHierarchy assignHierarchy where assignHierarchy.evaluation.id = :evaluationId")
+        List<EvalAssignHierarchy> assignments = currentSession().createQuery(
+                "select assignHierarchy from EvalAssignHierarchy assignHierarchy where assignHierarchy.evaluation.id = :evaluationId",
+                EvalAssignHierarchy.class)
                 .setParameter("evaluationId", evaluationId)
-                .executeUpdate();
+                .list();
+        deleteAll(assignments);
+        return assignments.size();
     }
 
     public void saveAssignHierarchyAndGroups(Set<EvalAssignHierarchy> assignHierarchies, Set<EvalAssignGroup> assignGroups) {

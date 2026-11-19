@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalAuthoringService;
@@ -105,7 +105,7 @@ public class RenderingUtils {
         {
         	try
         	{
-	        	realValues[i]=new Integer(answersArray.get(i));
+                realValues[i]=Integer.valueOf(answersArray.get(i));
         	}
         	catch (Exception e)
         	{

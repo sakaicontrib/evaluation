@@ -60,7 +60,7 @@ public class TemplateEntityProviderImpl implements TemplateEntityProvider, CoreE
 	   boolean exists = false;
 		Long templateId;
 		try {
-			templateId = new Long(id);
+			templateId = Long.valueOf(id);
 			if (authoringService.getTemplateById(templateId) != null) {
 			   exists = true;
 			}
@@ -73,7 +73,7 @@ public class TemplateEntityProviderImpl implements TemplateEntityProvider, CoreE
 
 	public Object getEntity(EntityReference ref) {
 		// TODO Auto-generated method stub
-		EvalTemplate item = authoringService.getTemplateById(new Long(ref.getId()));
+		EvalTemplate item = authoringService.getTemplateById(Long.valueOf(ref.getId()));
 		if(item != null && isAllowedAccessEvalTemplateItem(ref)){
 			return (developerHelperService.cloneBean(item, 1, new String[]{})); 
 		}
@@ -105,8 +105,8 @@ public class TemplateEntityProviderImpl implements TemplateEntityProvider, CoreE
 
 	public void deleteEntity(EntityReference ref, Map<String, Object> params) {
 		// TODO Auto-generated method stub
-		if(isAllowedAccessEvalTemplateItem(ref) && authoringService.canRemoveTemplate(developerHelperService.getCurrentUserId(), new Long(ref.getId()))){
-			authoringService.deleteTemplate(new Long(ref.getId()), developerHelperService.getCurrentUserId());
+		if(isAllowedAccessEvalTemplateItem(ref) && authoringService.canRemoveTemplate(developerHelperService.getCurrentUserId(), Long.valueOf(ref.getId()))){
+			authoringService.deleteTemplate(Long.valueOf(ref.getId()), developerHelperService.getCurrentUserId());
 		}
 		
 	}

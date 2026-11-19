@@ -40,8 +40,8 @@ import lombok.extern.slf4j.Slf4j;
 public class ShowEvalCategoryController extends EvalControllerSupport {
 
     @GetMapping
-    public String show(@RequestParam String evalCategory,
-                       @RequestParam(required = false, defaultValue = "false") boolean external,
+    public String show(@RequestParam(name = "evalCategory") String evalCategory,
+                       @RequestParam(name = "external", required = false, defaultValue = "false") boolean external,
                        Locale locale,
                        Model model) {
 

@@ -344,6 +344,14 @@ public class EvaluationDaoPortMethodsAssignmentTest extends AbstractEvaluationDa
         Assert.assertEquals(0, assignmentDao.countAssignGroupsByEvalAndGroupId(evalUnLocked.getId(), "dao-cleanup-group"));
         Assert.assertTrue(assignmentDao.getParticipantsForEval(evalUnLocked.getId(), null, null, null, null, null, null).isEmpty());
         Assert.assertTrue(assignmentDao.getAssignHierarchyByEval(evalUnLocked.getId()).isEmpty());
+        Assert.assertNull(persistence.findById(EvalAssignGroup.class, cleanupGroup.getId()));
+        Assert.assertNull(persistence.findById(EvalAssignUser.class, cleanupUser.getId()));
+        Assert.assertNull(persistence.findById(EvalAssignHierarchy.class, cleanupHierarchy.getId()));
+
+        // Deleting the evaluation must also flush with assignments already loaded.
+        queryDao.deleteEvaluation(evalUnLocked);
+        currentSession().flush();
+        Assert.assertNull(persistence.findById(EvalEvaluation.class, evalUnLocked.getId()));
     }
 
     @Test

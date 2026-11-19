@@ -444,7 +444,7 @@ public class EvaluationQueryDaoImpl extends EvaluationDaoHibernateSupport implem
      */
     public String getNodeIdForEvalGroup(String evalGroupId) {
         List<String> nodeIds = currentSession().createQuery(
-                "select egn.nodeId from EvalGroupNodes egn join egn.evalGroups egrps where egrps.id = :groupid order by egn.nodeId",
+                "select egn.nodeId from EvalGroupNodes egn join egn.evalGroups egrps where egrps = :groupid order by egn.nodeId",
                 String.class)
                 .setParameter("groupid", evalGroupId)
                 .list();

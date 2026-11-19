@@ -15,8 +15,8 @@
     permissions and limitations under the License.
 
 -->
-<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee  http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" version="2.4">
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee  https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd" version="6.0">
 
   <display-name>sakai-evaluation</display-name>
   <description>Sakai Evaluation</description>
@@ -82,17 +82,6 @@
   <servlet-mapping>
     <servlet-name>sakai.rsf.evaluation</servlet-name>
     <url-pattern>/*</url-pattern>
-  </servlet-mapping>
-
-  <!-- Webjars Servlet -->
-  <servlet>
-    <servlet-name>WebjarsServlet</servlet-name>
-    <servlet-class>org.webjars.servlet.WebjarsServlet</servlet-class>
-    <load-on-startup>2</load-on-startup>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>WebjarsServlet</servlet-name>
-    <url-pattern>/webjars/*</url-pattern>
   </servlet-mapping>
 
 </web-app>

@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalSettings;
@@ -142,8 +142,8 @@ public class ControlEvaluationsController extends EvalControllerSupport {
     // Handlers -------------------------------------------------------------------------------
 
     @GetMapping
-    public String show(@RequestParam(defaultValue = "6") int maxAgeToDisplay,
-                       @RequestParam(required = false) String category,
+    public String show(@RequestParam(name = "maxAgeToDisplay", defaultValue = "6") int maxAgeToDisplay,
+                       @RequestParam(name = "category", required = false) String category,
                        Locale locale, Model model,
                        HttpServletRequest request) {
 
@@ -166,8 +166,8 @@ public class ControlEvaluationsController extends EvalControllerSupport {
 
     /** Closes an active evaluation early and redirects back. */
     @PostMapping("/close")
-    public String closeEval(@RequestParam Long evaluationId,
-                            @RequestParam(defaultValue = "6") int maxAgeToDisplay) {
+    public String closeEval(@RequestParam(name = "evaluationId") Long evaluationId,
+                            @RequestParam(name = "maxAgeToDisplay", defaultValue = "6") int maxAgeToDisplay) {
         String currentUserId = currentUserId();
         evaluationSetupService.closeEvaluation(evaluationId, currentUserId);
         return "redirect:/control_evaluations?maxAgeToDisplay=" + maxAgeToDisplay;

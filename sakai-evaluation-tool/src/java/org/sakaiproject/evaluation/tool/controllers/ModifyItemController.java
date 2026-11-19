@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalSettings;
@@ -57,10 +57,10 @@ public class ModifyItemController extends EvalControllerSupport {
     }
 
     @GetMapping
-    public String show(@RequestParam(required = false) Long itemId,
-                       @RequestParam(required = false) Long templateItemId,
-                       @RequestParam(required = false) Long templateId,
-                       @RequestParam(required = false) String itemClassification,
+    public String show(@RequestParam(name = "itemId", required = false) Long itemId,
+                       @RequestParam(name = "templateItemId", required = false) Long templateItemId,
+                       @RequestParam(name = "templateId", required = false) Long templateId,
+                       @RequestParam(name = "itemClassification", required = false) String itemClassification,
                        Model model,
                        HttpServletRequest request) {
 
@@ -86,6 +86,9 @@ public class ModifyItemController extends EvalControllerSupport {
 
         if (templateItemId != null) {
             // Edit existing template item
+            if (!authoringService.canViewTemplateItem(currentUserId(), templateItemId)) {
+                throw new SecurityException("User cannot view this authoring object");
+            }
             templateItem = authoringService.getTemplateItemById(templateItemId);
             if (templateItem == null) {
                 throw new IllegalArgumentException("Template item not found: " + templateItemId);
@@ -105,6 +108,9 @@ public class ModifyItemController extends EvalControllerSupport {
 
         } else if (itemId != null) {
             // Edit item bank entry
+            if (!authoringService.canViewItem(currentUserId(), itemId)) {
+                throw new SecurityException("User cannot view this authoring object");
+            }
             item = authoringService.getItemById(itemId);
             if (item == null) {
                 throw new IllegalArgumentException("Item not found: " + itemId);
@@ -306,24 +312,24 @@ public class ModifyItemController extends EvalControllerSupport {
     }
 
     @PostMapping
-    public String save(@RequestParam(required = false) Long itemId,
-                       @RequestParam(required = false) Long templateItemId,
-                       @RequestParam(required = false) Long templateId,
-                       @RequestParam String itemClassification,
-                       @RequestParam String itemText,
-                       @RequestParam(required = false) String sharing,
-                       @RequestParam(required = false) Long scaleId,
-                       @RequestParam(required = false) String[] options,
-                       @RequestParam(required = false) String scaleDisplaySetting,
-                       @RequestParam(required = false) String displayRows,
-                       @RequestParam(required = false) Boolean usesNA,
-                       @RequestParam(required = false) Boolean usesComment,
-                       @RequestParam(required = false) Boolean compulsory,
-                       @RequestParam(required = false) String category,
-                       @RequestParam(required = false) Boolean itemExpert,
-                       @RequestParam(required = false) String expertDescription,
-                       @RequestParam(required = false) Long itemGroupId,
-                       @RequestParam(required = false) String resultsSharing,
+    public String save(@RequestParam(name = "itemId", required = false) Long itemId,
+                       @RequestParam(name = "templateItemId", required = false) Long templateItemId,
+                       @RequestParam(name = "templateId", required = false) Long templateId,
+                       @RequestParam(name = "itemClassification") String itemClassification,
+                       @RequestParam(name = "itemText") String itemText,
+                       @RequestParam(name = "sharing", required = false) String sharing,
+                       @RequestParam(name = "scaleId", required = false) Long scaleId,
+                       @RequestParam(name = "options", required = false) String[] options,
+                       @RequestParam(name = "scaleDisplaySetting", required = false) String scaleDisplaySetting,
+                       @RequestParam(name = "displayRows", required = false) String displayRows,
+                       @RequestParam(name = "usesNA", required = false) Boolean usesNA,
+                       @RequestParam(name = "usesComment", required = false) Boolean usesComment,
+                       @RequestParam(name = "compulsory", required = false) Boolean compulsory,
+                       @RequestParam(name = "category", required = false) String category,
+                       @RequestParam(name = "itemExpert", required = false) Boolean itemExpert,
+                       @RequestParam(name = "expertDescription", required = false) String expertDescription,
+                       @RequestParam(name = "itemGroupId", required = false) Long itemGroupId,
+                       @RequestParam(name = "resultsSharing", required = false) String resultsSharing,
                        HttpServletRequest request,
                        Model model) {
 
@@ -348,9 +354,15 @@ public class ModifyItemController extends EvalControllerSupport {
             // ---- Get or create the EvalItem ----
             EvalItem item;
             if (itemId != null) {
+                if (!authoringService.canViewItem(currentUserId(), itemId)) {
+                    throw new SecurityException("User cannot view this authoring object");
+                }
                 item = authoringService.getItemById(itemId);
                 if (item == null) throw new IllegalArgumentException("Item not found: " + itemId);
             } else if (templateItemId != null) {
+                if (!authoringService.canViewTemplateItem(currentUserId(), templateItemId)) {
+                    throw new SecurityException("User cannot view this authoring object");
+                }
                 EvalTemplateItem ti0 = authoringService.getTemplateItemById(templateItemId);
                 if (ti0 == null) throw new IllegalArgumentException("Template item not found: " + templateItemId);
                 item = ti0.getItem();
@@ -382,6 +394,9 @@ public class ModifyItemController extends EvalControllerSupport {
 
                 // Scale for SCALED items
                 if (EvalConstants.ITEM_TYPE_SCALED.equals(itemClassification) && scaleId != null) {
+                    if (!authoringService.canViewScale(currentUserId(), scaleId)) {
+                        throw new SecurityException("User cannot view this authoring object");
+                    }
                     EvalScale scale = authoringService.getScaleById(scaleId);
                     item.setScale(scale);
                 }
@@ -434,9 +449,15 @@ public class ModifyItemController extends EvalControllerSupport {
             if (inTemplate) {
                 EvalTemplateItem ti;
                 if (templateItemId != null) {
+                    if (!authoringService.canViewTemplateItem(currentUserId(), templateItemId)) {
+                        throw new SecurityException("User cannot view this authoring object");
+                    }
                     ti = authoringService.getTemplateItemById(templateItemId);
                 } else {
                     // Nuevo templateItem
+                    if (!authoringService.canViewTemplate(currentUserId(), templateId)) {
+                        throw new SecurityException("User cannot view this authoring object");
+                    }
                     EvalTemplate template = authoringService.getTemplateById(templateId);
                     ti = localTemplateLogic.newTemplateItem();
                     ti.setTemplate(template);

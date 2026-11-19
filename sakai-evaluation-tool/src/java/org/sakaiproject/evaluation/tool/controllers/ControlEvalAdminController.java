@@ -96,7 +96,7 @@ public class ControlEvalAdminController extends EvalControllerSupport {
     }
 
     @PostMapping("/assign")
-    public String assign(@RequestParam String userEid, RedirectAttributes ra) {
+    public String assign(@RequestParam(name = "userEid") String userEid, RedirectAttributes ra) {
         String currentUserId = currentUserId();
         if (!commonLogic.isUserAdmin(currentUserId))
             throw new SecurityException("Users who are not eval admins cannot assign other users as eval admins");
@@ -121,7 +121,7 @@ public class ControlEvalAdminController extends EvalControllerSupport {
     }
 
     @PostMapping("/unassign")
-    public String unassign(@RequestParam String userId, RedirectAttributes ra) {
+    public String unassign(@RequestParam(name = "userId") String userId, RedirectAttributes ra) {
         String currentUserId = currentUserId();
         if (!commonLogic.isUserAdmin(currentUserId))
             throw new SecurityException("Users who are not eval admins cannot unassign other users as eval admins");

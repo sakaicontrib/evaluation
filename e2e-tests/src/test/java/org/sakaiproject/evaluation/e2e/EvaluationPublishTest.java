@@ -15,14 +15,23 @@
 package org.sakaiproject.evaluation.e2e;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.microsoft.playwright.APIRequest;
+import com.microsoft.playwright.APIRequestContext;
+import com.microsoft.playwright.APIResponse;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
+import com.microsoft.playwright.Frame;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.Tracing;
+import com.microsoft.playwright.options.AriaRole;
+import com.microsoft.playwright.options.FormData;
+import com.microsoft.playwright.options.RequestOptions;
 import com.microsoft.playwright.options.WaitUntilState;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -49,7 +58,9 @@ class EvaluationPublishTest {
 
     private BrowserContext context;
     private Page page;
+    private Frame toolFrame;
     private Path artifactDir;
+    private String toolContext = TOOL_CONTEXT;
 
     @BeforeAll
     static void launchBrowser() throws Exception {
@@ -84,6 +95,7 @@ class EvaluationPublishTest {
                 .setSnapshots(true)
                 .setSources(true));
         page = context.newPage();
+        toolFrame = page.mainFrame();
     }
 
     @AfterEach
@@ -111,6 +123,7 @@ class EvaluationPublishTest {
         String evaluationTitle = "Playwright Published Evaluation " + suffix;
 
         loginAsAdmin();
+        openEvaluationThroughPortal();
 
         String templateId = createTemplate(templateTitle);
         addTextItem(templateId, "What worked well in this course?");
@@ -120,92 +133,193 @@ class EvaluationPublishTest {
         publishEvaluationWithoutAssignments(evaluationId);
 
         gotoToolPath("/control_evaluations?maxAgeToDisplay=12");
-        assertThat(page.locator("body")).containsText(evaluationTitle);
-        assertThat(page.locator(".inqueueTable, .activeTable").filter(new Locator.FilterOptions()
+        assertThat(toolFrame.locator("body")).containsText(evaluationTitle);
+        assertThat(toolFrame.locator(".inqueueTable, .activeTable").filter(new Locator.FilterOptions()
                 .setHasText(evaluationTitle))).isVisible();
     }
 
+    @Test
+    void anonymousRequestsCannotAccessAdministration() {
+        assertAdminAccessDenied();
+    }
+
+    @Test
+    void studentCannotAccessAdministrationOrPrivateTemplates() {
+        loginAsAdmin();
+        openEvaluationThroughPortal();
+        String templateId = createTemplate("Private access test " + Instant.now().toEpochMilli());
+        addTextItem(templateId, "Private question must not be exposed");
+        String templateItemId = queryParam(toolFrame.locator("a[href*=\"preview_item?\"]").first()
+                .getAttribute("href"), "templateItemId");
+        context.clearCookies();
+        loginAs("student0011", "sakai");
+        assertAdminAccessDenied();
+        assertPrivateTemplateAccessDenied(context, templateId);
+        assertPrivateTemplateItemAccessDenied(context, templateItemId);
+        try (BrowserContext anonymous = browser.newContext(new Browser.NewContextOptions()
+                .setBaseURL(baseUrl()).setIgnoreHTTPSErrors(true))) {
+            assertPrivateTemplateAccessDenied(anonymous, templateId);
+            assertPrivateTemplateItemAccessDenied(anonymous, templateItemId);
+        }
+    }
+
+    @Test
+    void adminCanOpenEvaluationThroughPortal() {
+        loginAsAdmin();
+        openEvaluationThroughPortal();
+        toolFrame.getByRole(AriaRole.LINK, new Frame.GetByRoleOptions().setName("Administrate").setExact(true)).click();
+        assertThat(toolFrame.getByRole(AriaRole.LINK, new Frame.GetByRoleOptions()
+                .setName("Control Email Settings").setExact(true))).isVisible();
+    }
+
+    private void openEvaluationThroughPortal() {
+        page.navigate("/portal/site/!admin");
+        Locator tool = page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions()
+                .setName("Evaluation System").setExact(true));
+        if (tool.count() == 0) {
+            // Use Sakai's fixture API to install the tool on a fresh CI instance.
+            APIRequestContext fixture = playwright.request().newContext(new APIRequest.NewContextOptions()
+                    .setBaseURL(baseUrl()).setIgnoreHTTPSErrors(true));
+            try {
+                APIResponse session = fixture.post("/direct/session/new", RequestOptions.create()
+                        .setForm(FormData.create().set("_username", "admin").set("_password", "admin")));
+                assertTrue(session.ok(), "Fixture login failed: HTTP " + session.status());
+                APIResponse added = fixture.get("/sakai-ws/rest/sakai/addToolAndPageToSite",
+                        RequestOptions.create().setQueryParam("sessionid", session.text().trim())
+                                .setQueryParam("siteid", "!admin").setQueryParam("toolid", "sakai.rsf.evaluation")
+                                .setQueryParam("position", "99"));
+                assertTrue(added.ok(), "Installing the tool in the test site must succeed");
+                assertEquals("success", added.text().trim());
+            } finally {
+                fixture.dispose();
+            }
+            page.reload();
+        }
+        tool.click();
+        Locator portalFrame = page.locator("iframe.portletMainIframe[title^='Evaluation System']");
+        if (portalFrame.count() > 0) {
+            toolFrame = page.frame(portalFrame.getAttribute("name"));
+        }
+        assertThat(toolFrame.locator("body")).containsText("Evaluations dashboard");
+        String path = java.net.URI.create(toolFrame.url()).getPath();
+        toolContext = path.endsWith("/summary") ? path.substring(0, path.length() - "/summary".length()) : path;
+        if (toolContext.endsWith("/")) {
+            toolContext = toolContext.substring(0, toolContext.length() - 1);
+        }
+    }
+
+    private void assertAdminAccessDenied() {
+        for (String path : new String[]{"/administrate", "/administrate_email", "/administrate_reporting",
+                "/control_eval_admin", "/export_settings"}) {
+            APIResponse response = context.request().get(TOOL_CONTEXT + path);
+            assertEquals(403, response.status(), path);
+        }
+        APIResponse response = context.request().post(TOOL_CONTEXT + "/administrate",
+                RequestOptions.create().setForm(FormData.create()));
+        assertEquals(403, response.status(), "Unauthorized settings writes must be denied");
+    }
+
+    private void assertPrivateTemplateAccessDenied(BrowserContext requester, String templateId) {
+        for (String path : new String[]{"/modify_template", "/modify_template_items", "/preview_eval", "/remove_template", "/evaluation_create"}) {
+            APIResponse response = requester.request().get(TOOL_CONTEXT + path + "?templateId=" + templateId);
+            assertEquals(403, response.status(), path);
+        }
+    }
+
+    private void assertPrivateTemplateItemAccessDenied(BrowserContext requester, String templateItemId) {
+        for (String path : new String[]{"/modify_item", "/preview_item", "/remove_item"}) {
+            APIResponse response = requester.request().get(TOOL_CONTEXT + path + "?templateItemId=" + templateItemId);
+            assertEquals(403, response.status(), path);
+        }
+    }
+
     private void loginAsAdmin() {
+        loginAs("admin", "admin");
+    }
+
+    private void loginAs(String username, String password) {
+        toolFrame = page.mainFrame();
+        toolContext = TOOL_CONTEXT;
         page.navigate("/portal/", new Page.NavigateOptions().setWaitUntil(WaitUntilState.DOMCONTENTLOADED));
-        Locator userId = page.locator("input[name=\"eid\"], #eid").first();
+        Locator userId = toolFrame.locator("input[name=\"eid\"], #eid").first();
         assertThat(userId).isVisible();
-        userId.fill("admin");
-        page.locator("input[name=\"pw\"], #pw").first().fill("admin");
-        page.locator("#submit, button[type=\"submit\"], input[type=\"submit\"]").first().click();
+        userId.fill(username);
+        toolFrame.locator("input[name=\"pw\"], #pw").first().fill(password);
+        toolFrame.locator("#submit, button[type=\"submit\"], input[type=\"submit\"]").first().click();
         page.waitForLoadState();
-        assertThat(page.locator("body")).containsText(Pattern.compile("Administration Workspace|Home"));
+        assertThat(toolFrame.locator("body")).containsText(Pattern.compile("Administration Workspace|Home"));
     }
 
     private String createTemplate(String templateTitle) {
         gotoToolPath("/modify_template");
-        page.locator("input[name=\"title\"]").fill(templateTitle);
-        page.locator("textarea[name=\"description\"]").fill("Created by Playwright e2e.");
+        toolFrame.locator("input[name=\"title\"]").fill(templateTitle);
+        toolFrame.locator("textarea[name=\"description\"]").fill("Created by Playwright e2e.");
         submitForm("#basic-form");
-        page.waitForURL(Pattern.compile(".*/modify_template_items\\?templateId=\\d+.*"));
-        assertThat(page.locator("body")).containsText(templateTitle);
-        return queryParam(page.url(), "templateId");
+        toolFrame.waitForURL(Pattern.compile(".*/modify_template_items\\?templateId=\\d+.*"));
+        assertThat(toolFrame.locator("body")).containsText(templateTitle);
+        return queryParam(toolFrame.url(), "templateId");
     }
 
     private void addTextItem(String templateId, String itemText) {
         gotoToolPath("/modify_item?itemClassification=Essay&templateId=" + templateId);
-        setFormValue("textarea[name=\"itemText\"]", itemText);
-        page.locator("select[name=\"displayRows\"]").selectOption("2");
-        Locator courseCategory = page.locator("input[name=\"category\"][value=\"course\"]");
+        fillEditor("item-text", itemText);
+        toolFrame.locator("select[name=\"displayRows\"]").selectOption("2");
+        Locator courseCategory = toolFrame.locator("input[name=\"category\"][value=\"course\"]");
         if (courseCategory.count() > 0) {
             courseCategory.check();
         }
         submitForm("#item-form");
-        page.waitForURL(Pattern.compile(".*/modify_template_items\\?templateId=" + Pattern.quote(templateId) + ".*"));
-        assertThat(page.locator("body")).containsText(itemText);
+        toolFrame.waitForURL(Pattern.compile(".*/modify_template_items\\?templateId=" + Pattern.quote(templateId) + ".*"));
+        assertThat(toolFrame.locator("body")).containsText(itemText);
     }
 
     private String createEvaluation(String templateId, String evaluationTitle) {
         gotoToolPath("/evaluation_create?templateId=" + templateId);
-        setFormValue("input[name=\"title\"]", evaluationTitle);
-        setFormValue("textarea[name=\"instructions\"]", "Please complete this test evaluation.");
+        toolFrame.locator("input[name=\"title\"]").fill(evaluationTitle);
+        fillEditor("instructions", "Please complete this test evaluation.");
         submitForm("form");
-        page.waitForURL(Pattern.compile(".*/evaluation_settings\\?evaluationId=\\d+.*"));
-        return queryParam(page.url(), "evaluationId");
+        toolFrame.waitForURL(Pattern.compile(".*/evaluation_settings\\?evaluationId=\\d+.*"));
+        return queryParam(toolFrame.url(), "evaluationId");
     }
 
     private void saveEvaluationSettings(String evaluationId, String evaluationTitle) {
         LocalDateTime now = LocalDateTime.now();
         gotoToolPath("/evaluation_settings?evaluationId=" + evaluationId);
-        setFormValue("input[name=\"title\"]", evaluationTitle);
-        setFormValue("textarea[name=\"instructions\"]", "Published by Playwright e2e.");
-        page.locator("input[name=\"startDate\"]").fill(now.plusMinutes(10).format(DATE_TIME_LOCAL));
-        page.locator("input[name=\"dueDate\"]").fill(now.plusDays(2).format(DATE_TIME_LOCAL));
-        Locator authControl = page.locator("select[name=\"authControl\"]");
+        toolFrame.locator("input[name=\"title\"]").fill(evaluationTitle);
+        fillEditor("instructions", "Published by Playwright e2e.");
+        toolFrame.locator("input[name=\"startDate\"]").fill(now.plusMinutes(10).format(DATE_TIME_LOCAL));
+        toolFrame.locator("input[name=\"dueDate\"]").fill(now.plusDays(2).format(DATE_TIME_LOCAL));
+        Locator authControl = toolFrame.locator("select[name=\"authControl\"]");
         if (authControl.count() > 0 && authControl.isEnabled()) {
             authControl.selectOption("NONE");
         }
-        Locator reminderFrom = page.locator("input[name=\"reminderFromEmail\"]");
+        Locator reminderFrom = toolFrame.locator("input[name=\"reminderFromEmail\"]");
         if (reminderFrom.count() > 0 && reminderFrom.isVisible()) {
             reminderFrom.fill("admin@example.edu");
         }
-        page.locator("form").first().locator("input[type=\"submit\"]").click();
-        page.waitForURL(Pattern.compile(".*/evaluation_assign\\?evaluationId=" + Pattern.quote(evaluationId) + ".*"));
+        toolFrame.locator("form").first().locator("input[type=\"submit\"]").click();
+        toolFrame.waitForURL(Pattern.compile(".*/evaluation_assign\\?evaluationId=" + Pattern.quote(evaluationId) + ".*"));
     }
 
     private void publishEvaluationWithoutAssignments(String evaluationId) {
-        page.locator("#eval-assign-form input[type=\"submit\"]").click();
-        page.waitForURL(Pattern.compile(".*/evaluation_assign_confirm\\?evaluationId=" + Pattern.quote(evaluationId) + ".*"));
-        assertThat(page.locator("body")).containsText("No groups selected");
-        page.locator("form").first().locator("input[type=\"submit\"]").click();
-        page.waitForURL(Pattern.compile(".*/control_evaluations.*"));
+        toolFrame.locator("#eval-assign-form input[type=\"submit\"]").click();
+        toolFrame.waitForURL(Pattern.compile(".*/evaluation_assign_confirm\\?evaluationId=" + Pattern.quote(evaluationId) + ".*"));
+        assertThat(toolFrame.locator("body")).containsText("No groups selected");
+        toolFrame.locator("form").first().locator("input[type=\"submit\"]").click();
+        toolFrame.waitForURL(Pattern.compile(".*/control_evaluations.*"));
     }
 
     private void gotoToolPath(String path) {
-        page.navigate(TOOL_CONTEXT + path, new Page.NavigateOptions().setWaitUntil(WaitUntilState.DOMCONTENTLOADED));
+        toolFrame.navigate(toolContext + path, new Frame.NavigateOptions().setWaitUntil(WaitUntilState.DOMCONTENTLOADED));
     }
 
-    private void setFormValue(String selector, String value) {
-        Locator locator = page.locator(selector).first();
-        locator.evaluate("(element, text) => { element.value = text; element.dispatchEvent(new Event('input', { bubbles: true })); element.dispatchEvent(new Event('change', { bubbles: true })); }", value);
+    private void fillEditor(String id, String value) {
+        toolFrame.locator("[id=\"cke_" + id + "\"]")
+                .frameLocator("iframe.cke_wysiwyg_frame").locator("body").fill(value);
     }
 
     private void submitForm(String selector) {
-        page.locator(selector).evaluate("form => form.submit()");
+        toolFrame.locator(selector).locator("input[type=\"submit\"], button[type=\"submit\"]").first().click();
     }
 
     private static String queryParam(String url, String name) {

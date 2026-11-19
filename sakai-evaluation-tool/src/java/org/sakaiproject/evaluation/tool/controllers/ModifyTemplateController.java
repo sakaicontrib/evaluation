@@ -14,7 +14,7 @@
  */
 package org.sakaiproject.evaluation.tool.controllers;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalSettings;
@@ -43,7 +43,7 @@ public class ModifyTemplateController extends EvalControllerSupport {
 
 
     @GetMapping
-    public String show(@RequestParam(required = false) Long templateId,
+    public String show(@RequestParam(name = "templateId", required = false) Long templateId,
                        Model model,
                        HttpServletRequest request) {
 
@@ -54,6 +54,9 @@ public class ModifyTemplateController extends EvalControllerSupport {
         String currentSharing = EvalConstants.SHARING_PRIVATE;
 
         if (templateId != null) {
+            if (!authoringService.canViewTemplate(currentUserId(), templateId)) {
+                throw new SecurityException("User cannot view this template");
+            }
             EvalTemplate template = localTemplateLogic.fetchTemplate(templateId);
             title = template.getTitle() != null ? template.getTitle() : "";
             description = template.getDescription() != null ? template.getDescription() : "";
@@ -71,11 +74,11 @@ public class ModifyTemplateController extends EvalControllerSupport {
     }
 
     @PostMapping
-    public String save(@RequestParam(required = false) Long templateId,
-                       @RequestParam(defaultValue = "") String title,
-                       @RequestParam(defaultValue = "") String description,
-                       @RequestParam(required = false) String sharing,
-                       @RequestParam(required = false) String fixedSharing,
+    public String save(@RequestParam(name = "templateId", required = false) Long templateId,
+                       @RequestParam(name = "title", defaultValue = "") String title,
+                       @RequestParam(name = "description", defaultValue = "") String description,
+                       @RequestParam(name = "sharing", required = false) String sharing,
+                       @RequestParam(name = "fixedSharing", required = false) String fixedSharing,
                        HttpServletRequest request) {
 
         boolean inFacebox = "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));

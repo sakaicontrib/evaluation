@@ -40,7 +40,7 @@ public class ItemEntityProviderImpl implements ItemEntityProvider, CoreEntityPro
       boolean exists = false;
       Long itemId;
       try {
-         itemId = new Long(id);
+         itemId = Long.valueOf(id);
          if (authoringService.getItemById(itemId) != null) {
             exists = true;
          }

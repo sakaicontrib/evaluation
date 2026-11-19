@@ -80,7 +80,7 @@ public class ControlTemplatesController extends EvalControllerSupport {
     }
 
     @PostMapping("/copy")
-    public String copyTemplate(@RequestParam Long templateId) {
+    public String copyTemplate(@RequestParam(name = "templateId") Long templateId) {
         String currentUserId = currentUserId();
         authoringService.copyTemplate(templateId, null, currentUserId, false, true);
         return "redirect:/control_templates";

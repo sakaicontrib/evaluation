@@ -34,10 +34,13 @@ import lombok.extern.slf4j.Slf4j;
 public class ChownTemplateController extends EvalControllerSupport {
 
     @GetMapping
-    public String show(@RequestParam Long templateId,
-                       @RequestParam(required = false) String errorMessage,
+    public String show(@RequestParam(name = "templateId") Long templateId,
+                       @RequestParam(name = "errorMessage", required = false) String errorMessage,
                        Model model) {
         String currentUserId = currentUserId();
+        if (!authoringService.canViewTemplate(currentUserId(), templateId)) {
+            throw new SecurityException("User cannot view this authoring object");
+        }
         EvalTemplate template = authoringService.getTemplateById(templateId);
         boolean canModify = authoringService.canModifyTemplate(currentUserId, templateId);
 
@@ -49,11 +52,14 @@ public class ChownTemplateController extends EvalControllerSupport {
     }
 
     @PostMapping
-    public String chown(@RequestParam Long templateId,
-                        @RequestParam String newOwner,
+    public String chown(@RequestParam(name = "templateId") Long templateId,
+                        @RequestParam(name = "newOwner") String newOwner,
                         RedirectAttributes redirectAttributes) {
 
         String currentUserId = currentUserId();
+        if (!authoringService.canViewTemplate(currentUserId(), templateId)) {
+            throw new SecurityException("User cannot view this authoring object");
+        }
         EvalTemplate template = authoringService.getTemplateById(templateId);
 
         String newUserId = commonLogic.getUserId(newOwner);

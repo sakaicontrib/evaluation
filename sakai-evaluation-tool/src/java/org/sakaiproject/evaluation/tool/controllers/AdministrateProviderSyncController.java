@@ -43,7 +43,7 @@ public class AdministrateProviderSyncController extends EvalControllerSupport {
     private static final long DELAY_MILLIS = 2L * 60L * 1000L;
 
     @GetMapping
-    public String show(@RequestParam(required = false, defaultValue = "0") int tab, Model model) {
+    public String show(@RequestParam(name = "tab", required = false, defaultValue = "0") int tab, Model model) {
         checkAdmin();
         loadModel(model);
         model.addAttribute("initialTab", tab);
@@ -52,11 +52,11 @@ public class AdministrateProviderSyncController extends EvalControllerSupport {
 
     // Tab 1: save event settings
     @PostMapping("/events")
-    public String saveEvents(@RequestParam(required = false) Boolean syncUnassignedOnStartup,
-                             @RequestParam(required = false) Boolean syncOnStateChange,
-                             @RequestParam(required = false) Boolean syncOnGroupSave,
-                             @RequestParam(required = false) Boolean syncOnGroupUpdate,
-                             @RequestParam(required = false) String syncServerId,
+    public String saveEvents(@RequestParam(name = "syncUnassignedOnStartup", required = false) Boolean syncUnassignedOnStartup,
+                             @RequestParam(name = "syncOnStateChange", required = false) Boolean syncOnStateChange,
+                             @RequestParam(name = "syncOnGroupSave", required = false) Boolean syncOnGroupSave,
+                             @RequestParam(name = "syncOnGroupUpdate", required = false) Boolean syncOnGroupUpdate,
+                             @RequestParam(name = "syncServerId", required = false) String syncServerId,
                              RedirectAttributes ra) {
         checkAdmin();
         if (syncUnassignedOnStartup != null)
@@ -76,9 +76,9 @@ public class AdministrateProviderSyncController extends EvalControllerSupport {
 
     // Tab 2: create a new cron job
     @PostMapping("/schedule")
-    public String schedule(@RequestParam(defaultValue = "") String cronExpression,
+    public String schedule(@RequestParam(name = "cronExpression", defaultValue = "") String cronExpression,
                            @RequestParam(value = "states", required = false) List<String> states,
-                           @RequestParam(required = false) String syncServerId,
+                           @RequestParam(name = "syncServerId", required = false) String syncServerId,
                            RedirectAttributes ra) {
         checkAdmin();
         String stateList = states != null ? String.join(" ", states) : "";
@@ -97,10 +97,10 @@ public class AdministrateProviderSyncController extends EvalControllerSupport {
 
     // Tab 2: update an existing cron job
     @PostMapping("/update")
-    public String update(@RequestParam String fullJobName,
-                         @RequestParam(defaultValue = "") String cronExpression,
+    public String update(@RequestParam(name = "fullJobName") String fullJobName,
+                         @RequestParam(name = "cronExpression", defaultValue = "") String cronExpression,
                          @RequestParam(value = "states", required = false) List<String> states,
-                         @RequestParam(required = false) String syncServerId,
+                         @RequestParam(name = "syncServerId", required = false) String syncServerId,
                          RedirectAttributes ra) {
         checkAdmin();
         String stateList = states != null ? String.join(" ", states) : "";
@@ -124,7 +124,7 @@ public class AdministrateProviderSyncController extends EvalControllerSupport {
 
     // Delete cron job
     @PostMapping("/delete")
-    public String delete(@RequestParam String fullJobName, RedirectAttributes ra) {
+    public String delete(@RequestParam(name = "fullJobName") String fullJobName, RedirectAttributes ra) {
         checkAdmin();
         Map<String, Map<String, String>> cronJobs = commonLogic.getCronJobs(JOB_GROUP);
         Map<String, String> job = cronJobs != null ? cronJobs.get(fullJobName) : null;
@@ -144,7 +144,7 @@ public class AdministrateProviderSyncController extends EvalControllerSupport {
     // Tab 3: quick sync (runs within 2 minutes)
     @PostMapping("/quick")
     public String quickSync(@RequestParam(value = "states", required = false) List<String> states,
-                            @RequestParam(required = false) String syncServerId,
+                            @RequestParam(name = "syncServerId", required = false) String syncServerId,
                             RedirectAttributes ra) {
         checkAdmin();
         String stateList = states != null ? String.join(" ", states) : "";

@@ -48,7 +48,7 @@ public class ModifyHierarchyNodeGroupsController extends EvalControllerSupport {
     }
 
     @GetMapping
-    public String show(@RequestParam String nodeId,
+    public String show(@RequestParam(name = "nodeId") String nodeId,
                        @RequestParam(value = "expanded", required = false) List<String> expanded,
                        Model model) {
         checkAdmin();
@@ -84,7 +84,7 @@ public class ModifyHierarchyNodeGroupsController extends EvalControllerSupport {
     }
 
     @PostMapping("/save")
-    public String save(@RequestParam String nodeId,
+    public String save(@RequestParam(name = "nodeId") String nodeId,
                        @RequestParam(value = "selectedGroups", required = false) List<String> selectedGroups,
                        @RequestParam(value = "expanded", required = false) List<String> expanded) {
         checkAdmin();

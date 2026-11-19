@@ -411,7 +411,7 @@ public class PDFReportExporter implements ReportExporter {
         {
             try
             {
-                myNumber=new Integer(options.get(i));
+                myNumber=Integer.valueOf(options.get(i));
                 totalNumbers=totalNumbers+(myNumber*values[i]);
                 totalValues=totalValues+values[i];
             }
@@ -445,7 +445,7 @@ public class PDFReportExporter implements ReportExporter {
             numeroValores=numeroValores+collectedValues.get(n);
             try
             {
-            	answer=new Integer(answers.get(n));
+                answer=Integer.valueOf(answers.get(n));
             }
             catch (NumberFormatException e)
             {

@@ -36,9 +36,9 @@ public class ModifyEmailController extends EvalControllerSupport {
 
 
     @GetMapping
-    public String show(@RequestParam(required = false) Long templateId,
-                       @RequestParam(required = false) String emailType,
-                       @RequestParam(required = false) Long evaluationId,
+    public String show(@RequestParam(name = "templateId", required = false) Long templateId,
+                       @RequestParam(name = "emailType", required = false) String emailType,
+                       @RequestParam(name = "evaluationId", required = false) Long evaluationId,
                        Model model) {
 
         EvalEmailTemplate template = loadTemplate(templateId, emailType, evaluationId);
@@ -55,11 +55,11 @@ public class ModifyEmailController extends EvalControllerSupport {
     }
 
     @PostMapping
-    public String save(@RequestParam(required = false) Long templateId,
-                       @RequestParam(required = false) String emailType,
-                       @RequestParam(required = false) Long evaluationId,
-                       @RequestParam String subject,
-                       @RequestParam String message) {
+    public String save(@RequestParam(name = "templateId", required = false) Long templateId,
+                       @RequestParam(name = "emailType", required = false) String emailType,
+                       @RequestParam(name = "evaluationId", required = false) Long evaluationId,
+                       @RequestParam(name = "subject") String subject,
+                       @RequestParam(name = "message") String message) {
 
         String userId = currentUserId();
         Long[] savedTemplateId = new Long[1];
@@ -114,8 +114,8 @@ public class ModifyEmailController extends EvalControllerSupport {
     }
 
     @PostMapping("/reset")
-    public String reset(@RequestParam Long evaluationId,
-                        @RequestParam String emailType) {
+    public String reset(@RequestParam(name = "evaluationId") Long evaluationId,
+                        @RequestParam(name = "emailType") String emailType) {
         String userId = currentUserId();
         evaluationSetupService.assignEmailTemplate(null, evaluationId, emailType, userId);
         return "redirect:/preview_email?emailType=" + emailType + "&evaluationId=" + evaluationId;

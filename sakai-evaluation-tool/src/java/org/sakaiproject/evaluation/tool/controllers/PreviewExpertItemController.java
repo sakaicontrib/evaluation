@@ -46,9 +46,9 @@ public class PreviewExpertItemController extends EvalControllerSupport {
     }
 
     @GetMapping
-    public String show(@RequestParam String type,
-                       @RequestParam(required = false) Long categoryId,
-                       @RequestParam(required = false) Long objectiveId,
+    public String show(@RequestParam(name = "type") String type,
+                       @RequestParam(name = "categoryId", required = false) Long categoryId,
+                       @RequestParam(name = "objectiveId", required = false) Long objectiveId,
                        Model model) {
 
         boolean isCategory = EvalConstants.ITEM_GROUP_TYPE_CATEGORY.equals(type);

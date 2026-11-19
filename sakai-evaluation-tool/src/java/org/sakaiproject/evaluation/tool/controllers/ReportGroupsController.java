@@ -45,8 +45,8 @@ public class ReportGroupsController extends EvalControllerSupport {
     }
 
     @GetMapping
-    public String show(@RequestParam Long evaluationId,
-                       @RequestParam(required = false, defaultValue = "false") boolean external,
+    public String show(@RequestParam(name = "evaluationId") Long evaluationId,
+                       @RequestParam(name = "external", required = false, defaultValue = "false") boolean external,
                        Model model) {
 
         model.addAttribute("evaluationId", evaluationId);

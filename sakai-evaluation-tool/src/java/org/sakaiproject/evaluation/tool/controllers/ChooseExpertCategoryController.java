@@ -44,7 +44,7 @@ public class ChooseExpertCategoryController extends EvalControllerSupport {
     }
 
     @GetMapping
-    public String show(@RequestParam Long templateId, Model model) {
+    public String show(@RequestParam(name = "templateId") Long templateId, Model model) {
         String currentUserId = currentUserId();
         // non-empty categories only (includeEmpty=false, includeExpert=true)
         List<EvalItemGroup> categories = authoringService.getItemGroups(null, currentUserId, false, true);

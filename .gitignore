@@ -75,3 +75,6 @@ modules.xml
 .aider/
 
 # End of https://www.gitignore.io/api/intellij+iml
+
+# Maven repository used by CI
+/.m2/

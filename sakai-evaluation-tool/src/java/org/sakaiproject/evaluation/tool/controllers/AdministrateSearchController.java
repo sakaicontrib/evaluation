@@ -56,10 +56,10 @@ public class AdministrateSearchController extends EvalControllerSupport {
 
     @GetMapping
     public String show(
-            @RequestParam(required = false, defaultValue = "") String searchString,
-            @RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false) String searchByGroup,
-            @RequestParam(required = false, defaultValue = "false") boolean searchGroups,
+            @RequestParam(name = "searchString", required = false, defaultValue = "") String searchString,
+            @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(name = "searchByGroup", required = false) String searchByGroup,
+            @RequestParam(name = "searchGroups", required = false, defaultValue = "false") boolean searchGroups,
             Model model) {
 
         if (!isCurrentUserAdmin())

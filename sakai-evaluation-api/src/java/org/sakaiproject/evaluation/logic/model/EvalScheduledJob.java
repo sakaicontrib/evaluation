@@ -137,7 +137,7 @@ public class EvalScheduledJob {
       EvalIdType rvalue = new EvalIdType();
       if (contextId.indexOf(SEPARATOR) != -1) {
          int index = contextId.indexOf(SEPARATOR);
-         rvalue.evaluationId = new Long(contextId.substring(0, index));
+         rvalue.evaluationId = Long.valueOf(contextId.substring(0, index));
          rvalue.jobType = contextId.substring(index + 1);
       }
       return rvalue;

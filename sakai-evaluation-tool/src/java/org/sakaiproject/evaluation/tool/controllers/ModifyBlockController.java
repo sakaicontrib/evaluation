@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.sakaiproject.evaluation.constant.EvalConstants;
 import org.sakaiproject.evaluation.logic.EvalSettings;
@@ -64,8 +64,8 @@ public class ModifyBlockController extends EvalControllerSupport {
     }
 
     @GetMapping
-    public String show(@RequestParam Long templateId,
-                       @RequestParam String templateItemIds,
+    public String show(@RequestParam(name = "templateId") Long templateId,
+                       @RequestParam(name = "templateItemIds") String templateItemIds,
                        Model model,
                        HttpServletRequest request) {
 
@@ -235,16 +235,16 @@ public class ModifyBlockController extends EvalControllerSupport {
     }
 
     @PostMapping
-    public String save(@RequestParam Long templateId,
-                       @RequestParam String templateItemIds,
-                       @RequestParam String blockId,
-                       @RequestParam Integer originalDisplayOrder,
-                       @RequestParam(required = false) String orderedChildIds,
+    public String save(@RequestParam(name = "templateId") Long templateId,
+                       @RequestParam(name = "templateItemIds") String templateItemIds,
+                       @RequestParam(name = "blockId") String blockId,
+                       @RequestParam(name = "originalDisplayOrder") Integer originalDisplayOrder,
+                       @RequestParam(name = "orderedChildIds", required = false) String orderedChildIds,
                        @RequestParam(value = "item-text::input", required = false) String itemText,
-                       @RequestParam(required = false) String scaleDisplaySetting,
-                       @RequestParam(required = false) Boolean usesNA,
-                       @RequestParam(required = false) String category,
-                       @RequestParam(required = false) String blockTextChoice,
+                       @RequestParam(name = "scaleDisplaySetting", required = false) String scaleDisplaySetting,
+                       @RequestParam(name = "usesNA", required = false) Boolean usesNA,
+                       @RequestParam(name = "category", required = false) String category,
+                       @RequestParam(name = "blockTextChoice", required = false) String blockTextChoice,
                        Model model,
                        HttpServletRequest request) {
 

@@ -30,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 public class RemoveEmailController extends EvalControllerSupport {
 
     @PostMapping
-    public String remove(@RequestParam Long emailTemplateId) {
+    public String remove(@RequestParam(name = "emailTemplateId") Long emailTemplateId) {
         evaluationSetupService.removeEmailTemplate(emailTemplateId, currentUserId());
         return "redirect:/control_email_templates";
     }

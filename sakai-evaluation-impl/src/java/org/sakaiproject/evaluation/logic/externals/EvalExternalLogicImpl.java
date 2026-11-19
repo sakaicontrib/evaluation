@@ -33,8 +33,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -1422,11 +1422,11 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                 if (defaultValue instanceof Number) {
                     int num = ((Number) defaultValue).intValue();
                     int value = serverConfigurationService.getInt(settingName, num);
-                    returnValue = (T) new Integer(value);
+                    returnValue = (T) Integer.valueOf(value);
                 } else if (defaultValue instanceof Boolean) {
                     boolean bool = ((Boolean) defaultValue);
                     boolean value = serverConfigurationService.getBoolean(settingName, bool);
-                    returnValue = (T) new Boolean(value);
+                    returnValue = (T) Boolean.valueOf(value);
                 } else if (defaultValue instanceof String) {
                     returnValue = (T) serverConfigurationService.getString(settingName, (String) defaultValue);
                 }

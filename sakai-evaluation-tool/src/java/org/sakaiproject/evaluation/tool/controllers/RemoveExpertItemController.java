@@ -34,9 +34,9 @@ import lombok.extern.slf4j.Slf4j;
 public class RemoveExpertItemController extends EvalControllerSupport {
 
     @GetMapping
-    public String show(@RequestParam String type,
-                       @RequestParam(required = false) Long categoryId,
-                       @RequestParam(required = false) Long objectiveId,
+    public String show(@RequestParam(name = "type") String type,
+                       @RequestParam(name = "categoryId", required = false) Long categoryId,
+                       @RequestParam(name = "objectiveId", required = false) Long objectiveId,
                        Model model) {
 
         boolean isCategory = EvalConstants.ITEM_GROUP_TYPE_CATEGORY.equals(type);
@@ -51,9 +51,9 @@ public class RemoveExpertItemController extends EvalControllerSupport {
     }
 
     @PostMapping
-    public String remove(@RequestParam String type,
-                         @RequestParam(required = false) Long categoryId,
-                         @RequestParam(required = false) Long objectiveId) {
+    public String remove(@RequestParam(name = "type") String type,
+                         @RequestParam(name = "categoryId", required = false) Long categoryId,
+                         @RequestParam(name = "objectiveId", required = false) Long objectiveId) {
 
         boolean isCategory = EvalConstants.ITEM_GROUP_TYPE_CATEGORY.equals(type);
         Long eigId = isCategory ? categoryId : objectiveId;

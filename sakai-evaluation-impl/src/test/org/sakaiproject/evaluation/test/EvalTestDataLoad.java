@@ -1209,7 +1209,7 @@ public class EvalTestDataLoad {
         //    evaluationDueUntaken = new EvalEvaluation(new Date(), MAINT_USER_ID, "Eval due not taken", null, 
         //    threeDaysAgo, yesterday, tomorrow, threeDaysFuture, null, null,
         //    EvalConstants.EVALUATION_STATE_ACTIVE, EvalConstants.INSTRUCTOR_OPT_IN, 
-        //    new Integer(1), null, null, null, null, templatePublic, null,
+        //    Integer.valueOf(1), null, null, null, null, templatePublic, null,
         //    Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, UNLOCKED);
         // Evaluation Complete (ended yesterday, viewable tomorrow), recent close
         evaluationClosed = new EvalEvaluation(EvalConstants.EVALUATION_TYPE_EVALUATION, ADMIN_USER_ID, "Eval closed", null, 
@@ -1742,7 +1742,7 @@ public class EvalTestDataLoad {
                 Method setIdMethod = elementClass.getMethod("setId", new Class[] {Long.class});
                 Long id = (Long) getIdMethod.invoke(object, (Object[])null);
                 if (id == null) {
-                    id = new Long(idCounter++);
+                    id = Long.valueOf(idCounter++);
                     setIdMethod.invoke(object, new Object[] { id });
                 }
             } catch (SecurityException | IllegalArgumentException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
