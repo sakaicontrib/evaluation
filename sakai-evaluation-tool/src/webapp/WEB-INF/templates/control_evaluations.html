@@ -26,6 +26,8 @@
     <link th:href="@{/content/css/evaluation_base.css}" type="text/css" rel="stylesheet" media="all"/>
     <script src="/library/webjars/jquery/1.12.4/jquery.min.js"></script>
     <script th:src="@{/content/js/jquery/jquery.tablesorter.min.js}"></script>
+    <script src="/library/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js"></script>
+    <th:block th:replace="~{fragments/evalsys_scripts :: evalsys}"></th:block>
 </head>
 <body>
 <div class="portletBody evaluation">
@@ -227,9 +229,12 @@
                         </th:block>
                         <th:block th:if="${row.canEarlyClose}">
                             <form th:action="@{/control_evaluations/close}" method="post"
-                                  class="inlineForm left-separator">
+                                  class="inlineForm left-separator"
+                                  th:classappend="${row.closeAsksResultsEmail} ? 'close-asks-results-email'"
+                                  th:data-close-text="${row.closeAsksResultsEmail} ? #{controlevaluations.close.dialog.text(${row.dueDate})}">
                                 <input type="hidden" name="evaluationId" th:value="${row.evalId}"/>
                                 <input type="hidden" name="maxAgeToDisplay" th:value="${maxAgeToDisplay}"/>
+                                <input type="hidden" name="sendResultsNow" value="false"/>
                                 <input type="submit"
                                        th:value="#{controlevaluations.active.close.now}"
                                        class="makeLink"/>
@@ -419,8 +424,69 @@ $(document).ready(function() {
     $('.inqueueTable').tablesorter({ textExtraction: dateExtract, headers: {1: {sorter: false}}, sortList: [[3, 1]] });
     $('.activeTable').tablesorter({ textExtraction: dateExtract, headers: {1: {sorter: false}, 5: {sorter: false}, 6: {sorter: false}}, sortList: [[3, 1]] });
     $('.closedTable').tablesorter({ textExtraction: dateExtract, headers: {1: {sorter: false}, 5: {sorter: false}, 6: {sorter: false}}, sortList: [[3, 1]] });
+
+    // Early close: ask whether to send the results-available email now or keep the original schedule
+    const closeModalEl = document.getElementById('closeResultsEmailModal');
+    const closeModal = new bootstrap.Modal(closeModalEl);
+    let pendingCloseForm = null;
+    closeModalEl.addEventListener('show.bs.modal', () => {
+        if (evalsys.positionModalInViewport) {
+            evalsys.positionModalInViewport(closeModalEl);
+        }
+    });
+    document.querySelectorAll('form.close-asks-results-email').forEach(form => {
+        form.addEventListener('submit', e => {
+            if (form.dataset.confirmed === 'true') {
+                return;
+            }
+            e.preventDefault();
+            pendingCloseForm = form;
+            document.getElementById('closeResultsEmailText').textContent = form.dataset.closeText;
+            closeModal.show();
+        });
+    });
+    closeModalEl.querySelectorAll('[data-send-results-now]').forEach(button => {
+        button.addEventListener('click', () => {
+            if (!pendingCloseForm) {
+                return;
+            }
+            pendingCloseForm.querySelector('input[name="sendResultsNow"]').value = button.dataset.sendResultsNow;
+            pendingCloseForm.dataset.confirmed = 'true';
+            closeModal.hide();
+            pendingCloseForm.submit();
+        });
+    });
 });
 </script>
+<div class="modal fade" id="closeResultsEmailModal" tabindex="-1"
+     aria-labelledby="closeResultsEmailTitle" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="closeResultsEmailTitle"
+                    th:text="#{controlevaluations.close.dialog.title}">Close evaluation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        th:attr="aria-label=#{controlevaluations.close.dialog.cancel}"></button>
+            </div>
+            <div class="modal-body">
+                <p id="closeResultsEmailText"></p>
+                <p th:text="#{controlevaluations.close.dialog.question}">Do you want to send it now?</p>
+                <ul>
+                    <li th:text="#{controlevaluations.close.dialog.send.now.help}">Send now help</li>
+                    <li th:text="#{controlevaluations.close.dialog.wait.help}">Wait help</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                        th:text="#{controlevaluations.close.dialog.cancel}">Cancel</button>
+                <button type="button" class="btn btn-secondary" data-send-results-now="false"
+                        th:text="#{controlevaluations.close.dialog.wait}">Wait</button>
+                <button type="button" class="btn btn-primary" data-send-results-now="true"
+                        th:text="#{controlevaluations.close.dialog.send.now}">Send now</button>
+            </div>
+        </div>
+    </div>
+</div>
 <th:block th:if="${mainFrameId != ''}"><script th:inline="javascript">setMainFrameHeight([[${mainFrameId}]]);</script></th:block>
 </body>
 </html>

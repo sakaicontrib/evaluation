@@ -242,6 +242,24 @@ public class EvalJobLogicImpl implements EvalJobLogic {
 
     }
 
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.externals.EvalJobLogic#scheduleResultsNotificationNow(java.lang.Long)
+     */
+    public void scheduleResultsNotificationNow(Long evaluationId) {
+        if (evaluationId == null) {
+            throw new IllegalArgumentException("scheduleResultsNotificationNow: evaluationId must be set");
+        }
+        // Remove the pending jobs of the original schedule so the notifications are not sent twice
+        deleteInvocation(evaluationId, EvalConstants.JOB_TYPE_DUE);
+        deleteInvocation(evaluationId, EvalConstants.JOB_TYPE_CLOSED);
+        deleteInvocation(evaluationId, EvalConstants.JOB_TYPE_VIEWABLE);
+        deleteInvocation(evaluationId, EvalConstants.JOB_TYPE_VIEWABLE_INSTRUCTORS);
+        deleteInvocation(evaluationId, EvalConstants.JOB_TYPE_VIEWABLE_STUDENTS);
+        // The closed job schedules the owner, instructor and student results notifications
+        scheduleJob(evaluationId, new Date(), EvalConstants.JOB_TYPE_CLOSED);
+        log.debug("Results notifications rescheduled to now for evalId={}", evaluationId);
+    }
+
     // PRIVATE METHODS
 
 	/**

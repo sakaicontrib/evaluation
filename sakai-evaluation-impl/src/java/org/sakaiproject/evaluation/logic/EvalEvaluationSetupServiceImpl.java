@@ -643,6 +643,13 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
      * @see org.sakaiproject.evaluation.logic.EvalEvaluationSetupService#closeEvaluation(java.lang.Long, java.lang.String)
      */
     public EvalEvaluation closeEvaluation(Long evaluationId, String userId) {
+        return closeEvaluation(evaluationId, userId, false);
+    }
+
+    /* (non-Javadoc)
+     * @see org.sakaiproject.evaluation.logic.EvalEvaluationSetupService#closeEvaluation(java.lang.Long, java.lang.String, boolean)
+     */
+    public EvalEvaluation closeEvaluation(Long evaluationId, String userId, boolean sendResultsNow) {
         EvalEvaluation evaluation = evaluationService.getEvaluationById(evaluationId);
         if (evaluation == null) {
             throw new IllegalArgumentException("Invalid evaluation id, cannot find evaluation: " + evaluationId);
@@ -672,6 +679,16 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
 
             // fire the evaluation closed event
             commonLogic.registerEntityEvent(EVENT_EVAL_CLOSED, evaluation);
+
+            // Without a future view date the results are viewable right after closing, but the
+            // results notifications stay tied to the original due date unless asked to send them now
+            if (sendResultsNow) {
+                if (EvalConstants.EVALUATION_STATE_VIEWABLE.equals(evaluation.getState())) {
+                    evalJobLogic.scheduleResultsNotificationNow(evaluation.getId());
+                } else {
+                    log.debug("Not sending results notifications now for eval {}: state is {}", evaluationId, evaluation.getState());
+                }
+            }
         } else {
             log.warn(userId + " tried to close eval that is already closed ("+evaluationId+"): " + evaluation.getTitle());
         }

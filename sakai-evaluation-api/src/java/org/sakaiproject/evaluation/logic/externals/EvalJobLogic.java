@@ -73,5 +73,14 @@ public interface EvalJobLogic {
     */
    public void jobAction(Long evaluationId, String jobType);
 
+   /**
+    * Replace any pending due/closed/results jobs of an evaluation with a closed job that runs now,
+    * so the results-available notifications are sent right away instead of on the original schedule.
+    * Intended for evaluations that were closed early and whose results are already viewable.
+    *
+    * @param evaluationId the unique id for an {@link EvalEvaluation}
+    */
+   public void scheduleResultsNotificationNow(Long evaluationId);
+
 
 }
