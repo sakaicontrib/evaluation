@@ -35,6 +35,11 @@ public class MockEvalJobLogic implements EvalJobLogic {
       // pretend all is ok and do nothing
    }
 
+   public void scheduleResultsNotificationNow(Long evaluationId) {
+      log.info("MOCK: scheduleResultsNotificationNow(evaluationId="+evaluationId+")");
+      // pretend all is ok and do nothing
+   }
+
    public void processEvaluationStateChange(Long evaluationId, String actionState) {
       log.info("MOCK: jobAction(evaluationId="+evaluationId+", actionState="+actionState+")");
       // pretend all is ok and do nothing

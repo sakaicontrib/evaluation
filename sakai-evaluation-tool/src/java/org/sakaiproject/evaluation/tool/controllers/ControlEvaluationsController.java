@@ -95,6 +95,7 @@ public class ControlEvaluationsController extends EvalControllerSupport {
         boolean canEdit;
         boolean canDelete;
         boolean canEarlyClose;
+        boolean closeAsksResultsEmail; // closing makes results viewable now, so ask when to notify
         boolean canReopen;
         boolean canNotify;
         boolean canChown;
@@ -167,9 +168,10 @@ public class ControlEvaluationsController extends EvalControllerSupport {
     /** Closes an active evaluation early and redirects back. */
     @PostMapping("/close")
     public String closeEval(@RequestParam Long evaluationId,
+                            @RequestParam(defaultValue = "false") boolean sendResultsNow,
                             @RequestParam(defaultValue = "6") int maxAgeToDisplay) {
         String currentUserId = currentUserId();
-        evaluationSetupService.closeEvaluation(evaluationId, currentUserId);
+        evaluationSetupService.closeEvaluation(evaluationId, currentUserId, sendResultsNow);
         return "redirect:/control_evaluations?maxAgeToDisplay=" + maxAgeToDisplay;
     }
 
@@ -366,6 +368,8 @@ public class ControlEvaluationsController extends EvalControllerSupport {
             row.setCanNotify(true);
             if (isActive) {
                 row.setCanEarlyClose(earlyCloseAllowed);
+                // a future view date keeps its own results schedule, there is nothing to ask
+                row.setCloseAsksResultsEmail(eval.getViewDate() == null || !eval.getViewDate().after(new Date()));
             } else {
                 row.setCanReopen(reopeningAllowed);
             }
